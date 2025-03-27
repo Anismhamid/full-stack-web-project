@@ -1,0 +1,32 @@
+const express = require("express");
+const app = express();
+require("dotenv").config();
+const products = require("./routes/products");
+const users = require("./routes/users");
+const carts = require("./routes/carts");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const chalk = require("chalk");
+const {logger} = require("./middlewares/logger");
+
+const port = process.env.PORT || 8000;
+
+app.use(cors());
+app.use(express.json());
+app.use(logger);
+
+mongoose
+	.connect(process.env.DB)
+	.then(() => console.log(chalk.blue("Connected to mongoDB")))
+	.catch((error) => {
+		console.log(error);
+		process.exit(1);
+	});
+
+app.use("/api/products", products);
+app.use("/api/users", users);
+app.use("/api/carts", carts);
+
+app.listen(port, () =>
+	console.log(chalk.blue.underline("Server started on port:", port)),
+);
