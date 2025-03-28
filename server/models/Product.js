@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const fruitProductSchema = new mongoose.Schema(
 	{
-		product_name: {type: String,unique:true, required: true, trim: true},
+		product_name: {type: String, unique: true, required: true, trim: true},
 		category: {type: String, required: true, default: "Fruit"},
 		price: {
 			type: Number,
@@ -12,7 +12,7 @@ const fruitProductSchema = new mongoose.Schema(
 		quantity_in_stock: {
 			type: Number,
 			required: true,
-			min: [0, "Quantity must be zero or greater"],
+			min: 1,
 		},
 		description: {
 			type: String,
@@ -27,7 +27,7 @@ const fruitProductSchema = new mongoose.Schema(
 				"Please provide a valid image URL",
 			],
 		},
-		sale:{type:Boolean},
+		sale: {type: Boolean},
 		createdAt: {
 			type: Date,
 			default: Date.now,
@@ -36,7 +36,7 @@ const fruitProductSchema = new mongoose.Schema(
 			type: Date,
 			default: Date.now,
 		},
-		__v:{type:Number}
+		__v: {type: Number},
 	},
 	{
 		timestamps: true,

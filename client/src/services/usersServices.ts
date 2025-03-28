@@ -1,5 +1,6 @@
 import axios from "axios";
 import {UserLogin, UserRegister} from "../interfaces/User";
+import {showError, showSuccess} from "../atoms/Toast";
 
 const api = `${import.meta.env.VITE_API_URL}/users`;
 
@@ -17,9 +18,10 @@ export const registerNewUser = async (newUserData: UserRegister) => {
 export const loginUser = async (userData: UserLogin) => {
 	try {
 		const response = await axios.post(`${api}/login`, userData);
+		showSuccess(`ברוך שובך`);
 		return response.data;
 	} catch (error) {
-		console.log(error);
+		showError("החיבור נכשל, נא לנסות שוב");
 	}
 };
 

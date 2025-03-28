@@ -46,3 +46,19 @@ export const getCartItems = async (userId: string) => {
 		console.log("Error fetching cart items:", error);
 	}
 };
+
+export const DeleteCartItems = async (product_name: string) => {
+	try {
+		const response = await axios.delete(`${api}/carts/${product_name}`, {
+			headers: {
+				Authorization: localStorage.getItem("token"),
+			},
+		});
+console.log(response.data);
+
+		return response.data;
+	} catch (error) {
+		console.log(error);
+	}
+};
+

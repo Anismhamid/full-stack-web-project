@@ -10,7 +10,6 @@ interface Quantities {
  * @param action "+" or "-"
  * @param product_name The name of the product (e.g., "Apple")
  */
-
 export const handleQuantity = (
 	setQuantities: React.Dispatch<React.SetStateAction<Quantities>>,
 	action: "-" | "+",
@@ -29,9 +28,8 @@ export const handleQuantity = (
  * @param setQuantities quantity setter
  * @param quantity The quantity of the product to add
  * @param product_price The price of the product
- * @param product_image The price of the product
+ * @param product_image The image of the product
  */
-
 export const handleAddToCart = async (
 	setQuantities: React.Dispatch<React.SetStateAction<Quantities>>,
 	product_name: string,

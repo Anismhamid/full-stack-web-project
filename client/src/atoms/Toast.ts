@@ -5,7 +5,7 @@ export const showSuccess = (message: string) => {
 	toast.success(message, {
 		position: "bottom-left",
 		autoClose: 2000,
-		hideProgressBar: false,
+		hideProgressBar: true,
 		closeOnClick: true,
 		rtl: true,
 		pauseOnFocusLoss: true,

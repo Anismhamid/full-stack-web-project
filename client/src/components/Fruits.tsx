@@ -3,7 +3,7 @@ import {getFruits} from "../services/fruitsServices";
 import {Fruit} from "../interfaces/Fruit";
 import {handleAddToCart, handleQuantity} from "../helpers/fruitesFunctions";
 import ForAllModal from "../atoms/Modal";
-import useToken from "../hooks/useToken";
+import {useUser} from "../hooks/useUSer";
 
 interface FruitsProps {}
 
@@ -11,10 +11,10 @@ const Fruits: FunctionComponent<FruitsProps> = () => {
 	const [fruits, setFruits] = useState<Fruit[]>([]);
 	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
 	const [onShowModal, setOnShowModal] = useState<boolean>(false);
-	const {decodedToken} = useToken();
+	const {isLoggedIn} = useUser();
 
-	const OnShowCardModal = () => setOnShowModal(true);
-	const OnHideCardModal = () => setOnShowModal(false);
+	const OnShowCartModal = () => setOnShowModal(true);
+	const OnHideCartModal = () => setOnShowModal(false);
 
 	const handleAdd = (
 		product_name: string,
@@ -24,10 +24,8 @@ const Fruits: FunctionComponent<FruitsProps> = () => {
 		sale: boolean,
 	) => {
 		const productQuantity = quantity[product_name]; // Access the quantity of the specific product
-		if (!productQuantity) {
-			// If the quantity for this product is not found, handle the case
-		} else if (!decodedToken) {
-			OnShowCardModal();
+		if (!isLoggedIn) {
+			OnShowCartModal();
 		} else {
 			handleAddToCart(
 				setQuantities,
@@ -56,13 +54,12 @@ const Fruits: FunctionComponent<FruitsProps> = () => {
 			.catch((err) => {
 				console.log(err);
 			});
-		window.scroll(0, 0);
 	}, []);
 
 	return (
 		<main>
-			<div className='container py-5'>
-				<h1 className='display-1 text-center'>
+			<div className='container'>
+				<h1 className='display-1 py-5 text-center'>
 					הפירות שלנו - טריים, איכותיים ומגוונים!
 				</h1>
 				<hr />
@@ -110,8 +107,13 @@ const Fruits: FunctionComponent<FruitsProps> = () => {
 										</h5>
 										<h6 className=' text-danger'>ל / 1-ק"ג</h6>
 										<hr />
-										<div className='d-flex align-items-center justify-content-around'>
+										<div className='d-flex align-items-center justify-content-evenly'>
 											<button
+												disabled={
+													fruit.quantity_in_stock <= 0
+														? true
+														: false
+												}
 												onClick={() =>
 													handleQuantity(
 														setQuantities,
@@ -127,13 +129,18 @@ const Fruits: FunctionComponent<FruitsProps> = () => {
 												<b>{fruitQuantity}</b>
 											</h5>
 											<button
-												onClick={() =>
+												disabled={
+													fruit.quantity_in_stock <= 0
+														? true
+														: false
+												}
+												onClick={() => {
 													handleQuantity(
 														setQuantities,
 														"+",
 														fruit.product_name,
-													)
-												}
+													);
+												}}
 												className='btn btn-info text-dark fw-bold'
 											>
 												+
@@ -141,18 +148,29 @@ const Fruits: FunctionComponent<FruitsProps> = () => {
 										</div>
 										<div className='card-footer d-flex justify-content-between align-items-center'>
 											<button
-												onClick={() =>
+												onClick={() => {
 													handleAdd(
 														fruit.product_name,
 														quantities,
 														fruit.price,
 														fruit.image_url,
 														fruit.sale || false,
-													)
+													);
+												}}
+												disabled={
+													fruit.quantity_in_stock <= 0
+														? true
+														: false
 												}
-												className='btn btn-success'
+												className={` w-100 ${
+													fruit.quantity_in_stock <= 0
+														? "btn btn-danger"
+														: "btn btn-success"
+												}`}
 											>
-												הוספה לסל
+												{fruit.quantity_in_stock <= 0
+													? "אזל מהמלאי"
+													: "הוספה לסל"}
 											</button>
 										</div>
 									</div>
@@ -162,7 +180,7 @@ const Fruits: FunctionComponent<FruitsProps> = () => {
 					})}
 				</div>
 			</div>
-			<ForAllModal show={onShowModal} onHide={OnHideCardModal} />
+			<ForAllModal show={onShowModal} onHide={OnHideCartModal} />
 		</main>
 	);
 };

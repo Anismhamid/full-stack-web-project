@@ -134,17 +134,10 @@ h1 {
 }
 
 nav ul li a {
-  color: #992d09 !important;
+
   font-weight: bold !important;
 
   &:hover {
     color: #fa2c2c !important;
   }
-}
-
-footer {
-  background:#7fad0a;
-background-repeat: no-repeat;
-background-position: center;
-background-size: cover;
 }

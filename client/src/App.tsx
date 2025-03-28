@@ -4,6 +4,7 @@ import Home from "./components/Home";
 import NavBar from "./components/NavBar";
 import {path, productsPathes} from "./routes/routes";
 import Vegetable from "./components/Vegetable";
+import Checkout from "./components/Checkout";
 import Cart from "./components/Cart";
 import Footer from "./components/Footer";
 import Contact from "./components/Contact";
@@ -15,7 +16,7 @@ import "../node_modules/bootstrap/dist/js/bootstrap.min.js";
 import UsersManagement from "./components/UsersManagement.js";
 import {UserProvider} from "./hooks/useUSer.js";
 import {ToastContainer} from "react-toastify";
-
+import Orders from "./components/Orders.js";
 
 function App() {
 	return (
@@ -31,8 +32,10 @@ function App() {
 					<Route path={path.Contact} element={<Contact />} />
 					<Route path={path.About} element={<About />} />
 					<Route path={path.Cart} element={<Cart />} />
+					<Route path={path.Order} element={<Orders />} />
 					<Route path={productsPathes.Fruits} element={<Fruits />} />
 					<Route path={productsPathes.Vegetable} element={<Vegetable />} />
+					<Route path={path.Checkout} element={<Checkout />} />
 					<Route path={path.Png} element={<PageNotFound />} />
 				</Routes>
 				<Footer />

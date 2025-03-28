@@ -1,7 +1,9 @@
 import {FunctionComponent, useEffect, useState} from "react";
-import {getCartItems} from "../services/cart";
+import {DeleteCartItems, getCartItems} from "../services/cart";
 import {Cart as CartType} from "../interfaces/Cart";
 import useToken from "../hooks/useToken";
+import { useNavigate } from "react-router-dom";
+import { path } from "../routes/routes";
 
 interface CartProps {}
 
@@ -9,6 +11,23 @@ const Cart: FunctionComponent<CartProps> = () => {
 	const [items, setItems] = useState<CartType[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 	const {decodedToken} = useToken();
+	const navigate = useNavigate()
+
+	const handleDelete = (product_name: string) => {
+		setItems((prev: CartType[]) => {
+			return prev.map((item:any) => {
+				const updatedProducts = item.products.filter(
+					(product: any) => product.product_name !== product_name,
+				);
+
+				return {...item, products: updatedProducts};
+			});
+		});
+
+		DeleteCartItems(product_name).catch((err) => {
+			console.error("Error deleting item:", err);
+		});
+	};
 
 	// Fetch cart items when the component mounts
 	useEffect(() => {
@@ -24,16 +43,18 @@ const Cart: FunctionComponent<CartProps> = () => {
 					setLoading(false);
 				});
 		}
-	}, [decodedToken,loading]);
+	}, [decodedToken]);
 
 	// Calculate total amount of the cart, only considering items that have valid products
-	const totalAmount = items.reduce(
-		(total, item) =>
+	const totalAmount = items.reduce((total, item) => {
+		return (
 			total +
-			(item.products?.[0]?.product_price ?? 0) *
-				(item.products?.[0]?.quantity ?? 0),
-		0,
-	);
+			item.products.reduce(
+				(productTotal, product) => productTotal + product.product_price,
+				0,
+			)
+		);
+	}, 0);
 
 	if (loading) {
 		return (
@@ -50,8 +71,8 @@ const Cart: FunctionComponent<CartProps> = () => {
 				<div className='mt-4'>
 					<ul className='list-group'>
 						{items.length ? (
-							items.map((item) => (
-								<div>
+							items.map((item, index) => (
+								<div key={index}>
 									{item.products.map((product) => (
 										<li
 											key={product.product_name}
@@ -64,7 +85,9 @@ const Cart: FunctionComponent<CartProps> = () => {
 													src={product.product_image}
 													alt={product.product_name}
 												/>
-												<strong className="me-1 text-danger">{product.sale?"במבצע":""}|</strong>
+												<strong className='me-1 text-danger'>
+													{product.sale ? "במבצע" : ""}|
+												</strong>
 												<strong>{product.product_name}</strong> -
 												{product.quantity} ק"ג
 												<div className='text-muted'>
@@ -78,7 +101,9 @@ const Cart: FunctionComponent<CartProps> = () => {
 												</div>
 											</div>
 											<button
-												// onClick={() => removeFromCart(item.product_name)}
+												onClick={() => {
+													handleDelete(product.product_name);
+												}}
 												className='btn btn-danger btn-sm'
 											>
 												מחיקה
@@ -88,7 +113,7 @@ const Cart: FunctionComponent<CartProps> = () => {
 								</div>
 							))
 						) : (
-							<h5 className="text-danger">אין מוצרים בסל</h5>
+							<h5 className='text-danger'>אין מוצרים בסל</h5>
 						)}
 					</ul>
 					<hr />
@@ -100,7 +125,7 @@ const Cart: FunctionComponent<CartProps> = () => {
 						})}
 					</h4>
 					<div className='d-flex justify-content-center mt-3'>
-						<button className='btn btn-primary'>המשך לקופה</button>
+						<button onClick={()=>navigate(path.Checkout)} className='btn btn-primary'>המשך לקופה</button>
 					</div>
 				</div>
 			</div>

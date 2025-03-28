@@ -4,6 +4,8 @@ require("dotenv").config();
 const products = require("./routes/products");
 const users = require("./routes/users");
 const carts = require("./routes/carts");
+const orders = require("./routes/orders");
+
 const mongoose = require("mongoose");
 const cors = require("cors");
 const chalk = require("chalk");
@@ -26,6 +28,7 @@ mongoose
 app.use("/api/products", products);
 app.use("/api/users", users);
 app.use("/api/carts", carts);
+app.use("/api/orders", orders);
 
 app.listen(port, () =>
 	console.log(chalk.blue.underline("Server started on port:", port)),

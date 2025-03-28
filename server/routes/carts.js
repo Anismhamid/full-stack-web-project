@@ -28,6 +28,7 @@ router.post("/", auth, async (req, res) => {
 
 		// Find or create the user's cart
 		let cart = await Carts.findOne({userId: req.payload._id});
+
 		if (!cart) {
 			cart = new Carts({
 				userId: req.payload._id,
@@ -35,25 +36,29 @@ router.post("/", auth, async (req, res) => {
 					{
 						product_name: req.body.product_name,
 						quantity: req.body.quantity,
-						product_price: req.body.product_price,
+						product_price: req.body.product_price * req.body.quantity,
 						product_image: req.body.product_image,
-						sale: req.body.sale,
+						sale: req.body.sale || false,
 					},
 				],
 			});
 			await cart.save();
 		} else {
-			// Add the product to the existing cart or update the quantity if it already exists
+			// If cart exists, find the product in the cart
 			const productInCart = cart.products.find(
 				(item) => item.product_name === req.body.product_name,
 			);
+
 			if (productInCart) {
+				// Update product quantity and price if it exists in the cart
 				productInCart.quantity += req.body.quantity;
+				productInCart.product_price =
+					productInCart.quantity * req.body.product_price;
 			} else {
 				cart.products.push({
 					product_name: req.body.product_name,
 					quantity: req.body.quantity,
-					product_price: req.body.product_price,
+					product_price: req.body.product_price * req.body.quantity,
 					product_image: req.body.product_image,
 					sale: req.body.sale,
 				});
@@ -80,10 +85,8 @@ router.get("/:id", auth, async (req, res) => {
 		// Find the cart for the specific user by userId
 		const cart = await Carts.find();
 
-		// If no cart found, return a 404 error
-		if (!cart) {
-			return res.status(404).send("Cart not found"); // More meaningful error message
-		}
+		// If no cart found
+		if (!cart) return res.status(404).send("Cart not found"); // More meaningful error message
 
 		// Successfully return the cart
 		res.status(200).send(cart);
@@ -112,5 +115,36 @@ router.get("/admins", auth, async (req, res) => {
 		res.status(500).send(error);
 	}
 });
+
+router.delete("/:product_name", auth, async (req, res) => {
+	try {
+		// Ensure the user is authenticated
+		if (!req.payload._id) return res.status(401).send("User not authenticated");
+
+		// Find the cart for the authenticated user (assuming the user can only delete from their own cart)
+		const cart = await Carts.findOne({userId: req.payload._id});
+		if (!cart) return res.status(404).send("Cart not found");
+
+		// Find the product index in cart products array
+		const productIndex = cart.products.findIndex(
+			(product) => product.product_name === req.params.product_name,
+		);
+		if (productIndex === -1) return res.status(404).send("Product not found in cart");
+
+		// Remove the product from the cart
+		cart.products.splice(productIndex, 1);
+
+		// Save the cart after removing the product
+		await cart.save();
+
+		// Send a successful response
+		res.status(200).send("Product removed from cart successfully");
+	} catch (error) {
+		// Handle any errors that occur
+		console.error(error); // Log the error for debugging purposes
+		res.status(500).send("Server error");
+	}
+});
+
 
 module.exports = router;

@@ -11,6 +11,8 @@ export enum path {
 	UsersManagement = "/usersManagement",
 	Fruits = "/fruits",
 	Vegetable = "/vegetable",
+	Order = "/order",
+	Checkout = "/checkout",
 	Contact = "/contact",
 	About = "/about",
 	Cart = "/Cart",

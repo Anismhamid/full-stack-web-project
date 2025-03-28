@@ -70,7 +70,7 @@ function useToken() {
 		};
 	}, [token, lastActivityTime]);
 
-	return {decodedToken};
+	return {decodedToken, setAfterDecode};
 }
 
 export default useToken;

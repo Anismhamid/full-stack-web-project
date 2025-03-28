@@ -39,12 +39,7 @@ const Vegentable: FunctionComponent<VegentableProps> = () => {
 		product_image: string,
 		sale: boolean,
 	) => {
-		const productQuantity = quantity[product_name]; // Access the quantity of the specific product
-		if (!productQuantity) {
-			// If the quantity for this product is not found, handle the case
-			console.log("No quantity available for this product");
-			return;
-		}
+		const productQuantity = quantity[product_name];
 
 		handleAddToCart(
 			setQuantities,
@@ -138,14 +133,12 @@ const Vegentable: FunctionComponent<VegentableProps> = () => {
 										<div className='card-footer d-flex justify-content-between align-items-center'>
 											<button
 												onClick={() => {
-													OnShowCardModal();
-
 													handleAdd(
 														Vegentable.product_name,
 														quantities,
 														Vegentable.price,
 														Vegentable.image_url,
-														Vegentable.sale,
+														Vegentable.sale || false,
 													);
 												}}
 												className='btn btn-success'

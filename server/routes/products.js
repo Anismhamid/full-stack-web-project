@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Products = require("../models/Product");
+const auth = require("../middlewares/auth");
 const Joi = require("joi");
 
 const fruitSchema = Joi.object({
@@ -17,9 +18,8 @@ const fruitSchema = Joi.object({
 		.uri()
 		.regex(/^https?:\/\/.+\.(jpg|jpeg|png|gif)$/)
 		.required(),
+	sale: Joi.boolean(),
 });
-
-module.exports = fruitSchema;
 
 // get all the fruits
 router.get("/fruits", async (req, res) => {
@@ -67,17 +67,19 @@ router.get("/fruit/:name", async (req, res) => {
 });
 
 // post route to create a new fruit product
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
 	try {
+		if (!req.payload.isAdmin || !req.payload.isModerator)
+			return res.status(401).send("Unauthorized");
 		const {error} = fruitSchema.validate(req.body);
 		if (error) return res.status(400).send(error.details[0].message);
 
 		// check if exists
-		let fruit = Fruits.findOne({product_name: req.params.name});
+		let fruit = Products.findOne({product_name: req.params.name});
 		if (fruit) res.status(400).send("The fruit is exists");
 
 		// create a new fruit product using the data from the request body
-		fruit = new Fruits(req.body);
+		fruit = new Products(req.body);
 
 		// save the new fruit product to the database
 		await fruit.save();

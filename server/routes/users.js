@@ -73,7 +73,7 @@ router.post("/login", async (req, res) => {
 	try {
 		// check if user have pression to get the users
 		const user = await User.findOne({email: req.body.email});
-		if (!user) return res.status(404).send("No have users yet");
+		if (!user) return res.status(404).send("Invalid credentials");
 
 		const compare = await bcryptjs.compare(req.body.password, user.password);
 		if (!compare) return res.status(400).send("Invalid credentials");

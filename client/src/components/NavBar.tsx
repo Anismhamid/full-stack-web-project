@@ -25,23 +25,23 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 	}, [decodedToken, setAuth, setIsLoggedIn]);
 
 	useEffect(() => {
-		window.scrollTo(0, 0);
+		window.scrollTo(0, 100);
 	}, [location]);
 
 	const logout = () => {
 		localStorage.removeItem("token");
 		setAuth(null);
 		setIsLoggedIn(false);
-		navigate(path.Home);
+		if (isActive(path.Cart)) navigate(path.Home);
 	};
 
 	return (
 		<nav className='navbard-brand bg-dark top-0 w-100 position-fixed z-3'>
-			<ul className='nav nav-tabs border-light  d-flex align-items-center'>
+			<ul className='nav nav-tabs border-light d-flex align-self-center align-items-center'>
 				<li className='nav-item'>
 					<NavLink
-						className={`border-bottom p-2${
-							isActive(path.Home) ? "text-black border-light fw-bold" : ""
+						className={`${
+							isActive(path.Home) ? "text-dabger fw-bold" : ""
 						} nav-link`}
 						aria-current='page'
 						to={path.Home}
@@ -51,23 +51,39 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 				</li>
 
 				{auth?.isAdmin && (
-					<li className='nav-item'>
-						<NavLink
-							className={`border-bottom p-2 ${
-								isActive(path.UsersManagement)
-									? "text-danger border-danger fw-bold"
-									: ""
-							} nav-link`}
-							aria-current='page'
-							to={path.UsersManagement}
-						>
-							משתמדים
-						</NavLink>
-					</li>
+					<>
+						{" "}
+						<li className='nav-item'>
+							<NavLink
+								className={`${
+									isActive(path.UsersManagement)
+										? "text-danger border-danger fw-bold"
+										: ""
+								} nav-link`}
+								aria-current='page'
+								to={path.UsersManagement}
+							>
+								משתמדים
+							</NavLink>
+						</li>
+						<li className='nav-item'>
+							<NavLink
+								className={`${
+									isActive(path.Order)
+										? "text-danger border-danger fw-bold"
+										: ""
+								} nav-link`}
+								aria-current='page'
+								to={path.Order}
+							>
+								הזמנות
+							</NavLink>
+						</li>
+					</>
 				)}
-				<li className='nav-item p-2'>
+				<li className='nav-item'>
 					<NavLink
-						className={`border-bottom ${
+						className={`${
 							isActive(path.About) ? "text-black border-light fw-bold" : ""
 						} nav-link`}
 						aria-current='page'
@@ -78,7 +94,7 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 				</li>
 				<li className='nav-item'>
 					<NavLink
-						className={`border-bottom p-2${
+						className={`${
 							isActive(path.Contact)
 								? "text-black border-light fw-bold"
 								: ""
@@ -89,9 +105,9 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 						צור קשר
 					</NavLink>
 				</li>
-				<li className='nav-item p-2'>
+				<li className='nav-item'>
 					<NavLink
-						className={`border-bottom ${
+						className={`mt-2 ${
 							isActive(productsPathes.Fruits)
 								? "text-black border-light fw-bold"
 								: ""
@@ -102,9 +118,9 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 						פירות
 					</NavLink>
 				</li>
-				<li className='nav-item p-2'>
+				<li className='nav-item'>
 					<NavLink
-						className={`border-bottom ${
+						className={`mt-2${
 							isActive(productsPathes.Vegetable)
 								? "text-black border-light fw-bold"
 								: ""
@@ -114,9 +130,9 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 						ירקות
 					</NavLink>
 				</li>
-				<li className='nav-item p-2'>
+				<li className='nav-item'>
 					<NavLink
-						className={`border-bottom ${
+						className={`mt-2 ${
 							isActive(path.Cart) ? "text-black border-light fw-bold" : ""
 						} nav-link `}
 						aria-current='page'
@@ -143,9 +159,7 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 						<button
 							onClick={() => navigate(path.Login)}
 							className={`fw-bold text-success ${
-								isActive(path.Login)
-									? "text-light border border-light fw-bold"
-									: ""
+								isActive(path.Login) ? "text-light bg-dark fw-bold" : ""
 							} nav-link`}
 							aria-current='page'
 						>
