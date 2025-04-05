@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
-require("dotenv").config();
+const envFile = process.env.NODE_ENV === "production" ? ".env.production" : ".env";
+require("dotenv").config({path: envFile});
+const helmet = require("helmet");
 const products = require("./routes/products");
 const users = require("./routes/users");
 const carts = require("./routes/carts");
@@ -9,12 +11,18 @@ const discounts = require("./routes/discountAndOffers");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const chalk = require("chalk");
+const expressRoutes = require("express-list-routes");
+const {rateLimit} = require("express-rate-limit");
 const {logger, logToFile} = require("./middlewares/logger");
 
 const port = process.env.PORT || 8000;
 
-app.use(cors());
-app.use(express.json());
+const limiter = rateLimit({
+	windowMs: 24 * 60 * 60 * 1000, // hours / minutes / seconds / milliseconds :: 24 hours
+	limit: 1000, // Limit each IP to 1000 requests per `window` (here, per 24 hours).
+	standardHeaders: "draft-8", // draft-6: `RateLimit-*` headers; draft-7 & draft-8: combined `RateLimit` header
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+});
 
 mongoose
 	.connect(process.env.DB)
@@ -24,8 +32,14 @@ mongoose
 		process.exit(1);
 	});
 
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(helmet());
 app.use(logger);
 logToFile();
+app.use(limiter);
+
 app.use("/api/users", users);
 app.use("/api/carts", carts);
 app.use("/api/orders", orders);
@@ -35,3 +49,10 @@ app.use("/api/discounts", discounts);
 app.listen(port, () =>
 	console.log(chalk.blue.underline("Server started on port:", port)),
 );
+
+if (process.env.NODE_ENV === "development") {
+	console.log(chalk.bgWhite.red.bold("App is running in Development mode"));
+	expressRoutes(app);
+} else {
+	console.log(chalk.bgWhiteBright.bold("App is running in Production mode"));
+}

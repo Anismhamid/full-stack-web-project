@@ -24,8 +24,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 				url: "",
 				alt: "",
 			},
-			isAdmin: false,
-			isModerator: false,
+			role: "",
 		},
 		validationSchema: yup.object({
 			name: yup.object({

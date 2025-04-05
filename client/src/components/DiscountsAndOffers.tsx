@@ -16,7 +16,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 			setProductsInDiscount(res);
 			setLoading(false);
 		});
-	}, [productsInDiscount]);
+	}, []);
 
 	if (loading) {
 		return <Loader />;

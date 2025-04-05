@@ -1,0 +1,46 @@
+{
+	"name": "full-stack-web-project",
+	"version": "1.1.0",
+	"description": "E-Commerce Application - Corner Market\nThis is a simple e-commerce platform that allows users to browse and purchase various fresh products such as fruits, vegetables, fish, meat, dairy and more. Users can view categories of products, access discounts and offers, add items to the cart, and proceed to checkout.",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"install:client": "cd client && npm install",
+		"install:server": "cd server && npm install",
+		"install": "concurrently \"npm run install:client\" \"npm run install:server\"",
+		"start:client": "cd client && npm run build && npm run preview",
+		"dev:client": "cd client && npm run dev",
+		"start:server": "cd server && cross-env NODE_ENV=production node index.js",
+		"dev:server": "cd server && cross-env NODE_ENV=development node --watch index.js",
+		"start:dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+		"start:prod": "concurrently \"npm run start:client\" \"npm run start:server\""
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Anismhamid/full-stack-web-project.git"
+	},
+	"keywords": [
+		"e-commerce",
+		"shopping",
+		"products",
+		"fresh products",
+		"market",
+		"fruits",
+		"vegetables",
+		"spices",
+		"dairy",
+		"fish"
+	],
+	"author": "Anis Mhamid",
+	"license": "MIT",
+	"type": "module",
+	"bugs": {
+		"url": "https://github.com/Anismhamid/full-stack-web-project/issues"
+	},
+	"homepage": "https://github.com/Anismhamid/full-stack-web-project#readme",
+	"devDependencies": {
+		"concurrently": "^9.1.2",
+		"cross-env": "^7.0.3"
+	}
+}
