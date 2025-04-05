@@ -34,13 +34,10 @@ const userSchema = new mongoose.Schema(
 				alt: {type: String, default: "Profile image"},
 			},
 		},
-		isAdmin: {
-			type: Boolean,
-			default: false,
-		},
-		isModerator: {
-			type: Boolean,
-			default: false,
+		role: {
+			type: String,
+			enum: ["Admin", "Moderator", "Client"],
+			default: "Client",
 		},
 		createdAt: {
 			type: Date,

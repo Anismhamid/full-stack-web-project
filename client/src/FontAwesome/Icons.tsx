@@ -1,16 +1,19 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
 	faAppleWhole,
+	faBars,
 	faBottleWater,
 	faBoxOpen,
 	faCarrot,
 	faCartShopping,
+	faContactCard,
 	faCow,
 	faCreditCard,
 	faDrumstickBite,
 	faFishFins,
 	faHome,
 	faIceCream,
+	faInfoCircle,
 	faListCheck,
 	faMoneyBillWave,
 	faMortarPestle,
@@ -41,4 +44,7 @@ export const fontAwesomeIcon = {
 	beverages: <FontAwesomeIcon icon={faBottleWater} />,
 	forzen: <FontAwesomeIcon icon={faSnowflake} />,
 	snacks: <FontAwesomeIcon icon={faIceCream} />,
+	about: <FontAwesomeIcon icon={faInfoCircle} />,
+	contact: <FontAwesomeIcon icon={faContactCard} />,
+	menuBars: <FontAwesomeIcon icon={faBars} />,
 };

@@ -28,6 +28,10 @@ import Beverages from "./components/Beverages.js";
 import Frozen from "./components/Frozen.js";
 import Snacks from "./components/Snacks.js";
 
+
+
+
+
 function App() {
 	return (
 		<UserProvider>

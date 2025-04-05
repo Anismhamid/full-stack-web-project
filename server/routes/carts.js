@@ -98,7 +98,7 @@ router.get("/my-cart", auth, async (req, res) => {
 // get carts for admin users
 router.get("/admin", auth, async (req, res) => {
 	try {
-		if (!req.payload.isAdmin) return res.status(401).send("just for admin");
+		if (req.payload.role !== "Admin") return res.status(401).send("just for admin");
 
 		// Find all the the carts for admin user
 		const carts = await Carts.find();
@@ -116,12 +116,13 @@ router.get("/admin", auth, async (req, res) => {
 
 router.delete("/:product_name", auth, async (req, res) => {
 	try {
+		const userId = req.payload._id;
 		// Ensure the user is authenticated
-		if (!req.payload._id) return res.status(401).send("User not authenticated");
 
 		// Find the cart for the authenticated user (assuming the user can only delete from their own cart)
-		const cart = await Carts.findOne({userId: req.payload._id});
+		const cart = await Carts.findOne({userId: req.payload._id, userId: userId});
 		if (!cart) return res.status(404).send("Cart not found");
+		if (userId !== cart.userId) return res.status(403).send("User not authenticated");
 
 		// Find the product index in cart products array
 		const productIndex = cart.products.findIndex(

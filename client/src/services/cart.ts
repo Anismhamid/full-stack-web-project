@@ -3,14 +3,14 @@ import axios from "axios";
 const api = `${import.meta.env.VITE_API_URL}`;
 
 /**
- * Adds to cart
- * @param product_name The name of the product to add to the cart
- * @param quantity The quantity of the product
- * @param product_price The price of the product
- * @param product_image The image URL of the product
- * @param	sale product there are On sale,
- * @param discount Optional sending discount i't 0 by deafult ,
- * @returns Cart The updated cart data or an error message
+ * Adds a product to the user's cart
+ * @param product_name - The name of the product to add to the cart
+ * @param quantity - The quantity of the product
+ * @param product_price - The price of the product
+ * @param product_image - The image URL of the product
+ * @param sale - Indicates if the product is on sale is false by defualt
+ * @param discount - The discount for the product (defaults to 0 if not provided)
+ * @returns The updated cart data if successful, or an error message if there's an issue
  */
 export const addToCart = async (
 	product_name: string,
@@ -39,6 +39,10 @@ export const addToCart = async (
 	}
 };
 
+/**
+ * Get all items in the user's cart
+ * @returns An array of cart items if successful, or null if there's an error
+ */
 export const getCartItems = async () => {
 	try {
 		const response = await axios.get(`${api}/carts/my-cart`, {
@@ -53,6 +57,11 @@ export const getCartItems = async () => {
 	}
 };
 
+/**
+ * Delete an item from the user's cart by product name
+ * @param product_name - The name of the product to be removed from the cart
+ * @returns The response data if successful, or null if there's an error
+ */
 export const DeleteCartItems = async (product_name: string) => {
 	try {
 		const response = await axios.delete(`${api}/carts/${product_name}`, {
@@ -64,5 +73,6 @@ export const DeleteCartItems = async (product_name: string) => {
 		return response.data;
 	} catch (error) {
 		console.log(error);
+		return null;
 	}
 };

@@ -14,7 +14,7 @@ const Beverages: FunctionComponent<BeveragesProps> = () => {
 				<p className='text-center mb-4 p-2 rounded lead'>
 					כאן תוכלו למצוא מגוון רחב של משקאות טריים, טבעיים ומיוחדים שמתאימים
 					לכל טעם. אנו מבטיחים איכות גבוהה ומשקאות טעימים שיספקו לכם חווית שתייה
-					מושלמת.
+					מושלמת
 				</p>
 			</div>
 			<ProductCategory category='beverages' />

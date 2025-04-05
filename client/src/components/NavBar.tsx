@@ -5,14 +5,16 @@ import {useUser} from "../context/useUSer";
 import useToken from "../hooks/useToken";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 
-interface NavBarProps {}
+interface NavBarProps {
+}
 
 const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 	const location = useLocation();
 	const {decodedToken, setAfterDecode} = useToken();
 	const {auth, setAuth, isLoggedIn, setIsLoggedIn} = useUser();
-	const isActive = (path: string) => location.pathname === path;
 	const navigate = useNavigate();
+
+	const isActive = (path: string) => location.pathname === path;
 
 	useEffect(() => {
 		const token = localStorage.getItem("token");
@@ -20,9 +22,7 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 			setAuth(decodedToken);
 			if (auth) setIsLoggedIn(true);
 		}
-		if (auth) {
-		}
-	}, [decodedToken, auth]);
+	}, [decodedToken,auth]);
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -37,18 +37,8 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 	};
 
 	return (
-		<nav className='navbard-brand top-0 w-100 position-sticky z-3'>
-			<ul className='nav nav-tabs d-flex align-items-center justify-content-around border-bottom border-success-subtle '>
-				<li>
-					<NavLink className='navbar-brand' to='/'>
-						<img
-							style={{height: "90px"}}
-							className='img-fluid'
-							src='src/assets/untitled.png'
-							alt='Logo image'
-						/>
-					</NavLink>
-				</li>
+		<nav className='navbard-brand position-relative position-sticky bg-dark top-0 w-100 z-3'>
+			<ul className=' nav nav-tabs d-flex align-items-center justify-content-around border-bottom border-success-subtle '>
 				<li className='nav-item'>
 					<NavLink
 						className={`fs-4 ${
@@ -61,7 +51,7 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 					</NavLink>
 				</li>
 
-				{((auth && auth.isAdmin) || (auth && auth.isModerator)) && (
+				{(auth && auth.role !== "Client") && (
 					<li className='nav-item'>
 						<NavLink
 							className={`fs-4 ${

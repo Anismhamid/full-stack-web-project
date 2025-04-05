@@ -13,8 +13,7 @@ type Auth = {
 		first: string;
 		last: string;
 	};
-	isAdmin: boolean;
-	isModerator: boolean;
+	role: string;
 	iat: number;
 };
 

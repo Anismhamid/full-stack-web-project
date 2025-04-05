@@ -3,7 +3,11 @@ import {Order} from "../interfaces/Order";
 
 const api = `${import.meta.env.VITE_API_URL}/orders`;
 
-// Get user order
+/**
+ * Get all orders for a specific user by user ID
+ * @param userId - The unique identifier of the user
+ * @returns The user's orders if successful, or empty array if there's an error
+ */
 export const getUserOrders = async (userId: string) => {
 	try {
 		const orders = await axios.get(`${api}/${userId}`, {
@@ -12,10 +16,15 @@ export const getUserOrders = async (userId: string) => {
 		return orders.data;
 	} catch (error) {
 		console.log(error);
+		return [];
 	}
 };
 
-// get order Details
+/**
+ * Get the details of an order by its order number
+ * @param orderNumber - The unique identifier for the order
+ * @returns The order details if successful, or empty array if there's an error
+ */
 export const getOrderByOrderNumber = async (orderNumber: string) => {
 	try {
 		const response = await axios.get(`${api}/details/${orderNumber}`, {
@@ -26,10 +35,14 @@ export const getOrderByOrderNumber = async (orderNumber: string) => {
 		return response.data;
 	} catch (error) {
 		console.log("Error fetching cart items:", error);
+		return [];
 	}
 };
 
-// get all orders for admins users
+/**
+ * Get all orders for admin users
+ * @returns An array of orders if successful, or empty array if there's an error
+ */
 export const getAllOrders = async () => {
 	try {
 		const response = await axios.get(api, {
@@ -38,10 +51,15 @@ export const getAllOrders = async () => {
 		return response.data;
 	} catch (error) {
 		console.log(error);
+		return [];
 	}
 };
 
-// post product from checkout
+/**
+ * Post a new order to the API
+ * @param order - The order data to be submitted, including products and any other necessary information
+ * @returns The order confirmation data if successful, or null if there's an error
+ */
 export const postOrder = async (order: Order) => {
 	try {
 		const orders = await axios.post(
@@ -56,10 +74,16 @@ export const postOrder = async (order: Order) => {
 		return orders.data;
 	} catch (error) {
 		console.log(error);
+		return null;
 	}
 };
 
-// Patch order status
+/**
+ * Update the status of an order by order number
+ * @param status - The new status for the order
+ * @param orderNumber - The unique identifier of the order
+ * @returns The updated order data if successful, or null if there's an error
+ */
 export const patchStatus = async (status: string, orderNumber: string) => {
 	try {
 		const patchStatus = await axios.patch(
@@ -70,5 +94,6 @@ export const patchStatus = async (status: string, orderNumber: string) => {
 		return patchStatus.data;
 	} catch (error) {
 		console.log(error);
+		return null;
 	}
 };

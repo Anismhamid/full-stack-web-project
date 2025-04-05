@@ -1,27 +1,36 @@
 import {FunctionComponent, useEffect, useState} from "react";
-import {getProductsByCategory} from "../services/productsServices"; // פונקציה כללית שמביאה מוצרים לפי קטגוריה
+import {deleteProduct, getProductsByCategory} from "../services/productsServices"; // פונקציה כללית שמביאה מוצרים לפי קטגוריה
 import {Products} from "../interfaces/Products";
 import {handleAddToCart, handleQuantity} from "../helpers/fruitesFunctions";
 import ForAllModal from "../atoms/LoginModal";
 import {useUser} from "../context/useUSer";
-import DeleteProductButton from "../atoms/DeleteProductButton";
 import Loader from "../atoms/loader/Loader";
+import UpdateProductModal from "../atoms/UpdateProductModal";
+import {showError, showSuccess} from "../atoms/Toast";
 
 interface ProductCategoryProps {
 	category: string;
 }
 
 const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) => {
+	const [productNameToUpdate, setProductNameToUpdate] = useState<string>("");
 	const [products, setProducts] = useState<Products[]>([]);
 	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
-	const [onShowModal, setOnShowModal] = useState<boolean>(false);
+	const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
 	const {auth, isLoggedIn} = useUser();
 	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]); // To hold the visible products
-	const [showMoreLoading, setShowMoreLoading] = useState(false); // For showing loading state for show more
+	const [showMoreLoading, setShowMoreLoading] = useState<boolean>(false);
+	const [showUpdateProductModal, setOnShowUpdateProductModal] =
+		useState<boolean>(false);
 
-	const OnShowCartModal = () => setOnShowModal(true);
-	const OnHideCartModal = () => setOnShowModal(false);
+	// Login modal to show whene adding a product to cart and (not loggedIn)
+	const OnShowLoginModal = () => setShowLoginModal(true);
+	const OnHideLoginModal = () => setShowLoginModal(false);
+
+	// Update product
+	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
+	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
 
 	const handleAdd = (
 		product_name: string,
@@ -33,7 +42,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 	) => {
 		const productQuantity = quantity[product_name];
 		if (!isLoggedIn) {
-			OnShowCartModal();
+			OnShowLoginModal();
 		} else {
 			handleAddToCart(
 				setQuantities,
@@ -47,12 +56,23 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 		}
 	};
 
+	const handleDelete = (product_name: string) => {
+		deleteProduct(product_name)
+			.then(() => {
+				showSuccess("המוצר נמחק בהצלחה!");
+			})
+			.catch((err) => {
+				console.error(err);
+				showError("שגיאה במחיקת המוצר!");
+			});
+	};
+
 	useEffect(() => {
 		getProductsByCategory(category)
 			.then((res) => {
 				setProducts(res);
 
-				setVisibleProducts(res.slice(0, 6));
+				setVisibleProducts(res.slice(0, 10));
 
 				const initialQuantities = res.reduce(
 					(acc: any, product: {product_name: string}) => {
@@ -72,8 +92,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 
 	const handleShowMore = () => {
 		setShowMoreLoading(true);
-		// Load more products by slicing the products array
-		const nextVisibleCount = visibleProducts.length + 9;
+		const nextVisibleCount = visibleProducts.length + 6; // Load more products by slicing the products array
 		const newVisibleProducts = products.slice(0, nextVisibleCount);
 		setVisibleProducts(newVisibleProducts);
 		setShowMoreLoading(false);
@@ -84,23 +103,19 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 	}
 
 	return (
-		<main className='gradient min-vh-100'>
-			<div className='container my-5'>
+		<main className='gradient m-auto min-vh-100'>
+			<div className='container m-auto my-5'>
 				<div className='row m-auto'>
 					{visibleProducts.map((product) => {
 						const productQuantity = quantities[product.product_name] || 1;
 						return (
 							<div
-								className='col-md-4 my-3 col-lg-3 col-sm-10 m-auto'
+								className='col-md-6 col-lg-3 col-sm-10 m-auto my-3 '
 								key={product.product_name}
 							>
-								<div style={{}} className='card mb-3 h-100'>
-									<div className='card-img-top object-fit-cover overflow-hidden'>
+								<div className='card  h-100'>
+									<div className='card-img-top object-fit-lg-cover overflow-hidden'>
 										<img
-											style={{
-												height: "200px",
-												width: "100%",
-											}}
 											className='img-thumbnail rounded-3'
 											src={product.image_url}
 											alt={product.product_name}
@@ -112,8 +127,16 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 											{product.product_name}
 										</h5>
 										<hr />
-										<h5 className='text-success text-center'>
-											במלאי - {product.quantity_in_stock} יחידות
+										<h5
+											className={` text-center ${
+												product.quantity_in_stock <= 0
+													? "text-danger"
+													: "text-success"
+											}`}
+										>
+											{product.quantity_in_stock <= 0
+												? "אזל מהמלאי"
+												: "במלאי"}
 										</h5>
 										<hr />
 
@@ -151,11 +174,25 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 											</>
 										) : (
 											<h5 className='card-text text-center'>
-												{product.price}
+												מחיר:{" "}
+												{product.price.toLocaleString("he-IL", {
+													style: "currency",
+													currency: "ILS",
+												})}
 											</h5>
 										)}
 
-										<h6 className='text-primary'>ל / יחידה</h6>
+										<h6 className='text-primary'>
+											{category === "spices"
+												? "ל / 100-גרם"
+												: category === "fruit" ||
+												  category === "vegetable" ||
+												  category === "meat" ||
+												  category === "fish"
+												? 'ל / ק"ג'
+												: "ל-יחידה"}
+										</h6>
+
 										<div className='d-flex align-items-center justify-content-evenly'>
 											<button
 												disabled={product.quantity_in_stock <= 0}
@@ -187,7 +224,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 												+
 											</button>
 										</div>
-										<div className='card-footer'>
+										<div className='card-footer row'>
 											<button
 												onClick={() => {
 													handleAdd(
@@ -210,10 +247,32 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 													? "אזל מהמלאי"
 													: "הוספה לסל"}
 											</button>
-											{(auth?.isAdmin || auth?.isModerator) && (
-												<DeleteProductButton
-													product_name={product.product_name}
-												/>
+
+											{((auth && auth.role === "Admin") ||
+												(auth && auth.role === "Moderator")) && (
+												<div className='col-12 mt-3 pb-3 p-1 rounded'>
+													<button
+														className='btn btn-warning w-100 my-2'
+														onClick={() => {
+															setProductNameToUpdate(
+																product.product_name,
+															);
+															onShowUpdateProductModal();
+														}}
+													>
+														עידכון מוצר
+													</button>
+													<button
+														onClick={() =>
+															handleDelete(
+																product.product_name,
+															)
+														}
+														className='btn btn-danger mt-1 w-100'
+													>
+														מחיקת המוצר
+													</button>
+												</div>
 											)}
 										</div>
 									</div>
@@ -224,10 +283,10 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 				</div>
 				{/* Show More Button */}
 				{products.length > visibleProducts.length && (
-					<div className='text-center'>
+					<div className='text-center bg-light m-auto w-50 rounded-3 border border-2 border-primary'>
 						<button
 							onClick={handleShowMore}
-							className='btn btn-outline-primary'
+							className='btn btn-outline-primary w-100 fw-bold'
 							disabled={showMoreLoading}
 						>
 							{showMoreLoading ? "טוען..." : "הצג עוד"}
@@ -235,7 +294,12 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 					</div>
 				)}
 			</div>
-			<ForAllModal show={onShowModal} onHide={OnHideCartModal} />
+			<UpdateProductModal
+				product_name={productNameToUpdate}
+				show={showUpdateProductModal}
+				onHide={() => onHideUpdateProductModal()}
+			/>
+			<ForAllModal show={showLoginModal} onHide={OnHideLoginModal} />
 		</main>
 	);
 };

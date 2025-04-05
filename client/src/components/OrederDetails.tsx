@@ -30,28 +30,26 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 						const {product_name, product_image, quantity, sale, discount} =
 							product;
 						return (
-							<>
-								<div key={index} className='col'>
-									<div className='card h-100 shadow-sm border-0'>
-										<img
-											src={product_image}
-											alt={product_name}
-											className='card-img-top'
-											style={{
-												height: "200px",
-												objectFit: "cover",
-											}}
-										/>
-										<div className='card-body d-flex flex-column'>
-											<h5 className='card-title'>{product_name}</h5>
-											<h5>{sale ? `מבצע${discount}` : ""}</h5>
-											<h6 className='card-subtitle mb-2 text-muted'>
-												כמות: {quantity}
-											</h6>
-										</div>
+							<div key={product_image + index + 1} className='col'>
+								<div className='card h-100 shadow-sm border-0'>
+									<img
+										src={product_image}
+										alt={product_name}
+										className='card-img-top'
+										style={{
+											height: "200px",
+											objectFit: "cover",
+										}}
+									/>
+									<div className='card-body d-flex flex-column'>
+										<h5 className='card-title'>{product_name}</h5>
+										<h5>{sale ? `מבצע${discount}` : ""}</h5>
+										<h6 className='card-subtitle mb-2 text-muted'>
+											כמות: {quantity}
+										</h6>
 									</div>
 								</div>
-							</>
+							</div>
 						);
 					})}
 				</div>

@@ -1,5 +1,5 @@
 import {useFormik} from "formik";
-import {FunctionComponent, useEffect, useState} from "react";
+import {FunctionComponent } from "react";
 import {UserLogin} from "../interfaces/User";
 import * as yup from "yup";
 import {Link, useNavigate} from "react-router-dom";
@@ -8,7 +8,6 @@ import {loginUser} from "../services/usersServices";
 import {useUser} from "../context/useUSer";
 import useToken from "../hooks/useToken";
 import {showSuccess} from "../atoms/Toast";
-import {jwtDecode, JwtPayload} from "jwt-decode";
 
 interface LoginProps {}
 

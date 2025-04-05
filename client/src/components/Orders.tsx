@@ -135,8 +135,8 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 										</div>
 									</div>
 
-									{((auth && auth.isAdmin) ||
-										(auth && auth?.isModerator)) && (
+									{((auth && auth.role === "Admin") ||
+										(auth && auth?.role === "Moderator")) && (
 										<div className='d-flex align-items-center justify-content-around'>
 											<button
 												onClick={() =>

@@ -13,8 +13,7 @@ export interface UserRegister {
 		url: string;
 		alt: string;
 	};
-	isAdmin: boolean;
-	isModerator:boolean
+	role: string;
 	status?: string;
 }
 

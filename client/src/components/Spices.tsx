@@ -1,13 +1,5 @@
-import {FunctionComponent, useEffect, useState} from "react";
+import {FunctionComponent} from "react";
 import ProductCategory from "./ProductsCategory";
-// import {getSpicesProducts} from "../services/productsServices"; // updated to fetch spices
-// import {Products} from "../interfaces/Products";
-// import {handleAddToCart, handleQuantity} from "../helpers/fruitesFunctions";
-// import ForAllModal from "../atoms/LoginModal";
-// import {useUser} from "../context/useUSer";
-// import DeleteProductButton from "../atoms/DeleteProductButton";
-// import Loader from "../atoms/loader/Loader";
-// import ProductCategory from "./ProductsCategory";
 
 interface SpicesProps {}
 

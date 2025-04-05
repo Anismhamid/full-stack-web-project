@@ -4,36 +4,47 @@ import {Products} from "../interfaces/Products";
 const api = `${import.meta.env.VITE_API_URL}`;
 
 /**
- * Gets fruits
- * @returns fruits
+ * Gets a specific product by name
+ * @param productName - The name of the product to fetch
+ * @returns The product data if found, or null if there's an error or product not found
  */
-export async function getFruits() {
+export const getProductByspicificName = async (product_name: string) => {
 	try {
-		const response = await axios.get(`${api}/products/fruit`);
-
-		return response.data;
+		const product = await axios.get(`${api}/products/spicific/${product_name}`, {
+			headers: {Authorization: localStorage.getItem("token")},
+		});
+		return product.data;
 	} catch (error) {
 		console.log(error);
+		return null;
 	}
-}
+};
 
 /**
- * Gets Vegetale
- * @returns Vegetale
+ * Update product by name
+ * @param productName - The name of the product to update
+ * @param updatedProduct - The updated product data
+ * @returns The updated product if successful, or null if there's an error
  */
-export async function getVegetable() {
+export const updateProduct = async (productName: string, updatedProduct: Products) => {
 	try {
-		const response = await axios.get(`${api}/products/vegetable`);
-
-		return response.data;
+		const product = await axios.put(
+			`${api}/products/${productName}`,
+			updatedProduct,
+			{
+				headers: {Authorization: localStorage.getItem("token")},
+			},
+		);
+		return product.data;
 	} catch (error) {
 		console.log(error);
+		return null;
 	}
-}
+};
 
 /**
- * Gets all products
- * @returns products
+ * Get all products from all categories
+ * @returns An array of products, or an empty array if there's an error
  */
 export const getAllProducts = async () => {
 	try {
@@ -41,14 +52,14 @@ export const getAllProducts = async () => {
 		return response.data;
 	} catch (error) {
 		console.log(error);
+		return [];
 	}
 };
 
 /**
- *
  * Create a new product
- * @param products
- * @returns products
+ * @param products - Product data to be created
+ * @returns The created product if successful, or null if there's an error
  */
 export async function createNewProduct(products: Products) {
 	try {
@@ -59,12 +70,13 @@ export async function createNewProduct(products: Products) {
 		return response.data;
 	} catch (error) {
 		console.log(error);
+		return null;
 	}
 }
 
 /**
- * Gets products in discount
- * @returns
+ * Get products in discount limit (6 items)
+ * @returns An array of products on discount, or an empty array if there's an error
  */
 export async function getProductsInDiscount() {
 	try {
@@ -73,108 +85,39 @@ export async function getProductsInDiscount() {
 		return response.data;
 	} catch (error) {
 		console.log(error);
+		return [];
 	}
 }
 
-// Delete product by productId
-export async function deleteProduct(productId: string) {
+/**
+ * Delete product by name
+ * @param productName - The name of the product to delete
+ * @returns The deleted product if successful, or null if there's an error
+ */
+export async function deleteProduct(productName: string) {
 	try {
-		const response = await axios.delete(`${api}/products/${productId}`, {
+		const response = await axios.delete(`${api}/products/${productName}`, {
 			headers: {Authorization: localStorage.getItem("token")},
 		});
 
 		return response.data;
 	} catch (error) {
 		console.log(error);
+		return null;
 	}
 }
 
-// //===========fish============
-// export async function getFishProducts() {
-// 	try {
-// 		const fishes = await axios.get(`${api}/products/fish`);
-// 		return fishes.data;
-// 	} catch (error) {
-// 		console.log(error);
-// 	}
-// }
-
-// //===========Meat============
-// export async function getMeatProducts() {
-// 	try {
-// 		const fishes = await axios.get(`${api}/products/meat`);
-// 		return fishes.data;
-// 	} catch (error) {
-// 		console.log(error);
-// 	}
-// }
-
-// //===========Spices============
-// export async function getSpicesProducts() {
-// 	try {
-// 		const fishes = await axios.get(`${api}/products/spices`);
-// 		return fishes.data;
-// 	} catch (error) {
-// 		console.log(error);
-// 	}
-// }
-
-// //===========Dairy============
-// export async function getDairyProducts() {
-// 	try {
-// 		const fishes = await axios.get(`${api}/products/dairy`);
-// 		return fishes.data;
-// 	} catch (error) {
-// 		console.log(error);
-// 	}
-// }
-
-// //===========Bakery============
-// export async function getBakeryProducts() {
-// 	try {
-// 		const fishes = await axios.get(`${api}/products/bakery`);
-// 		return fishes.data;
-// 	} catch (error) {
-// 		console.log(error);
-// 	}
-// }
-
-// //===========Beverages============
-// export async function getBeveragesProducts() {
-// 	try {
-// 		const fishes = await axios.get(`${api}/products/beverages`);
-// 		return fishes.data;
-// 	} catch (error) {
-// 		console.log(error);
-// 	}
-// }
-
-//===========Forzen============
-// export async function getFrozenProducts() {
-// 	try {
-// 		const fishes = await axios.get(`${api}/products/forzen`);
-// 		return fishes.data;
-// 	} catch (error) {
-// 		console.log(error);
-// 	}
-// }
-
-//===========Snack============
-// export async function getSnacksProducts() {
-// 	try {
-// 		const fishes = await axios.get(`${api}/products/snacks`);
-// 		return fishes.data;
-// 	} catch (error) {
-// 		console.log(error);
-// 	}
-// }
-
+/**
+ * Get products by category name
+ * @param category - The name of the category to fetch products for
+ * @returns Array of products if successful, or an empty array if there's an error
+ */
 export const getProductsByCategory = async (category: string) => {
 	try {
-		const response = await axios(`${api}/products/${category}`);
+		const response = await axios.get(`${api}/products/${category}`);
 		return response.data;
 	} catch (error) {
 		console.error("Error fetching products by category:", error);
-		throw error;
+		return [];
 	}
 };

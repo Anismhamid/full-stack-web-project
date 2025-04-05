@@ -26,8 +26,7 @@ const userSchema = Joi.object({
 			),
 		alt: Joi.string().allow("").default("Ghost"),
 	}),
-	isAdmin: Joi.boolean().default(false),
-	isModerator: Joi.boolean().default(false),
+	role: Joi.string().valid("Admin", "Moderator", "Client").default("Client"),
 });
 
 const loginSchema = Joi.object({
@@ -62,7 +61,7 @@ router.post("/", async (req, res) => {
 
 		// creatre token
 		const token = Jwt.sign(
-			_.pick(user, ["_id", "name.first", "name.last", "isAdmin", "isModerator"]),
+			_.pick(user, ["_id", "name.first", "name.last", "role"]),
 			process.env.JWT_SECRET,
 		);
 
@@ -93,7 +92,7 @@ router.post("/login", async (req, res) => {
 		}
 
 		const token = Jwt.sign(
-			_.pick(user, ["_id", "name.first", "name.last", "isAdmin", "isModerator"]),
+			_.pick(user, ["_id", "name.first", "name.last", "role"]),
 			process.env.JWT_SECRET,
 		);
 
@@ -108,7 +107,8 @@ router.post("/login", async (req, res) => {
 router.get("/", auth, async (req, res) => {
 	try {
 		// check if user have pression to get the users
-		if (!req.payload.isAdmin) return res.status(401).send("You Cannot access");
+		if (!req.payload.role === "Admin")
+			return res.status(401).send("You Cannot access");
 
 		const users = await User.find({}, {password: 0});
 		if (!users || users.length === 0)
@@ -124,14 +124,36 @@ router.get("/", auth, async (req, res) => {
 router.get("/:userId", auth, async (req, res) => {
 	try {
 		// check if user have pression to get the user by id
-		if (!req.payload.isAdmin && !req.payload.isModerator)
+		if (!req.payload.role === "Admin" && !req.payload.role === "Moderator")
 			return res.status(401).send("You Cannot access");
 
 		const user = await User.findOne({userId: req.params.userId}, {password: 0});
-		if (!user || user.length === 0)
-			return res.status(404).send("user Not Found");
+		if (!user || user.length === 0) return res.status(404).send("user Not Found");
 
 		res.status(200).send(user);
+	} catch (error) {
+		res.status(500).send(error.message);
+	}
+});
+
+router.patch("/role/:userEmail", auth, async (req, res) => {
+	try {
+		// Cehck permission
+		if (!req.payload.role === "Client")
+			return res.status(401).send("Access denied. no token provided");
+
+		const updatedUserRole = await User.findOneAndUpdate(
+			{email: req.params.userEmail},
+			{role: req.body.role},
+			{new: true},
+		);
+
+		// Check if user exists
+		if (!updatedUserRole) {
+			return res.status(404).send("User not found");
+		}
+
+		res.status(200).send(updatedUserRole);
 	} catch (error) {
 		res.status(500).send(error.message);
 	}

@@ -14,13 +14,12 @@ import ForAllModal from "../atoms/LoginModal";
 interface HomeProps {}
 
 const Home: FunctionComponent<HomeProps> = () => {
-	const [onShowAddModal, setOnShowAddModal] = useState<boolean>(false);
-	const [searchQuery, setSearchQuery] = useState("");
-	const [products, setProducts] = useState<Products[]>([]);
-	const [onShowModal, setOnShowModal] = useState<boolean>(false);
-	const [loading, setLoading] = useState(true);
-
 	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
+	const [onShowAddModal, setOnShowAddModal] = useState<boolean>(false);
+	const [onShowModal, setOnShowModal] = useState<boolean>(false);
+	const [products, setProducts] = useState<Products[]>([]);
+	const [searchQuery, setSearchQuery] = useState("");
+	const [loading, setLoading] = useState(true);
 	const {auth, isLoggedIn} = useUser();
 	const navigate = useNavigate();
 
@@ -82,16 +81,14 @@ const Home: FunctionComponent<HomeProps> = () => {
 	}
 
 	return (
-		<main className='gradient min-vh-100'>
+		<main className='gradient min-vh-100 main'>
 			{/* Admin / Moderator Options */}
 			<div className=' container'>
-				{((auth && auth.isAdmin) || (auth && auth.isModerator)) && (
-					<div className='d-flex align-items-center justify-content-around mt-5'>
+				{((auth && auth.role === "Admin") ||
+					(auth && auth.role === "Moderator")) && (
+					<div className='d-flex align-items-center mt-5 p-5 justify-content-around mt-5'>
 						<button className='btn btn-dark' onClick={showAddProductModal}>
 							הוספת מוצר
-						</button>
-						<button className='btn btn-dark' onClick={showAddProductModal}>
-							עידכון מוצר
 						</button>
 						<button
 							className='btn btn-info'
@@ -130,7 +127,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 												<div className='card-img-top object-fit-cover overflow-hidden'>
 													<img
 														style={{
-															height: "200px",
+															height: "300px",
 															width: "100%",
 														}}
 														className=' img-thumbnail rounded-3'
@@ -284,12 +281,10 @@ const Home: FunctionComponent<HomeProps> = () => {
 					</div>
 				</section>
 			</div>
-			
+
 			<div className='container'>
 				{/* Discounts and Offers */}
-				<section className='my-5'>
-					<DiscountsAndOffers />
-				</section>
+				<DiscountsAndOffers />
 
 				{/* Fruits section */}
 				<section className='my-5'>
@@ -297,9 +292,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 				</section>
 
 				{/* Vegetable section */}
-				<section className='my-5'>
-					<Vegentable />
-				</section>
+				<Vegentable />
 
 				{/* Customer support section */}
 				<section className='my-5'>
