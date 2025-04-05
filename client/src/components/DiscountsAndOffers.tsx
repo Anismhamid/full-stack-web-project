@@ -25,11 +25,11 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 	return (
 		<main className='gradient min-vh-100'>
 			<div className='container rounded rounded-3'>
-				<h1 className='text-center mb-4 p-2 rounded display-5 fw-bold'>
+				<h1 className='w-100 text-center mb-4 p-2 rounded display-5 fw-bold'>
 					הצעות ומבצעים
 				</h1>
-				<p className='text-center mb-4 bg-light p-2 rounded lead'>
-					<span className='text-center mb-4 bg-light p-2 rounded d-block'>
+				<p className='text-center mb-4 p-2 rounded lead'>
+					<span className='text-center mb-4 p-2 rounded d-block'>
 						אל תפספסו את המבצעים המיוחדים שלנו!
 					</span>
 					אנחנו תמיד מציעים הנחות והטבות על פירות וירקות בעונות מסוימות, וגם

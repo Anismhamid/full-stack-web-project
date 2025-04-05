@@ -25,7 +25,10 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 	}, [decodedToken,auth]);
 
 	useEffect(() => {
-		window.scrollTo(0, 0);
+		window.scrollTo(0, 70);
+		if(isActive(path.Home)){
+			window.scrollTo(0, 100);
+		}
 	}, [location]);
 
 	const logout = () => {
@@ -37,8 +40,8 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 	};
 
 	return (
-		<nav className='navbard-brand position-relative position-sticky bg-dark top-0 w-100 z-3'>
-			<ul className=' nav nav-tabs d-flex align-items-center justify-content-around border-bottom border-success-subtle '>
+		<nav className=' position-relative position-sticky bg-dark top-0 w-100 z-2'>
+			<ul className='nav nav-tabs d-flex align-items-center justify-content-around border-bottom border-success-subtle '>
 				<li className='nav-item'>
 					<NavLink
 						className={`fs-4 ${

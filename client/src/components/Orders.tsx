@@ -187,7 +187,7 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 
 									<div className='mb-3'>
 										<strong>שיטת תשלום:</strong>{" "}
-										{order.products[0].payment ? (
+										{order.payment ? (
 											<span className='text-success'>
 												{fontAwesomeIcon.creditCard}
 												כרטיס אשראי
@@ -202,12 +202,12 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 
 									<div className='mb-3'>
 										<strong>שיטת איסוף:</strong>{" "}
-										{order.products[0].selfCollection ? (
+										{order.selfCollection ? (
 											<span className='text-info'>
 												{fontAwesomeIcon.boxOpen}
 												איסוף עצמי
 											</span>
-										) : order.products[0].delivery ? (
+										) : order.delivery ? (
 											<span className='text-primary'>
 												{fontAwesomeIcon.boxOpen}
 												משלוח + 20 שח

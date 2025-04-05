@@ -59,7 +59,7 @@ const logger = (req, res, next) => {
 
 		originalSend.call(this, body); // Continue normal response flow
 	};
-
+console.log(req.method + req.url);
 	next();
 };
 

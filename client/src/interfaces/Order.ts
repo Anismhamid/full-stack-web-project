@@ -8,16 +8,17 @@ export interface Order {
 			product_image: string;
 			product_price: number;
 			quantity: number;
-			payment: boolean;
-			cashOnDelivery: boolean;
-			selfCollection: boolean;
-			delivery: boolean;
 			sale: boolean;
 			discount: number;
 		},
 	];
+	payment: boolean;
+	cashOnDelivery: boolean;
+	selfCollection: boolean;
+	delivery: boolean;
 	status: string;
 	totalAmount: number;
+	deliveryFee: number;
 	date: string;
 	createdAt: string;
 	updatedAt: string;

@@ -12,6 +12,8 @@
   box-sizing: border-box;
 }
 
+
+
 img {
   object-fit: cover;
   transition: 0.5s;

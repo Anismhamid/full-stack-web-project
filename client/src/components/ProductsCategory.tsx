@@ -103,7 +103,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 	}
 
 	return (
-		<main className='gradient m-auto min-vh-100'>
+		<main className='m-auto min-vh-100'>
 			<div className='container m-auto my-5'>
 				<div className='row m-auto'>
 					{visibleProducts.map((product) => {
