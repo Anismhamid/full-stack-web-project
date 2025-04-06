@@ -1,4 +1,4 @@
-<h1> E-Commerce Platform - Corner Market</h1>
+<h1>E-Commerce Platform - Corner Market</h1>
 
 This is a simple e-commerce application that allows users to browse and purchase various fresh products such as fruits, vegetables, fish, and dairy. Users can view categories of products, access discounts and offers, add items to the cart, and proceed to checkout.
 
