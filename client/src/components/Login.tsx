@@ -1,5 +1,5 @@
 import {useFormik} from "formik";
-import {FunctionComponent } from "react";
+import {FunctionComponent, useEffect} from "react";
 import {UserLogin} from "../interfaces/User";
 import * as yup from "yup";
 import {Link, useNavigate} from "react-router-dom";
@@ -52,6 +52,12 @@ const Login: FunctionComponent<LoginProps> = () => {
 			}
 		},
 	});
+
+	useEffect(() => {
+		if (localStorage.token) {
+			navigate(path.Home);
+		}
+	}, []);
 
 	return (
 		<main className='login min-vh-100'>

@@ -9,6 +9,7 @@ import {useFormik} from "formik";
 import * as yup from "yup";
 import {showError, showInfo} from "../atoms/Toast";
 import Loader from "../atoms/loader/Loader";
+import {Order} from "../interfaces/Order";
 
 interface CheckoutProps {}
 
@@ -62,7 +63,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 	}, [decodedToken]);
 
 	// Calculate total amount of the cart
-	let totalAmount = cartItems.reduce((total, item) => {
+	const totalAmount = cartItems.reduce((total, item) => {
 		return (
 			total +
 			item.products.reduce(
@@ -72,9 +73,13 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 		);
 	}, 0);
 
+	const deliveryFee = 25;
+
+	const discountedAmount = totalAmount - (totalAmount * formik.values.discount) / 100;
+
 	const finalAmount = formik.values.delivery
-		? totalAmount - (totalAmount * formik.values.discount) / 100 + 20
-		: totalAmount - (totalAmount * formik.values.discount) / 100;
+		? discountedAmount + deliveryFee
+		: discountedAmount;
 
 	const handleCheckout = async (value: {
 		payment: boolean;
@@ -90,18 +95,26 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 				product_image: product.product_image,
 				product_price: product.product_price,
 				quantity: product.quantity,
-				payment: value.payment,
-				cashOnDelivery: value.cashOnDelivery,
-				selfCollection: value.selfCollection,
-				delivery: value.delivery,
 				sale: value.sale,
 				discount: value.discount,
 			})),
 		);
 
+		const newOrder = {
+			products: [...itemsToOrder],
+			payment: value.payment,
+			cashOnDelivery: value.cashOnDelivery,
+			selfCollection: value.selfCollection,
+			delivery: value.delivery,
+			deliveryFee: value.delivery ? deliveryFee : 0,
+			totalAmount: finalAmount,
+		};
+		console.log("Total Amount:", totalAmount);
+		console.log("Discounted Amount:", discountedAmount);
+		console.log("Final Amount:", finalAmount);
 		try {
 			setLoading(true);
-			await postOrder(itemsToOrder as any);
+			await postOrder(newOrder as Order);
 			navigate(path.MyOrders);
 			setLoading(false);
 		} catch (error) {
@@ -173,6 +186,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 								value={formik.values.payment ? "true" : "false"}
 								onBlur={formik.handleBlur}
 								onChange={formik.handleChange}
+								disabled={formik.values.cashOnDelivery}
 							/>
 							<label className='form-check-label' htmlFor='creditCard'>
 								כרטיס אשראי
@@ -190,6 +204,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 								value={formik.values.cashOnDelivery ? "true" : "false"}
 								onBlur={formik.handleBlur}
 								onChange={formik.handleChange}
+								disabled={formik.values.payment}
 							/>
 							<label className='form-check-label' htmlFor='cashOnDelivery'>
 								מזומן
@@ -214,6 +229,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 									}
 									onBlur={formik.handleBlur}
 									onChange={formik.handleChange}
+									disabled={formik.values.delivery}
 								/>
 								<label
 									className='form-check-label'
@@ -230,15 +246,16 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 									className='form-check-input'
 									id='delivery'
 									name='delivery'
-									checked={formik.values.delivery ? true : false}
+									checked={formik.values.delivery}
 									value={formik.values.delivery ? "true" : "false"}
 									onBlur={formik.handleBlur}
 									onChange={formik.handleChange}
+									disabled={formik.values.selfCollection}
 								/>
 								<label className='form-check-label' htmlFor='delivery'>
 									משלוח
 									<span className='text-danger fw-bold ms-2'>
-										+ 20 שח
+										+ {deliveryFee}
 									</span>
 								</label>
 							</div>
@@ -254,10 +271,8 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 								style: "currency",
 								currency: "ILS",
 							})}
-							onChange={formik.handleChange}
-							className='form-control fs-2 text-center w-50 m-auto'
+							className='form-control bg-black text-light border-0 fs-4 text-center w-50 m-auto'
 							id='totalAmount'
-							placeholder='שם מוצר'
 							disabled
 						/>
 					</div>

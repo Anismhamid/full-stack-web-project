@@ -29,10 +29,6 @@ const orderSchema = new mongoose.Schema(
 					type: Number,
 					required: true,
 				},
-				payment: {type: Boolean, default: false},
-				cashOnDelivery: {type: Boolean},
-				selfCollection: {type: Boolean, default: false},
-				delivery: {type: Boolean},
 				sale: {type: Boolean, default: false},
 				discount: {
 					type: Number,
@@ -40,6 +36,11 @@ const orderSchema = new mongoose.Schema(
 				},
 			},
 		],
+		payment: {type: Boolean, required: true},
+		cashOnDelivery: {type: Boolean},
+		selfCollection: {type: Boolean, required: true},
+		delivery: {type: Boolean, required: true},
+		deliveryFee: {type: Number},
 		status: {
 			type: String,
 			enum: ["Pending", "Preparing", "Delivered", "Shipped", "Cancelled"],

@@ -58,7 +58,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 		<main className='login min-vh-100'>
 			<div className='container pt-5 mt-5'>
 				<form autoComplete='off' noValidate onSubmit={formik.handleSubmit}>
-					<h1 className='display-1 text-light fw-bold ms-5 mt-2'>הרשמה</h1>
+					<h6 className='display-6 text-light text-center'>הרשמה</h6>
 					<div className='form-floating my-3'>
 						<input
 							type='text'
@@ -183,7 +183,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 					</button>
 					<div className='mt-3'>
 						<span className='text-light fw-bold me-1'>יש לך חשבון ?</span>
-						<Link to={path.Register}>לחץ כאן להתחבר</Link>
+						<Link to={path.Login}>לחץ כאן להתחבר</Link>
 					</div>
 				</form>
 			</div>

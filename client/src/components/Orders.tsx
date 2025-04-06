@@ -17,13 +17,16 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 	const [orderStatuses, setOrderStatuses] = useState<{[orderNumber: string]: string}>(
 		{},
 	);
+	const [statusLoading, setStatusLoading] = useState<{[orderNumber: string]: boolean}>(
+		{},
+	); // Track loading for each status update
 
 	useEffect(() => {
-		if (auth)
+		setLoading(true);
+		if (auth) {
 			getUserOrders(auth._id)
 				.then((res) => {
 					setOrders(res);
-					setLoading(false);
 
 					const initialStatuses: {[orderId: string]: string} = {};
 					res.forEach(
@@ -33,31 +36,30 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 					);
 					setOrderStatuses(initialStatuses);
 				})
-
 				.catch((error) => {
 					console.error("Failed to fetch orders:", error);
-					setLoading(false);
-				});
+				})
+				.finally(() => setLoading(false));
+		}
 	}, [auth]);
 
-	const totalAmount = orders.reduce((total, item) => {
-		return (
-			total +
-			item.products.reduce(
-				(productTotal, product) => productTotal + product.product_price,
-				0,
-			)
-		);
-	}, 0);
-
-	// Handle order status
+	// Handle order status update
 	const handleStatus = async (status: string, orderId: string) => {
-		await patchStatus(status, orderId);
-
-		setOrderStatuses((prevStatuses) => ({
-			...prevStatuses,
-			[orderId]: status,
-		}));
+		setStatusLoading((prev) => ({...prev, [orderId]: true})); // loading state for specific order
+		try {
+			await patchStatus(status, orderId);
+			setOrderStatuses((prevStatuses) => ({
+				...prevStatuses,
+				[orderId]: status,
+			}));
+		} catch (error) {
+			console.error("Failed to update order status:", error);
+		} finally {
+			const a = setTimeout(() => {
+				setStatusLoading((prev) => ({...prev, [orderId]: false})); // Reset loading state
+			}, 1000);
+			return () => clearTimeout(a);
+		}
 	};
 
 	if (loading) {
@@ -72,12 +74,12 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 					{orders.length ? (
 						orders.map((order) => (
 							<div key={order.createdAt} className='mb-4 col-md-6'>
-								<div className=' card p-4 shadow-sm'>
+								<div className='card p-4 shadow-sm'>
 									<h5 className='card-title text-center bg-primary text-white p-2 rounded'>
 										<strong>מ"ס הזמנה:</strong> {order.orderNumber}
 									</h5>
 									<div className='d-flex flex-column align-items-start mb-3'>
-										<div className=' my-1'>
+										<div className='my-1'>
 											<strong>ID מזמין:</strong>
 											<span className='font-weight-bold ms-1'>
 												{order.userId}
@@ -135,6 +137,7 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 										</div>
 									</div>
 
+									{/* Admin/Moderator Controls */}
 									{((auth && auth.role === "Admin") ||
 										(auth && auth?.role === "Moderator")) && (
 										<div className='d-flex align-items-center justify-content-around'>
@@ -146,8 +149,13 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 													)
 												}
 												className='btn btn-primary'
+												disabled={
+													statusLoading[order.orderNumber]
+												}
 											>
-												הכנה
+												{statusLoading[order.orderNumber]
+													? "טוען..."
+													: "הכנה"}
 											</button>
 											<button
 												onClick={() =>
@@ -157,8 +165,13 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 													)
 												}
 												className='btn btn-info'
+												disabled={
+													statusLoading[order.orderNumber]
+												}
 											>
-												נשלח
+												{statusLoading[order.orderNumber]
+													? "טוען..."
+													: "נשלח"}
 											</button>
 											<button
 												onClick={() =>
@@ -168,8 +181,13 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 													)
 												}
 												className='btn btn-success'
+												disabled={
+													statusLoading[order.orderNumber]
+												}
 											>
-												נמסר
+												{statusLoading[order.orderNumber]
+													? "טוען..."
+													: "נמסר"}
 											</button>
 											<button
 												onClick={() =>
@@ -179,23 +197,27 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 													)
 												}
 												className='btn btn-danger'
+												disabled={
+													statusLoading[order.orderNumber]
+												}
 											>
-												ביטול
+												{statusLoading[order.orderNumber]
+													? "טוען..."
+													: "ביטול"}
 											</button>
 										</div>
 									)}
 
+									{/* Payment & Collection Methods */}
 									<div className='mb-3'>
 										<strong>שיטת תשלום:</strong>{" "}
 										{order.payment ? (
 											<span className='text-success'>
-												{fontAwesomeIcon.creditCard}
-												כרטיס אשראי
+												{fontAwesomeIcon.creditCard} כרטיס אשראי
 											</span>
 										) : (
 											<span className='text-warning'>
-												{fontAwesomeIcon.moneyBillWave}
-												מזומן
+												{fontAwesomeIcon.moneyBillWave} מזומן
 											</span>
 										)}
 									</div>
@@ -204,13 +226,11 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 										<strong>שיטת איסוף:</strong>{" "}
 										{order.selfCollection ? (
 											<span className='text-info'>
-												{fontAwesomeIcon.boxOpen}
-												איסוף עצמי
+												{fontAwesomeIcon.boxOpen} איסוף עצמי
 											</span>
 										) : order.delivery ? (
 											<span className='text-primary'>
-												{fontAwesomeIcon.boxOpen}
-												משלוח + 20 שח
+												{fontAwesomeIcon.boxOpen} משלוח + 20 שח
 											</span>
 										) : (
 											<span className='text-muted'>לא נבחר</span>
@@ -220,17 +240,15 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 									<div>
 										<h5 className='text-center text-success'>
 											<strong>ס"כ מחיר הזמנה:</strong>{" "}
-											{order.products
-												.reduce(
-													(productTotal, product) =>
-														productTotal +
-														product.product_price,
-													0,
-												)
-												.toLocaleString("he-IL", {
-													style: "currency",
-													currency: "ILS",
-												})}
+											{order.delivery
+												? (
+														order.totalAmount +
+														order.deliveryFee
+												  ).toLocaleString("he-IL", {
+														style: "currency",
+														currency: "ILS",
+												  })
+												: order.totalAmount}
 										</h5>
 									</div>
 
@@ -255,16 +273,8 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 						</div>
 					)}
 				</div>
-				<div className='my-4 text-center'>
-					<h5 className='text-black'>
-						<strong>ס"ה קניתה אצלנו ב:</strong>{" "}
-						{totalAmount.toLocaleString("he-IL", {
-							style: "currency",
-							currency: "ILS",
-						})}
-					</h5>
-				</div>
 
+				{/* Navigation Buttons */}
 				<div className='text-center'>
 					<NavigathionButtons />
 				</div>

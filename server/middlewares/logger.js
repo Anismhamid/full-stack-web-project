@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const logToFile = (statusCode, errorMessage) => {
+const logToFile = (method, url, statusCode, errorMessage) => {
 	const date = new Date();
 	const formattedDate = date.toISOString().split("T")[0]; // Format date as YYYY-MM-DD
 	const logDir = path.join(__dirname, "../logs"); // Directory to store log files
@@ -15,7 +15,7 @@ const logToFile = (statusCode, errorMessage) => {
 	// Prepare log message
 	const logMessage = `✨${new Date().toLocaleString(
 		"he-IL",
-	)}✨ - Status Code: ${statusCode} - Error: ${errorMessage}\n`;
+	)}✨ ${method} ${url} - Status Code: ${statusCode} - Error: ${errorMessage}\n`;
 
 	// Append the log message to the file
 	fs.appendFile(logFilePath, logMessage, (err) => {
@@ -34,7 +34,7 @@ const logger = (req, res, next) => {
 		const timeTaken = Date.now() - startTime;
 
 		if (res.statusCode >= 400) {
-			logToFile(res.statusCode, body); // Log error details
+			logToFile(req.method, req.url, res.statusCode, body); // Log error details
 		} else {
 			// const underLine = "_______________________";
 			const accessLogMessage = `✨${new Date().toLocaleString("he-IL")}✨ | ${
@@ -59,7 +59,7 @@ const logger = (req, res, next) => {
 
 		originalSend.call(this, body); // Continue normal response flow
 	};
-console.log(req.method + req.url);
+	console.log(req.method + req.url);
 	next();
 };
 

@@ -1,4 +1,4 @@
-import {FunctionComponent, useEffect, useState} from "react";
+import {FunctionComponent, useEffect, useRef, useState} from "react";
 import {deleteProduct, getProductsByCategory} from "../services/productsServices"; // פונקציה כללית שמביאה מוצרים לפי קטגוריה
 import {Products} from "../interfaces/Products";
 import {handleAddToCart, handleQuantity} from "../helpers/fruitesFunctions";
@@ -193,7 +193,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 												: "ל-יחידה"}
 										</h6>
 
-										<div className='d-flex align-items-center justify-content-evenly'>
+										<div className='d-flex align-items-center'>
 											<button
 												disabled={product.quantity_in_stock <= 0}
 												onClick={() =>
@@ -203,11 +203,11 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 														product.product_name,
 													)
 												}
-												className='btn btn-info text-dark fw-bold'
+												className='btn mb-2 m-auto'
 											>
-												-
+												<img src='/svg/remove.svg' alt='' />
 											</button>
-											<h5 className='text-decoration-underline'>
+											<h5 className=''>
 												<b>{productQuantity}</b>
 											</h5>
 											<button
@@ -219,9 +219,9 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 														product.product_name,
 													)
 												}
-												className='btn btn-info text-dark fw-bold'
+												className='btn mb-2 m-auto'
 											>
-												+
+												<img src='/svg/add.svg' alt='' />
 											</button>
 										</div>
 										<div className='card-footer row'>

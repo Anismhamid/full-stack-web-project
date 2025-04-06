@@ -54,7 +54,7 @@ img {
 
 
 h1 {
-  margin-top: 150px;
+  margin-top: 100px;
   background: #ffffffa4;
 }
 
@@ -66,6 +66,17 @@ main p {
 
 .logout {
   margin: 1rem;
+  &:hover{
+    background: black  !important;
+  }
+}
+
+.link-success:hover {
+  transform: scale(1.2);
+  -webkit-transform: scale(1.2);
+  -moz-transform: scale(1.2);
+  -ms-transform: scale(1.2);
+  -o-transform: scale(1.2);
 }
 
 /* loading Stytle */
@@ -183,7 +194,7 @@ main .loader {
 }
 
 .btn:hover {
-  background-color: #0056b3;
+  background-color: #00b368;
 }
 
 .modal-body {

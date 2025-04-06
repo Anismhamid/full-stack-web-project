@@ -9,16 +9,18 @@ const productSchema = Joi.object({
 	product_image: Joi.string().uri().optional(),
 	product_price: Joi.number().positive().required(),
 	quantity: Joi.number().integer().min(1).required(),
-	payment: Joi.boolean(),
-	cashOnDelivery: Joi.boolean(),
-	selfCollection: Joi.boolean(),
-	delivery: Joi.boolean(),
 	sale: Joi.boolean(),
 	discount: Joi.number(),
 });
 
 const orderSchema = Joi.object({
 	products: Joi.array().items(productSchema).min(1).required(),
+	payment: Joi.boolean().required(),
+	cashOnDelivery: Joi.boolean().required(),
+	selfCollection: Joi.boolean().required(),
+	delivery: Joi.boolean().required(),
+	totalAmount: Joi.number(),
+	deliveryFee: Joi.number(),
 });
 
 // Post new order from checkOut
@@ -28,15 +30,7 @@ router.post("/", auth, async (req, res) => {
 		const {error} = orderSchema.validate(req.body);
 		if (error) return res.status(400).send(error.details[0].message);
 
-		const {
-			products,
-			payment,
-			cashOnDelivery,
-			selfCollection,
-			delivery,
-			discount,
-			sale,
-		} = req.body;
+		const {products, deliveryFee} = req.body;
 
 		if (!products || products.length === 0)
 			return res.status(400).send("No products provided for the order.");
@@ -52,16 +46,11 @@ router.post("/", auth, async (req, res) => {
 
 		// Create a new order
 		const newOrder = new Order({
+			...req.body,
 			userId: req.payload._id,
-			products: products,
 			orderNumber: orderNumber,
 			totalAmount: totalAmount,
-			payment: payment,
-			cashOnDelivery: cashOnDelivery,
-			selfCollection: selfCollection,
-			delivery: delivery,
-			sale: sale,
-			discount: discount,
+			deliveryFee: deliveryFee,
 		});
 
 		// Save the order to the database
