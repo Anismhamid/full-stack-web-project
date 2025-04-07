@@ -10,6 +10,11 @@ import {Products} from "../interfaces/Products";
 import {handleAddToCart, handleQuantity} from "../helpers/fruitesFunctions";
 import Loader from "../atoms/loader/Loader";
 import ForAllModal from "../atoms/LoginModal";
+import SpeedDial from "@mui/material/SpeedDial";
+import SpeedDialIcon from "@mui/material/SpeedDialIcon";
+import SpeedDialAction from "@mui/material/SpeedDialAction";
+import {fontAwesomeIcon} from "../FontAwesome/Icons";
+import {path} from "../routes/routes";
 
 interface HomeProps {}
 
@@ -76,13 +81,52 @@ const Home: FunctionComponent<HomeProps> = () => {
 		}
 	};
 
+	const actions = [
+		{
+			icon: fontAwesomeIcon.CartInoc,
+			name: "מוצר חדש",
+			addClick: () => showAddProductModal(),
+		},
+		{
+			icon: fontAwesomeIcon.ordersList,
+			name: "הזמנות",
+			addClick: () => navigate(path.MyOrders),
+		},
+	];
+
 	if (loading) {
 		return <Loader />;
 	}
 
 	return (
 		<main className='gradient min-vh-100 main'>
-			<div className=' container'>
+			{((auth && auth.role === "Admin") || (auth && auth.role === "Moderator")) && (
+				<>
+					{" "}
+					<SpeedDial
+						ariaLabel='SpeedDial basic example'
+						sx={{position: "fixed", bottom: 16, right: 16}}
+						icon={<SpeedDialIcon />}
+					>
+						{actions.map((action) => (
+							<SpeedDialAction
+								key={action.name}
+								icon={action.icon}
+								tooltipTitle={action.name}
+								tooltipOpen={true}
+								onClick={action.addClick}
+							/>
+						))}
+					</SpeedDial>
+					<SpeedDial
+						ariaLabel='my-cart'
+						sx={{position: "fixed", bottom: 16, right: 90}}
+						icon={fontAwesomeIcon.CartInoc}
+						onClick={() => navigate(path.Cart)}
+					/>
+				</>
+			)}
+			<div className='container'>
 				{/* Search and filter products */}
 				<div style={{marginTop: "200px"}} className=''>
 					<div className='w-50 m-auto'>
@@ -95,6 +139,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 							autoComplete='on'
 						/>
 					</div>
+
 					{/* Admin / Moderator Options */}
 					{((auth && auth.role === "Admin") ||
 						(auth && auth.role === "Moderator")) && (

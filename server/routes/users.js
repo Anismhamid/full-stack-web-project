@@ -10,21 +10,27 @@ const auth = require("../middlewares/auth");
 const chalk = require("chalk");
 
 const userSchema = Joi.object({
-	_id: Joi.string(),
 	name: Joi.object({
 		first: Joi.string().min(3).max(50).required(),
 		last: Joi.string().min(2).max(50).required(),
-		username: Joi.string().allow("").default("Ghost"),
+	}),
+	phone: Joi.object({
+		phone_1: Joi.string().min(9).max(10).required(),
+		phone_2: Joi.string().min(9).max(10).allow(""),
+	}),
+	address: Joi.object({
+		city: Joi.string().min(2).max(20).required(),
+		street: Joi.string().min(2).max(20).required(),
+		houseNumber: Joi.string().allow(""),
 	}),
 	email: Joi.string().email().required(),
 	password: Joi.string().min(8).max(60).required(),
 	image: Joi.object({
 		url: Joi.string()
+			.uri()
 			.allow("")
-			.default(
-				"https://banner2.cleanpng.com/20201007/ylw/transparent-patient-icon-healthcare-icon-medical-icon-1713858313379.webp",
-			),
-		alt: Joi.string().allow("").default("Ghost"),
+			.default("https://cdn-icons-png.flaticon.com/512/64/64572.png"),
+		alt: Joi.string().allow(""),
 	}),
 	role: Joi.string().valid("Admin", "Moderator", "Client").default("Client"),
 });
@@ -34,11 +40,17 @@ const loginSchema = Joi.object({
 	password: Joi.string().min(8).max(60).required(),
 });
 
-// Register user
+const roleType = {
+	Admin: "Admin",
+	Moderator: "Moderator",
+	Client: "Client",
+};
+
+// Register new user
 router.post("/", async (req, res) => {
 	try {
 		// validate the body
-		const {error} = userSchema.validate(req.body);
+		const {error} = userSchema.validate(req.body, {stripUnknown: false});
 		if (error) return res.status(400).send(error.details[0].message);
 
 		// check if user exists
@@ -55,8 +67,9 @@ router.post("/", async (req, res) => {
 		// create cart
 		const cart = new Cart({
 			userId: user._id,
-			products: [{product_name: "", quantity: 0, product_price: 0}],
+			products: [],
 		});
+
 		await cart.save();
 
 		// creatre token
@@ -92,7 +105,13 @@ router.post("/login", async (req, res) => {
 		}
 
 		const token = Jwt.sign(
-			_.pick(user, ["_id", "name.first", "name.last", "role"]),
+			_.pick(user, [
+				"_id",
+				"name.first",
+				"name.last",
+				"role",
+				"image.url",
+			]),
 			process.env.JWT_SECRET,
 		);
 
@@ -107,12 +126,11 @@ router.post("/login", async (req, res) => {
 router.get("/", auth, async (req, res) => {
 	try {
 		// check if user have pression to get the users
-		if (!req.payload.role === "Admin")
+		if (!req.payload.role === roleType.Admin)
 			return res.status(401).send("You Cannot access");
 
-		const users = await User.find({}, {password: 0});
-		if (!users || users.length === 0)
-			return res.status(404).send("No have users yet");
+		const users = await User.find().select("-password");
+		if (!users) return res.status(404).send("No have users yet");
 
 		res.status(200).send(users);
 	} catch (error) {
@@ -124,11 +142,14 @@ router.get("/", auth, async (req, res) => {
 router.get("/:userId", auth, async (req, res) => {
 	try {
 		// check if user have pression to get the user by id
-		if (!req.payload.role === "Admin" && !req.payload.role === "Moderator")
+		if (
+			!req.payload.role === roleType.Admin &&
+			!req.payload.role === roleType.Moderator
+		)
 			return res.status(401).send("You Cannot access");
 
 		const user = await User.findOne({userId: req.params.userId}, {password: 0});
-		if (!user || user.length === 0) return res.status(404).send("user Not Found");
+		if (!user) return res.status(404).send("user Not Found");
 
 		res.status(200).send(user);
 	} catch (error) {
@@ -139,21 +160,21 @@ router.get("/:userId", auth, async (req, res) => {
 router.patch("/role/:userEmail", auth, async (req, res) => {
 	try {
 		// Cehck permission
-		if (!req.payload.role === "Client")
+		if (!req.payload.role === roleType.Admin)
 			return res.status(401).send("Access denied. no token provided");
 
-		const updatedUserRole = await User.findOneAndUpdate(
+		const user = await User.findOneAndUpdate(
 			{email: req.params.userEmail},
 			{role: req.body.role},
 			{new: true},
 		);
 
 		// Check if user exists
-		if (!updatedUserRole) {
-			return res.status(404).send("User not found");
+		if (!user) {
+			return res.status(404).send("User noot found");
 		}
 
-		res.status(200).send(updatedUserRole);
+		res.status(200).send(user);
 	} catch (error) {
 		res.status(500).send(error.message);
 	}

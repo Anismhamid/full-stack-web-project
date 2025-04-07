@@ -5,7 +5,6 @@ import {UserRegister} from "../interfaces/User";
 import {Link, useNavigate} from "react-router-dom";
 import {path} from "../routes/routes";
 import {registerNewUser} from "../services/usersServices";
-import {showSuccess} from "../atoms/Toast";
 
 interface RegisterProps {}
 
@@ -24,7 +23,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 				url: "",
 				alt: "",
 			},
-			role: "",
+			role: "Client",
 		},
 		validationSchema: yup.object({
 			name: yup.object({
@@ -46,11 +45,13 @@ const Register: FunctionComponent<RegisterProps> = () => {
 				})
 				.optional(),
 		}),
-		onSubmit(values) {
-			console.log(values);
-			registerNewUser(values);
-			showSuccess("נחמד, נרשמת בהצלחה!. עכשיו אתה יכול להתחבר");
-			navigate(path.Login);
+		onSubmit: async (values) => {
+			try {
+				await registerNewUser(values);
+				navigate(path.Login);
+			} catch (error) {
+				console.log(error);
+			}
 		},
 	});
 

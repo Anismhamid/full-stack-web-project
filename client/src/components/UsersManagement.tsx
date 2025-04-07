@@ -1,8 +1,43 @@
 import {FunctionComponent, useEffect, useState} from "react";
 import {UserRegister} from "../interfaces/User";
 import {getAllUsers, patchUserRole} from "../services/usersServices";
+import {styled} from "@mui/material/styles";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, {tableCellClasses} from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import {Box, Button, FormControl, MenuItem, Select} from "@mui/material";
+import {fontAwesomeIcon} from "../FontAwesome/Icons";
 
 interface UersManagementProps {}
+
+const STATUS = {
+	ACTIVE: "Active",
+	INACTIVE: "Inactive",
+};
+
+const StyledTableCell = styled(TableCell)(({theme}) => ({
+	[`&.${tableCellClasses.head}`]: {
+		backgroundColor: theme.palette.common.black,
+		color: theme.palette.common.white,
+	},
+	[`&.${tableCellClasses.body}`]: {
+		fontSize: 14,
+	},
+}));
+
+const StyledTableRow = styled(TableRow)(({theme}) => ({
+	"&:nth-of-type(odd)": {
+		backgroundColor: theme.palette.action.hover,
+	},
+	// hide last border
+	"&:last-child td, &:last-child th": {
+		border: 0,
+	},
+}));
 
 const UersManagement: FunctionComponent<UersManagementProps> = () => {
 	const [users, setUsers] = useState<UserRegister[]>([]);
@@ -29,23 +64,35 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 		setUsers(
 			users.map((user) =>
 				user._id === _id
-					? {...user, status: user.status === "Active" ? "Inactive" : "Active"}
+					? {
+							...user,
+							status:
+								user.status === STATUS.ACTIVE
+									? STATUS.INACTIVE
+									: STATUS.ACTIVE,
+					  }
 					: user,
 			),
 		);
 	};
 
 	// Change role
-	const changeRole = (_id: string, newRole: string) => {
-		setUsers(
-			users.map((user) => (user._id === _id ? {...user, role: newRole} : user)),
-		);
-		console.log(`Id:${_id}, role:${newRole}`);
-		patchUserRole(_id, newRole);
+	const changeRole = (email: string, newRole: string) => {
+		patchUserRole(email, newRole)
+			.then(() => {
+				setUsers(
+					users.map((user) =>
+						user.email === email ? {...user, role: newRole} : user,
+					),
+				);
+			})
+			.catch((err) => {
+				console.error("Failed to change role", err);
+			});
 	};
 
 	return (
-		<main className='gradient min-vh-100 bg-light py-5'>
+		<main className='gradient min-vh-100 bg-light'>
 			<div className='container'>
 				<h1 className='text-center bg-primary text-white rounded p-3 mb-4'>
 					ניהול משתמשים
@@ -67,74 +114,89 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 						</div>
 					</div>
 				</div>
-				{/* User Management Table */}
-				<div className='table-responsive'>
-					<table className='table table-hover table-bordered table-striped'>
-						<thead className='table-light text-center'>
-							<tr>
-								<th>שם</th>
-								<th>אימייל</th>
-								<th>תפקיד</th>
-								<th>סטטוס</th>
-								<th>פעולות</th>
-							</tr>
-						</thead>
-						<tbody className='text-center'>
+				<TableContainer component={Paper}>
+					<Table sx={{minWidth: 500}} aria-label='users table'>
+						<TableHead>
+							<TableRow>
+								<StyledTableCell align='center'>שם</StyledTableCell>
+								<StyledTableCell align='center'>דו"אל</StyledTableCell>
+								<StyledTableCell align='center'>תפקיד</StyledTableCell>
+								<StyledTableCell align='center'>סטטוס</StyledTableCell>
+								<StyledTableCell align='center'>סטטוס</StyledTableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
 							{filteredUsers.length > 0 ? (
 								filteredUsers.map((user) => (
-									<tr key={user._id}>
-										<td>{user.name.first}</td>
-										<td>{user.email}</td>
-										<td>
-											<select
-												className='form-select'
-												value={user.role}
-												onChange={(e) =>
-													changeRole(
-														user.email as string,
-														e.target.value,
-													)
-												}
-											>
-												<option value='Admin'>מנהל</option>
-												<option value='Moderator'>מודרטור</option>
-												<option value='Client'>משתמש</option>
-											</select>
-										</td>
-										<td>
-											<button
-												className={`btn ${
+									<StyledTableRow key={user._id} hover>
+										<StyledTableCell component='th' scope='row'>
+											{user.name.first}
+										</StyledTableCell>
+										<StyledTableCell align='center'>
+											{user.email}
+										</StyledTableCell>
+										<StyledTableCell align='center'>
+											<Box sx={{minWidth: 120}}>
+												<FormControl fullWidth>
+													<Select
+														value={user.role}
+														onChange={(e) =>
+															changeRole(
+																user.email as string,
+																e.target.value,
+															)
+														}
+													>
+														<MenuItem value='Admin'>
+															מנהל
+														</MenuItem>
+														<MenuItem value='Moderator'>
+															מודרטור
+														</MenuItem>
+														<MenuItem value='Client'>
+															משתמש
+														</MenuItem>
+													</Select>
+												</FormControl>
+											</Box>
+										</StyledTableCell>
+										<StyledTableCell align='center'>
+											<Button
+												color='success'
+												className={` ${
 													user.status === "Active"
-														? "btn-danger"
-														: "btn-success"
+														? "text-success"
+														: "text-danger"
 												}`}
 												onClick={() =>
 													toggleStatus(user._id as string)
 												}
 											>
 												{user.status === "Active"
-													? "חסום"
-													: "הפעל"}
-											</button>
-										</td>
-										<td>
-											<button className='btn btn-warning me-2'>
-												ערוך
-											</button>
-											<button className='btn btn-danger'>
-												מחק
-											</button>
-										</td>
-									</tr>
+													? "פעיל"
+													: "לא פעיל"}
+											</Button>
+										</StyledTableCell>
+										<StyledTableCell align='center'>
+											<Box sx={{display: "flex"}} className=''>
+												<Button color="warning">{fontAwesomeIcon.edit}</Button>
+												<Button color='error'>
+													{fontAwesomeIcon.trash}
+												</Button>
+											</Box>
+										</StyledTableCell>
+									</StyledTableRow>
 								))
 							) : (
-								<tr>
-									<td colSpan={5}>לא נמצאו משתמשים תואמים</td>
-								</tr>
+								<StyledTableRow hover>
+									<StyledTableCell align='center'>
+										לא נמצאו משתמשים תואמים
+									</StyledTableCell>
+								</StyledTableRow>
 							)}
-						</tbody>
-					</table>
-				</div>
+						</TableBody>
+					</Table>
+				</TableContainer>
 			</div>
 		</main>
 	);

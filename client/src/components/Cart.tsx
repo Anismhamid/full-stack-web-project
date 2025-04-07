@@ -7,6 +7,9 @@ import {path} from "../routes/routes";
 import NavigathionButtons from "../atoms/NavigathionButtons";
 import Loader from "../atoms/loader/Loader";
 
+import Tooltip from "@mui/material/Tooltip";
+import {fontAwesomeIcon} from "../FontAwesome/Icons";
+
 interface CartProps {}
 
 const Cart: FunctionComponent<CartProps> = () => {
@@ -117,14 +120,18 @@ const Cart: FunctionComponent<CartProps> = () => {
 												<strong>{product.product_name}</strong> -
 												{product.quantity} ק"ג{" "}
 											</div>
-											<button
-												onClick={() => {
-													handleDelete(product.product_name);
-												}}
-												className='btn btn-danger btn-sm'
-											>
-												מחיקה
-											</button>
+											<Tooltip title='Delete'>
+												<button
+													onClick={() => {
+														handleDelete(
+															product.product_name,
+														);
+													}}
+													className='btn bg-black m-auto text-danger bg-danger-subtle'
+												>
+													{fontAwesomeIcon.trash}
+												</button>
+											</Tooltip>
 										</li>
 									))}
 									<hr />

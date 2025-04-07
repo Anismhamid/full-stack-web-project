@@ -1,4 +1,4 @@
-import {FunctionComponent, useEffect, useRef, useState} from "react";
+import {FunctionComponent, useEffect, useState} from "react";
 import {deleteProduct, getProductsByCategory} from "../services/productsServices"; // פונקציה כללית שמביאה מוצרים לפי קטגוריה
 import {Products} from "../interfaces/Products";
 import {handleAddToCart, handleQuantity} from "../helpers/fruitesFunctions";
@@ -7,6 +7,8 @@ import {useUser} from "../context/useUSer";
 import Loader from "../atoms/loader/Loader";
 import UpdateProductModal from "../atoms/UpdateProductModal";
 import {showError, showSuccess} from "../atoms/Toast";
+import Tooltip from "@mui/material/Tooltip";
+import {fontAwesomeIcon} from "../FontAwesome/Icons";
 
 interface ProductCategoryProps {
 	category: string;
@@ -105,7 +107,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 	return (
 		<main className='m-auto min-vh-100'>
 			<div className='container m-auto my-5'>
-				<div className='row m-auto'>
+				<div className='row'>
 					{visibleProducts.map((product) => {
 						const productQuantity = quantities[product.product_name] || 1;
 						return (
@@ -250,28 +252,32 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 
 											{((auth && auth.role === "Admin") ||
 												(auth && auth.role === "Moderator")) && (
-												<div className='col-12 mt-3 pb-3 p-1 rounded'>
-													<button
-														className='btn btn-warning w-100 my-2'
-														onClick={() => {
-															setProductNameToUpdate(
-																product.product_name,
-															);
-															onShowUpdateProductModal();
-														}}
-													>
-														עידכון מוצר
-													</button>
-													<button
-														onClick={() =>
-															handleDelete(
-																product.product_name,
-															)
-														}
-														className='btn btn-danger mt-1 w-100'
-													>
-														מחיקת המוצר
-													</button>
+												<div className='mt-3 rounded'>
+													<Tooltip title='edit'>
+														<button
+															className='btn m-auto text-datk bg-warning'
+															onClick={() => {
+																setProductNameToUpdate(
+																	product.product_name,
+																);
+																onShowUpdateProductModal();
+															}}
+														>
+															{fontAwesomeIcon.edit}
+														</button>
+													</Tooltip>
+													<Tooltip title='Delete'>
+														<button
+															onClick={() =>
+																handleDelete(
+																	product.product_name,
+																)
+															}
+															className='btn m-auto text-danger bg-danger-subtle'
+														>
+															{fontAwesomeIcon.trash}
+														</button>
+													</Tooltip>
 												</div>
 											)}
 										</div>

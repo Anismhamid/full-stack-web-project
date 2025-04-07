@@ -23,8 +23,7 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 
 	useEffect(() => {
 		setLoading(true);
-		if (auth) {
-			getUserOrders(auth._id)
+			getUserOrders(auth?._id as string)
 				.then((res) => {
 					setOrders(res);
 
@@ -39,8 +38,9 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 				.catch((error) => {
 					console.error("Failed to fetch orders:", error);
 				})
-				.finally(() => setLoading(false));
-		}
+				.finally(() => {
+					setLoading(false);
+				});
 	}, [auth]);
 
 	// Handle order status update

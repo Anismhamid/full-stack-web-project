@@ -15,6 +15,7 @@ export const productsPathes = {
 export enum path {
 	Home = "/",
 	Login = "/login",
+	Profile = "/profile",
 	Register = "/register",
 	UsersManagement = "/usersManagement",
 	Fruits = "/fruits",

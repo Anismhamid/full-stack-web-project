@@ -66,8 +66,9 @@ main p {
 
 .logout {
   margin: 1rem;
-  &:hover{
-    background: black  !important;
+
+  &:hover {
+    background: black !important;
   }
 }
 
@@ -201,6 +202,9 @@ main .loader {
   font-size: 1.1rem;
 }
 
+.nav {
+  background: #000000ec;
+}
 
 .nav-item:hover {
   transform: translateY(-5px);

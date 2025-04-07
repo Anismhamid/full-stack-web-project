@@ -1,8 +1,27 @@
+const {required} = require("joi");
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
 	{
-		_id: {type: String},
+		name: {
+			type: {
+				first: {type: String, required: true, minlength: 2, maxlength: 50},
+				last: {type: String, required: true, minlength: 2, maxlength: 50},
+			},
+		},
+		phone: {
+			type: {
+				phone_1: {type: String, required: true},
+				phone_2: {type: String},
+			},
+		},
+		address: {
+			type: {
+				city: {type: String, required: true},
+				street: {type: String, required: true},
+				houseNumber: {type: String},
+			},
+		},
 		email: {
 			type: String,
 			required: true,
@@ -15,23 +34,12 @@ const userSchema = new mongoose.Schema(
 			minlength: 6,
 			maxlength: 60,
 		},
-		name: {
-			type: {
-				first: {type: String, required: true, minlength: 2, maxlength: 50},
-				last: {type: String, required: true, minlength: 2, maxlength: 50},
-				username: {
-					type: String,
-				},
-			},
-		},
 		image: {
 			type: {
 				url: {
 					type: String,
-					default:
-						"https://banner2.cleanpng.com/20201007/ylw/transparent-patient-icon-healthcare-icon-medical-icon-1713858313379.webp",
 				},
-				alt: {type: String, default: "Profile image"},
+				alt: {type: String},
 			},
 		},
 		role: {

@@ -27,9 +27,7 @@ import Bakery from "./components/Bakery.js";
 import Beverages from "./components/Beverages.js";
 import Frozen from "./components/Frozen.js";
 import Snacks from "./components/Snacks.js";
-
-
-
+import Profile from "./components/Profile.js";
 
 
 function App() {
@@ -41,6 +39,7 @@ function App() {
 				<Routes>
 					<Route path={path.Home} element={<Home />} />
 					<Route path={path.Login} element={<Login />} />
+					<Route path={path.Profile} element={<Profile />} />
 					<Route path={path.Register} element={<Register />} />
 					<Route path={path.UsersManagement} element={<UsersManagement />} />
 					<Route path={path.Contact} element={<Contact />} />

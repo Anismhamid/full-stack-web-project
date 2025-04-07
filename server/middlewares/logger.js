@@ -36,7 +36,6 @@ const logger = (req, res, next) => {
 		if (res.statusCode >= 400) {
 			logToFile(req.method, req.url, res.statusCode, body); // Log error details
 		} else {
-			// const underLine = "_______________________";
 			const accessLogMessage = `✨${new Date().toLocaleString("he-IL")}✨ | ${
 				req.method
 			} ${req.url} | Status: ${res.statusCode} | ${timeTaken}ms\n`;

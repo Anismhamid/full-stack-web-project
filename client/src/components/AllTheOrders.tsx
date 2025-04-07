@@ -6,6 +6,7 @@ import {useUser} from "../context/useUSer";
 import Loader from "../atoms/loader/Loader";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import NavigathionButtons from "../atoms/NavigathionButtons";
+import {path} from "../routes/routes";
 
 interface AllTheOrdersProps {}
 
@@ -24,15 +25,19 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	);
 
 	useEffect(() => {
-		getAllOrders()
-			.then((res) => {
-				setAllOrders(res);
-				setLoading(false);
-			})
-			.catch((err) => {
-				console.log(err);
-				setLoading(false);
-			});
+		if (auth && auth.role === "Admin") {
+			getAllOrders()
+				.then((res) => {
+					setAllOrders(res);
+					setLoading(false);
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		} else {
+			navigate(path.Home);
+			window.scroll(0, 0);
+		}
 	}, [searchQuery]);
 
 	const totalAmount = allOrders.reduce((total, item) => {
@@ -79,7 +84,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 				<div className='row'>
 					{filteredUsers.length ? (
 						filteredUsers.map((order, index) => (
-							<div key={order.createdAt} className='mb-4 col-md-6'>
+							<div key={order.createdAt} className='mb-4 col-md-6 col-lg-3'>
 								<div className=' card p-4 shadow-sm'>
 									<h5 className='card-title text-center bg-primary text-white p-2 rounded'>
 										הזמנה: {index + 1}

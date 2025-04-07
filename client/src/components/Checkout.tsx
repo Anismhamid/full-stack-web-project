@@ -10,6 +10,7 @@ import * as yup from "yup";
 import {showError, showInfo} from "../atoms/Toast";
 import Loader from "../atoms/loader/Loader";
 import {Order} from "../interfaces/Order";
+import Checkbox from "@mui/material/Checkbox";
 
 interface CheckoutProps {}
 
@@ -101,6 +102,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 		);
 
 		const newOrder = {
+			userId: decodedToken._id,
 			products: [...itemsToOrder],
 			payment: value.payment,
 			cashOnDelivery: value.cashOnDelivery,
@@ -109,9 +111,6 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 			deliveryFee: value.delivery ? deliveryFee : 0,
 			totalAmount: finalAmount,
 		};
-		console.log("Total Amount:", totalAmount);
-		console.log("Discounted Amount:", discountedAmount);
-		console.log("Final Amount:", finalAmount);
 		try {
 			setLoading(true);
 			await postOrder(newOrder as Order);
@@ -174,12 +173,11 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 				{/* Payment Methods Selection */}
 				<form onSubmit={formik.handleSubmit} className='mt-5 text-light'>
 					<h4>בחר שיטת תשלום</h4>
-					<div>
+					<div className='mt-3'>
 						{/* Credit Card */}
-						<div className='form-check'>
-							<input
-								type='checkbox'
-								className='form-check-input'
+						<div className='form-check mb-2'>
+							<Checkbox
+								className='form-check-input text-light'
 								id='creditCard'
 								name='payment'
 								checked={formik.values.payment ? true : false}
@@ -195,13 +193,12 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 
 						{/* Cash on Delivery */}
 						<div className='form-check'>
-							<input
-								type='checkbox'
-								className='form-check-input'
+							<Checkbox
 								id='cashOnDelivery'
 								name='cashOnDelivery'
 								checked={formik.values.cashOnDelivery ? true : false}
 								value={formik.values.cashOnDelivery ? "true" : "false"}
+								className='form-check-input text-light'
 								onBlur={formik.handleBlur}
 								onChange={formik.handleChange}
 								disabled={formik.values.payment}
@@ -218,9 +215,8 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 						<div>
 							{/* SelfCollection */}
 							<div className='form-check'>
-								<input
-									type='checkbox'
-									className='form-check-input'
+								<Checkbox
+									className='form-check-input text-light'
 									id='selfCollection'
 									name='selfCollection'
 									checked={formik.values.selfCollection ? true : false}
@@ -240,10 +236,10 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 							</div>
 
 							{/* Delivery */}
+
 							<div className='form-check'>
-								<input
-									type='checkbox'
-									className='form-check-input'
+								<Checkbox
+									className='form-check-input text-light '
 									id='delivery'
 									name='delivery'
 									checked={formik.values.delivery}

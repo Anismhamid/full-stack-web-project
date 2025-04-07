@@ -13,6 +13,10 @@ type Auth = {
 		first: string;
 		last: string;
 	};
+	image: {
+		url: string;
+		alt:string
+	};
 	role: string;
 	iat: number;
 };

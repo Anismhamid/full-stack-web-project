@@ -15,6 +15,7 @@ const productSchema = Joi.object({
 
 const orderSchema = Joi.object({
 	products: Joi.array().items(productSchema).min(1).required(),
+	userId: Joi.string().required(),
 	payment: Joi.boolean().required(),
 	cashOnDelivery: Joi.boolean().required(),
 	selfCollection: Joi.boolean().required(),
@@ -32,8 +33,7 @@ router.post("/", auth, async (req, res) => {
 
 		const {products, deliveryFee} = req.body;
 
-		if (!products || products.length === 0)
-			return res.status(400).send("No products provided for the order.");
+		if (!products) return res.status(400).send("No products provided for the order.");
 
 		// Calculate the total amount for the order on the products
 		const totalAmount = products.reduce(
@@ -41,14 +41,18 @@ router.post("/", auth, async (req, res) => {
 			0,
 		);
 
-		// Generatin an order number
-		const orderNumber = `ORD-${Math.floor(Math.random(+1) * 10000)}`;
+		// Generatin order number
+		let randomOrderNumber = `ORD-${Math.floor(Math.random() * 10001)}`;
+
+		if (await Order.findOne({orderNumber: randomOrderNumber})) {
+			randomOrderNumber = `ORD-${Math.floor(Math.random() * 10001)}`;
+		}
 
 		// Create a new order
 		const newOrder = new Order({
 			...req.body,
 			userId: req.payload._id,
-			orderNumber: orderNumber,
+			orderNumber: randomOrderNumber,
 			totalAmount: totalAmount,
 			deliveryFee: deliveryFee,
 		});
@@ -66,7 +70,7 @@ router.post("/", auth, async (req, res) => {
 router.get("/:userId", auth, async (req, res) => {
 	const userId = req.params.userId;
 
-	if (req.payload._id !== userId) {
+	if (!req.payload._id === userId) {
 		return res.status(403).send("You do not have permission to access these orders.");
 	}
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 import {UserLogin, UserRegister} from "../interfaces/User";
-import {showError} from "../atoms/Toast";
+import {showError, showSuccess} from "../atoms/Toast";
 
 const api = `${import.meta.env.VITE_API_URL}/users`;
 
@@ -12,9 +12,13 @@ const api = `${import.meta.env.VITE_API_URL}/users`;
 export const registerNewUser = async (newUserData: UserRegister) => {
 	try {
 		const response = await axios.post(api, newUserData);
+		showSuccess("נחמד, נרשמת בהצלחה!. עכשיו אתה יכול להתחבר");
+		console.log(response.data);
+
 		return response.data;
 	} catch (error) {
 		console.log(error);
+		showError("Invalid Data try again.");
 		return null;
 	}
 };

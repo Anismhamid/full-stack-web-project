@@ -6,10 +6,13 @@ import {
 	faBoxOpen,
 	faCarrot,
 	faCartShopping,
+	faChevronCircleRight,
+	faCog,
 	faContactCard,
 	faCow,
 	faCreditCard,
 	faDrumstickBite,
+	faEdit,
 	faFishFins,
 	faHome,
 	faIceCream,
@@ -20,7 +23,9 @@ import {
 	faPersonWalkingArrowLoopLeft,
 	faShekel,
 	faSnowflake,
+	faTrash,
 	faUserGear,
+	faUserPlus,
 	faWheatAwn,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -47,4 +52,9 @@ export const fontAwesomeIcon = {
 	about: <FontAwesomeIcon icon={faInfoCircle} />,
 	contact: <FontAwesomeIcon icon={faContactCard} />,
 	menuBars: <FontAwesomeIcon icon={faBars} />,
+	trash: <FontAwesomeIcon icon={faTrash} />,
+	edit: <FontAwesomeIcon icon={faEdit} />,
+	setting: <FontAwesomeIcon icon={faCog} />,
+	addPerson: <FontAwesomeIcon icon={faUserPlus} />,
+	backButton: <FontAwesomeIcon icon={faChevronCircleRight} />,
 };
