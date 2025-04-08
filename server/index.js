@@ -19,7 +19,7 @@ const port = process.env.PORT || 8000;
 
 const limiter = rateLimit({
 	windowMs: 24 * 60 * 60 * 1000, // hours / minutes / seconds / milliseconds :: 24 hours
-	limit: 1000, // Limit each IP to 1000 requests per `window` (here, per 24 hours).
+	limit: 100000, // Limit each IP to 1000 requests per `window` (here, per 24 hours).
 	standardHeaders: "draft-8", // draft-6: `RateLimit-*` headers; draft-7 & draft-8: combined `RateLimit` header
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
 });

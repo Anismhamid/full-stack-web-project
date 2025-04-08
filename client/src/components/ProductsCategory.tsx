@@ -9,6 +9,7 @@ import UpdateProductModal from "../atoms/UpdateProductModal";
 import {showError, showSuccess} from "../atoms/Toast";
 import Tooltip from "@mui/material/Tooltip";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
+import RoleType from "../interfaces/UserType";
 
 interface ProductCategoryProps {
 	category: string;
@@ -163,7 +164,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 														(product.discount
 															? (product.price *
 																	product.discount) /
-															  100
+																100
 															: 0)
 													).toLocaleString("he-IL", {
 														style: "currency",
@@ -188,11 +189,11 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 											{category === "spices"
 												? "ל / 100-גרם"
 												: category === "fruit" ||
-												  category === "vegetable" ||
-												  category === "meat" ||
-												  category === "fish"
-												? 'ל / ק"ג'
-												: "ל-יחידה"}
+													  category === "vegetable" ||
+													  category === "meat" ||
+													  category === "fish"
+													? 'ל / ק"ג'
+													: "ל-יחידה"}
 										</h6>
 
 										<div className='d-flex align-items-center'>
@@ -250,8 +251,10 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 													: "הוספה לסל"}
 											</button>
 
-											{((auth && auth.role === "Admin") ||
-												(auth && auth.role === "Moderator")) && (
+											{((auth && auth.role === RoleType.Admin) ||
+												(auth &&
+													auth.role ===
+														RoleType.Moderator)) && (
 												<div className='mt-3 rounded'>
 													<Tooltip title='edit'>
 														<button

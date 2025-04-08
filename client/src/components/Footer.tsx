@@ -6,7 +6,7 @@ interface FooterProps {}
 
 const Footer: FunctionComponent<FooterProps> = () => {
 	return (
-		<footer className='bg-dark text-white pt-4 pb-2 bottom-0 start-0 end-0'>
+		<footer className='text-white pt-4 pb-2 bottom-0 start-0 end-0'>
 			<div className='container py-5'>
 				<div className='row'>
 					{/* Store Info Section */}

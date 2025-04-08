@@ -4,14 +4,21 @@ export interface UserRegister {
 	name: {
 		first: string;
 		last: string;
-		username?: string;
+	};
+	phone: {
+		phone_1: string;
+		phone_2: string;
+	};
+	address: {
+		city: string;
+		street: string;
+		houseNumber?: string;
 	};
 	email: string;
 	password: string;
-
-	image?: {
-		url: string;
-		alt: string;
+	image: {
+		url?: string;
+		alt?: string;
 	};
 	role: string;
 	status?: string;

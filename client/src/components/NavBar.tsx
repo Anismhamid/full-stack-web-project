@@ -5,9 +5,8 @@ import {useUser} from "../context/useUSer";
 import useToken from "../hooks/useToken";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import AccountMenu from "../atoms/userMenu/AccountMenu";
-import {Tooltip} from "@mui/material";
-import Badge from "@mui/joy/Badge";
-import Box from "@mui/joy/Box";
+import {AppBar, MenuList, Tooltip} from "@mui/material";
+import RoleType from "../interfaces/UserType";
 
 interface NavBarProps {}
 
@@ -28,7 +27,7 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 	}, [decodedToken, auth]);
 
 	useEffect(() => {
-		window.scrollTo(0, 70);
+		window.scrollTo(0, 0);
 	}, [location]);
 
 	const logout = () => {
@@ -41,8 +40,8 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 
 	return (
 		<>
-			<nav className=' position-relative position-sticky top-0 w-100 z-2'>
-				<ul className='nav nav-tabs d-flex align-items-center justify-content-around border-bottom border-success-subtle '>
+			<AppBar position='sticky'>
+				<MenuList className='nav nav-tabs d-flex align-items-center justify-content-around border-bottom border-success-subtle '>
 					{!isLoggedIn ? (
 						<li>
 							<button
@@ -73,7 +72,7 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 							</NavLink>
 						</li>
 					</Tooltip>
-					{auth && auth.role === "Admin" && (
+					{auth && auth.role === RoleType.Admin && (
 						<Tooltip title='ניהול משתמשים' arrow>
 							<li className='nav-item'>
 								<NavLink
@@ -217,7 +216,7 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 							</NavLink>
 						</li>
 					</Tooltip>
-
+					{/* 
 					{auth && isLoggedIn && (
 						<Tooltip title='הזמנות שלי' arrow>
 							<li className='nav-item'>
@@ -234,7 +233,7 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 								</NavLink>
 							</li>
 						</Tooltip>
-					)}
+					)} */}
 
 					<li className='nav-item'>
 						<NavLink
@@ -258,7 +257,7 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 							צור קשר
 						</NavLink>
 					</li>
-					{auth && isLoggedIn && (
+					{/* {auth && isLoggedIn && (
 						<Tooltip title='סל קניות' arrow>
 							<li className='nav-item cart-icon'>
 								<Box sx={{display: "flex", gap: 3}}>
@@ -276,22 +275,25 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 								</Box>
 							</li>
 						</Tooltip>
-					)}
-				</ul>
-			</nav>
-			<div className='mt-5 position-fixed z-3 d-flex bg-transparent align-items-center justify-content-evenly'>
-				<div
-					onClick={() => navigate(-1)}
-					className='position-fixed rounded-4 fw-bold link-success z-3'
-					style={{
-						cursor: "pointer",
-						width: "36px",
-						height: "40px",
-						right: "50px",
-					}}
-				>
-					<span className='fs-1 rounded-5 '>{fontAwesomeIcon.backButton}</span>
-				</div>
+					)} */}
+				</MenuList>
+			</AppBar>
+			<div
+				onClick={() => navigate(-1)}
+				className='position-fixed border border-light fw-bold link-success z-3 d-flex align-items-center justify-content-center'
+				style={{
+					cursor: "pointer",
+					width: "36px",
+					height: "35px",
+					right: "16px",
+					backgroundColor: "#1A1E22",
+					borderRadius: "100%",
+					top: "110px",
+				}}
+			>
+				<span style={{color: "#66B2FF"}} className='fs-2'>
+					{fontAwesomeIcon.backButton}
+				</span>
 			</div>
 		</>
 	);

@@ -31,20 +31,14 @@ router.post("/", auth, async (req, res) => {
 		const {error} = orderSchema.validate(req.body);
 		if (error) return res.status(400).send(error.details[0].message);
 
-		const {products, deliveryFee} = req.body;
+		const {products, deliveryFee,totalAmount} = req.body;
 
 		if (!products) return res.status(400).send("No products provided for the order.");
-
-		// Calculate the total amount for the order on the products
-		const totalAmount = products.reduce(
-			(total, product) => total + product.product_price * product.quantity,
-			0,
-		);
 
 		// Generatin order number
 		let randomOrderNumber = `ORD-${Math.floor(Math.random() * 10001)}`;
 
-		if (await Order.findOne({orderNumber: randomOrderNumber})) {
+		while (await Order.findOne({orderNumber: randomOrderNumber})) {
 			randomOrderNumber = `ORD-${Math.floor(Math.random() * 10001)}`;
 		}
 
@@ -53,8 +47,8 @@ router.post("/", auth, async (req, res) => {
 			...req.body,
 			userId: req.payload._id,
 			orderNumber: randomOrderNumber,
-			totalAmount: totalAmount,
 			deliveryFee: deliveryFee,
+			totalAmount: totalAmount,
 		});
 
 		// Save the order to the database

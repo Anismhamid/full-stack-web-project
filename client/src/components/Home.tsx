@@ -15,6 +15,7 @@ import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import {path} from "../routes/routes";
+import RoleType from "../interfaces/UserType";
 
 interface HomeProps {}
 
@@ -90,7 +91,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		{
 			icon: fontAwesomeIcon.ordersList,
 			name: "הזמנות",
-			addClick: () => navigate(path.MyOrders),
+			addClick: () => navigate(path.AllTheOrders),
 		},
 	];
 
@@ -100,12 +101,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	return (
 		<main className='gradient min-vh-100 main'>
-			{((auth && auth.role === "Admin") || (auth && auth.role === "Moderator")) && (
+			{((auth && auth.role === RoleType.Admin) ||
+				(auth && auth.role === RoleType.Moderator)) && (
 				<>
-					{" "}
 					<SpeedDial
 						ariaLabel='SpeedDial basic example'
-						sx={{position: "fixed", bottom: 16, right: 16}}
+						sx={{position: "fixed", bottom: 90, right: 16}}
 						icon={<SpeedDialIcon />}
 					>
 						{actions.map((action) => (
@@ -118,17 +119,11 @@ const Home: FunctionComponent<HomeProps> = () => {
 							/>
 						))}
 					</SpeedDial>
-					<SpeedDial
-						ariaLabel='my-cart'
-						sx={{position: "fixed", bottom: 16, right: 90}}
-						icon={fontAwesomeIcon.CartInoc}
-						onClick={() => navigate(path.Cart)}
-					/>
 				</>
 			)}
 			<div className='container'>
 				{/* Search and filter products */}
-				<div style={{marginTop: "200px"}} className=''>
+				<div style={{marginTop: 0}} className=''>
 					<div className='w-50 m-auto'>
 						<input
 							type='search'
@@ -141,8 +136,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 					</div>
 
 					{/* Admin / Moderator Options */}
-					{((auth && auth.role === "Admin") ||
-						(auth && auth.role === "Moderator")) && (
+					{((auth && auth.role === RoleType.Moderator) ||
+						(auth && auth.role === RoleType.Moderator)) && (
 						<div className='d-flex align-items-center p-5 justify-content-around mt-5'>
 							<button
 								className='btn btn-dark'
@@ -212,7 +207,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 																(fruit.discount
 																	? (fruit.price *
 																			fruit.discount) /
-																	  100
+																		100
 																	: 0)
 															).toLocaleString("he-IL", {
 																style: "currency",

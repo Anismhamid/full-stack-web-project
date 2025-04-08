@@ -13,8 +13,6 @@ export const registerNewUser = async (newUserData: UserRegister) => {
 	try {
 		const response = await axios.post(api, newUserData);
 		showSuccess("נחמד, נרשמת בהצלחה!. עכשיו אתה יכול להתחבר");
-		console.log(response.data);
-
 		return response.data;
 	} catch (error) {
 		console.log(error);

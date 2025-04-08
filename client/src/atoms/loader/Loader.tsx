@@ -4,9 +4,8 @@ interface LoaderProps {}
 
 const Loader: FunctionComponent<LoaderProps> = () => {
 	return (
-		<main className='login min-vh-100'>
+		<main className='gradient min-vh-100 d-flex align-items-center justify-content-center'>
 			<div className='loader'></div>
-			<h2>Loading</h2>
 		</main>
 	);
 };

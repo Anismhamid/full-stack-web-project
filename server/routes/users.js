@@ -16,7 +16,7 @@ const userSchema = Joi.object({
 	}),
 	phone: Joi.object({
 		phone_1: Joi.string().min(9).max(10).required(),
-		phone_2: Joi.string().min(9).max(10).allow(""),
+		phone_2: Joi.string().allow(""),
 	}),
 	address: Joi.object({
 		city: Joi.string().min(2).max(20).required(),

@@ -11,6 +11,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import {Box, Button, FormControl, MenuItem, Select} from "@mui/material";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
+import RoleType from "../interfaces/UserType";
 
 interface UersManagementProps {}
 
@@ -70,7 +71,7 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 								user.status === STATUS.ACTIVE
 									? STATUS.INACTIVE
 									: STATUS.ACTIVE,
-					  }
+						}
 					: user,
 			),
 		);
@@ -147,13 +148,15 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 															)
 														}
 													>
-														<MenuItem value='Admin'>
+														<MenuItem value={RoleType.Admin}>
 															מנהל
 														</MenuItem>
-														<MenuItem value='Moderator'>
+														<MenuItem
+															value={RoleType.Moderator}
+														>
 															מודרטור
 														</MenuItem>
-														<MenuItem value='Client'>
+														<MenuItem value={RoleType.Client}>
 															משתמש
 														</MenuItem>
 													</Select>
@@ -179,7 +182,9 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 										</StyledTableCell>
 										<StyledTableCell align='center'>
 											<Box sx={{display: "flex"}} className=''>
-												<Button color="warning">{fontAwesomeIcon.edit}</Button>
+												<Button color='warning'>
+													{fontAwesomeIcon.edit}
+												</Button>
 												<Button color='error'>
 													{fontAwesomeIcon.trash}
 												</Button>

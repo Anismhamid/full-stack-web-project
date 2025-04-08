@@ -68,7 +68,7 @@ const Cart: FunctionComponent<CartProps> = () => {
 	}
 
 	return (
-		<main className='login min-vh-100'>
+		<main className='gradient min-vh-100'>
 			<div className='container py-5'>
 				<h1 className='text-center border rounded p-2'>סל קניות</h1>
 				<div className=''>

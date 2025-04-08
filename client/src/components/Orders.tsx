@@ -6,6 +6,7 @@ import Loader from "../atoms/loader/Loader";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import {useUser} from "../context/useUSer";
 import {useNavigate} from "react-router-dom";
+import RoleType from "../interfaces/UserType";
 
 interface OrdersProps {}
 
@@ -23,24 +24,22 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 
 	useEffect(() => {
 		setLoading(true);
-			getUserOrders(auth?._id as string)
-				.then((res) => {
-					setOrders(res);
+		getUserOrders(auth?._id as string)
+			.then((res) => {
+				setOrders(res);
 
-					const initialStatuses: {[orderId: string]: string} = {};
-					res.forEach(
-						(order: {orderNumber: string | number; status: string}) => {
-							initialStatuses[order.orderNumber] = order.status;
-						},
-					);
-					setOrderStatuses(initialStatuses);
-				})
-				.catch((error) => {
-					console.error("Failed to fetch orders:", error);
-				})
-				.finally(() => {
-					setLoading(false);
+				const initialStatuses: {[orderId: string]: string} = {};
+				res.forEach((order: {orderNumber: string | number; status: string}) => {
+					initialStatuses[order.orderNumber] = order.status;
 				});
+				setOrderStatuses(initialStatuses);
+			})
+			.catch((error) => {
+				console.error("Failed to fetch orders:", error);
+			})
+			.finally(() => {
+				setLoading(false);
+			});
 	}, [auth]);
 
 	// Handle order status update
@@ -67,7 +66,7 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 	}
 
 	return (
-		<main className='min-vh-100 login'>
+		<main className='gradient min-vh-100'>
 			<div className='container py-5 mt-5'>
 				<h1 className='text-center bg-light rounded'>הזמנות שלי</h1>
 				<div className='row'>
@@ -138,8 +137,8 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 									</div>
 
 									{/* Admin/Moderator Controls */}
-									{((auth && auth.role === "Admin") ||
-										(auth && auth?.role === "Moderator")) && (
+									{((auth && auth.role === RoleType.Admin) ||
+										(auth && auth?.role === RoleType.Moderator)) && (
 										<div className='d-flex align-items-center justify-content-around'>
 											<button
 												onClick={() =>
@@ -240,15 +239,10 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 									<div>
 										<h5 className='text-center text-success'>
 											<strong>ס"כ מחיר הזמנה:</strong>{" "}
-											{order.delivery
-												? (
-														order.totalAmount +
-														order.deliveryFee
-												  ).toLocaleString("he-IL", {
-														style: "currency",
-														currency: "ILS",
-												  })
-												: order.totalAmount}
+											{order.totalAmount.toLocaleString("he-IL", {
+												style: "currency",
+												currency: "ILS",
+											})}
 										</h5>
 									</div>
 
