@@ -16,6 +16,14 @@ import SpeedDialAction from "@mui/material/SpeedDialAction";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import {path} from "../routes/routes";
 import RoleType from "../interfaces/UserType";
+import Fish from "./Fish";
+import Dairy from "./Dairy";
+import Meat from "./Meat";
+import Spices from "./Spices";
+import Bakery from "./Bakery";
+import Beverages from "./Beverages";
+import Frozen from "./Frozen";
+import Snacks from "./Snacks";
 
 interface HomeProps {}
 
@@ -50,10 +58,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 		return products.filter((product) => {
 			const productName = product.product_name || "";
 			const productPrice = product.price || "";
+			const productInDiscount = product.sale ? "מבצע" : false || "";
 
 			return (
 				productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				(searchQuery && productPrice.toString() === searchQuery)
+				(searchQuery && productPrice.toString() === searchQuery) ||
+				(searchQuery && productInDiscount.toString() === searchQuery)
 			);
 		});
 	}, [products, searchQuery]);
@@ -121,8 +131,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 					</SpeedDial>
 				</>
 			)}
+
+			{/* Search and filter products */}
 			<div className='container'>
-				{/* Search and filter products */}
 				<div style={{marginTop: 0}} className=''>
 					<div className='w-50 m-auto'>
 						<input
@@ -134,25 +145,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 							autoComplete='on'
 						/>
 					</div>
-
-					{/* Admin / Moderator Options */}
-					{((auth && auth.role === RoleType.Moderator) ||
-						(auth && auth.role === RoleType.Moderator)) && (
-						<div className='d-flex align-items-center p-5 justify-content-around mt-5'>
-							<button
-								className='btn btn-dark'
-								onClick={showAddProductModal}
-							>
-								הוספת מוצר
-							</button>
-							<button
-								className='btn btn-info'
-								onClick={() => navigate(`/all-orders`)}
-							>
-								כל ההזמנות באתר
-							</button>
-						</div>
-					)}
 
 					<div className='row m-auto'>
 						{searchQuery.length ? (
@@ -306,7 +298,20 @@ const Home: FunctionComponent<HomeProps> = () => {
 								);
 							})
 						) : (
-							<></>
+							<p className=' rounded border border-light mt-3 text-center lead'>
+								חפש לפי/
+								<strong className='text-danger fw-bold mx-1'>
+									שם מוצר
+								</strong>
+								/
+								<strong className='text-danger fw-bold mx-1'>
+									מחיר מוצר
+								</strong>
+								/
+								<strong className='text-danger fw-bold ms-1'>
+									מילת מבצע
+								</strong>
+							</p>
 						)}
 					</div>
 				</div>
@@ -316,13 +321,60 @@ const Home: FunctionComponent<HomeProps> = () => {
 				{/* Discounts and Offers */}
 				<DiscountsAndOffers />
 
-				{/* Fruits section */}
-				<section className='my-5'>
-					<Fruits />
-				</section>
+				{/* Fruits  */}
+				<p className=' bg-transparent text-light fs-1'>פירות</p>
+				<hr className=' text-light' />
+
+				<Fruits />
 
 				{/* Vegetable section */}
+				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				<hr className=' text-light' />
+
 				<Vegentable />
+
+				{/* fish */}
+				<p className=' bg-transparent text-light fs-1'>דגים</p>
+				<hr className=' text-light' />
+				<Fish />
+
+				{/* dairy */}
+				<Dairy />
+
+				{/* meat */}
+				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				<hr className=' text-light' />
+				<Meat />
+
+				{/* spices */}
+				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				<hr className=' text-light' />
+				<Spices />
+
+				{/* spices */}
+				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				<hr className=' text-light' />
+				<Spices />
+
+				{/* bakery */}
+				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				<hr className=' text-light' />
+				<Bakery />
+
+				{/* beverages */}
+				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				<hr className=' text-light' />
+				<Beverages />
+
+				{/* forzen */}
+				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				<hr className=' text-light' />
+				<Frozen />
+
+				{/* snacks */}
+				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				<hr className=' text-light' />
+				<Snacks />
 
 				{/* Customer support section */}
 				<section className='my-5'>

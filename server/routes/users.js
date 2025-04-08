@@ -33,6 +33,8 @@ const userSchema = Joi.object({
 		alt: Joi.string().allow(""),
 	}),
 	role: Joi.string().valid("Admin", "Moderator", "Client").default("Client"),
+	activity: Joi.array(),
+	registrAt: Joi.string(),
 });
 
 const loginSchema = Joi.object({
@@ -58,7 +60,10 @@ router.post("/", async (req, res) => {
 		if (user)
 			return res.status(400).send("This user already exists. Please try another.");
 
-		user = new User(req.body);
+		user = new User({
+			...req.body,
+			registrAt: Date.now().toLocaleString("he-IL"),
+		});
 		const salt = bcryptjs.genSaltSync(10);
 		user.password = bcryptjs.hashSync(user.password, salt);
 
@@ -93,7 +98,7 @@ router.post("/login", async (req, res) => {
 		if (error) return res.status(400).send(error.details[0].message);
 
 		// Check if user have pression to get the users
-		const user = await User.findOne({email: req.body.email});
+		let user = await User.findOne({email: req.body.email});
 		if (!user) return res.status(400).send("Invalid credentials");
 
 		// Check password
@@ -104,14 +109,12 @@ router.post("/login", async (req, res) => {
 			return res.status(400).send("Invalid credentials");
 		}
 
+
+		user.activity.push(new Date().toISOString("he-IL"));
+		await user.save();
+
 		const token = Jwt.sign(
-			_.pick(user, [
-				"_id",
-				"name.first",
-				"name.last",
-				"role",
-				"image.url",
-			]),
+			_.pick(user, ["_id", "name.first", "name.last", "role", "image.url"]),
 			process.env.JWT_SECRET,
 		);
 

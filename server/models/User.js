@@ -1,4 +1,3 @@
-const {required} = require("joi");
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
@@ -47,6 +46,8 @@ const userSchema = new mongoose.Schema(
 			enum: ["Admin", "Moderator", "Client"],
 			default: "Client",
 		},
+		activity: {type: Array, required: true},
+		registrAt: {type: String},
 		createdAt: {
 			type: Date,
 			default: Date.now,

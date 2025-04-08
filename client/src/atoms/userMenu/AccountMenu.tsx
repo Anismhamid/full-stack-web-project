@@ -30,12 +30,15 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 	};
 	return (
 		<Fragment>
-			<Box sx={{display: "flex", alignItems: "center", textAlign: "center"}}>
+			<Box
+				dir='rtl'
+				sx={{display: "flex", alignItems: "center", textAlign: "center"}}
+			>
 				<Tooltip title='הגדרות חשבון'>
 					<IconButton
 						onClick={handleClick}
 						size='small'
-						sx={{ml: 2, width: "40px"}}
+						sx={{width: "40px", position: "absolute", left: 10}}
 						aria-controls={open ? "account-menu" : undefined}
 						aria-haspopup='true'
 						aria-expanded={open ? "true" : undefined}
@@ -56,9 +59,9 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 				onClick={handleClose}
 				slotProps={{
 					paper: {
-						elevation: 0,
+						elevation: 10,
 						sx: {
-							overflow: "visible",
+							overflow: "hidden",
 							filter: "drop-shadow(0px 2px 8px rgba(255, 255, 255, 0.32))",
 							mt: 1.5,
 							"& .MuiAvatar-root": {
@@ -89,19 +92,13 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 					<Avatar
 						src={auth && auth.image.url ? auth.image.url : "/svg/add.svg"}
 					/>
-					פרופיל
+					החשבון שלי
 				</MenuItem>
-				<MenuItem onClick={handleClose}>
-					<Avatar /> חשבון שלי
-				</MenuItem>
+
 				<Divider />
 				<MenuItem onClick={handleClose}>
-					<ListItemIcon>{fontAwesomeIcon.addPerson}</ListItemIcon>
-					Add another account
-				</MenuItem>
-				<MenuItem onClick={handleClose}>
 					<ListItemIcon>{fontAwesomeIcon.setting}</ListItemIcon>
-					Settings
+					הגדרות
 				</MenuItem>
 				<MenuItem onClick={() => logout()}>
 					{fontAwesomeIcon.LogOut} Logout

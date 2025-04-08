@@ -84,7 +84,7 @@ const Cart: FunctionComponent<CartProps> = () => {
 											<div className='border rounded-3 pe-2'>
 												<img
 													style={{
-														height: "100px",
+														height: "150px",
 														width: "150px",
 													}}
 													className='img-fluid me-5 rounded'

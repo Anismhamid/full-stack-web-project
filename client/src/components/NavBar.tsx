@@ -1,19 +1,21 @@
-import {FunctionComponent, memo, useEffect} from "react";
+import {FunctionComponent, memo, useEffect, useState} from "react";
 import {NavLink, useLocation, useNavigate} from "react-router-dom";
 import {path, productsPathes} from "../routes/routes";
 import {useUser} from "../context/useUSer";
 import useToken from "../hooks/useToken";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import AccountMenu from "../atoms/userMenu/AccountMenu";
-import {AppBar, MenuList, Tooltip} from "@mui/material";
+import {AppBar, Badge, Box, MenuList, Tooltip} from "@mui/material";
 import RoleType from "../interfaces/UserType";
+import {navbarCategoryLinks} from "../helpers/navCategoryies";
 
 interface NavBarProps {}
 
-const NavBar: FunctionComponent<NavBarProps> = memo(() => {
+const NavBar: FunctionComponent<NavBarProps> = () => {
 	const location = useLocation();
 	const {decodedToken, setAfterDecode} = useToken();
 	const {auth, setAuth, isLoggedIn, setIsLoggedIn} = useUser();
+
 	const navigate = useNavigate();
 
 	const isActive = (path: string) => location.pathname === path;
@@ -41,29 +43,12 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 	return (
 		<>
 			<AppBar position='sticky'>
-				<MenuList className='nav nav-tabs d-flex align-items-center justify-content-around border-bottom border-success-subtle '>
-					{!isLoggedIn ? (
-						<li>
-							<button
-								onClick={() => navigate(path.Login)}
-								className={`fw-bold bg-gradient ${
-									isActive(path.Login)
-										? "text-danger bg-light fw-bold fs-5"
-										: ""
-								} nav-link`}
-								aria-current='page'
-							>
-								התחבר
-							</button>
-						</li>
-					) : (
-						isLoggedIn && <AccountMenu logout={logout} />
-					)}
+				<MenuList className='nav  d-flex align-items-center'>
 					<Tooltip title='בית' arrow color='secondary'>
 						<li className='nav-item'>
 							<NavLink
 								className={`${
-									isActive(path.Home) ? "text-danger fw-bold fs-5" : ""
+									isActive(path.Home) ? "text-danger fw-bold" : ""
 								} nav-link`}
 								aria-current='page'
 								to={path.Home}
@@ -78,7 +63,7 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 								<NavLink
 									className={`${
 										isActive(path.UsersManagement)
-											? "text-danger fw-bold fs-5"
+											? "text-danger "
 											: ""
 									} nav-link`}
 									aria-current='page'
@@ -89,134 +74,22 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 							</li>
 						</Tooltip>
 					)}
-					<Tooltip title='פירות' arrow>
-						<li className='nav-item'>
-							<NavLink
-								className={`${
-									isActive(productsPathes.Fruits)
-										? "text-danger fw-bold fs-5"
-										: ""
-								} nav-link `}
-								aria-current='page'
-								to={productsPathes.Fruits}
-							>
-								{fontAwesomeIcon.Fruit}
-							</NavLink>
-						</li>
-					</Tooltip>
-					<Tooltip title='ירקות' arrow>
-						<li className='nav-item'>
-							<NavLink
-								className={`${
-									isActive(productsPathes.Vegetable)
-										? "text-danger"
-										: ""
-								} nav-link`}
-								to={productsPathes.Vegetable}
-							>
-								{fontAwesomeIcon.Vegetable}
-							</NavLink>
-						</li>
-					</Tooltip>
-					<Tooltip title='דגים' arrow>
-						<li className='nav-item'>
-							<NavLink
-								className={`${
-									isActive(productsPathes.fish) ? "text-danger" : ""
-								} nav-link`}
-								to={productsPathes.fish}
-							>
-								{fontAwesomeIcon.fish}
-							</NavLink>
-						</li>
-					</Tooltip>
-					<Tooltip title='מוצרי חלב' arrow>
-						<li className='nav-item'>
-							<NavLink
-								className={` ${
-									isActive(productsPathes.dairy) ? "text-danger" : ""
-								} nav-link`}
-								to={productsPathes.dairy}
-							>
-								{fontAwesomeIcon.dairyProducts}
-							</NavLink>
-						</li>
-					</Tooltip>
-					<Tooltip title='בשר' arrow>
-						<li className='nav-item'>
-							<NavLink
-								className={` ${
-									isActive(productsPathes.meat) ? "text-danger" : ""
-								} nav-link`}
-								to={productsPathes.meat}
-							>
-								{fontAwesomeIcon.meat}
-							</NavLink>
-						</li>
-					</Tooltip>
-					<Tooltip title='תבלינים' arrow>
-						<li className='nav-item'>
-							<NavLink
-								className={` ${
-									isActive(productsPathes.spices) ? "text-danger" : ""
-								} nav-link`}
-								to={productsPathes.spices}
-							>
-								{fontAwesomeIcon.spices}
-							</NavLink>
-						</li>
-					</Tooltip>
-					<Tooltip title='מאפים' arrow>
-						<li className='nav-item'>
-							<NavLink
-								className={` ${
-									isActive(productsPathes.bakery) ? "text-danger" : ""
-								} nav-link`}
-								to={productsPathes.bakery}
-							>
-								{fontAwesomeIcon.bakery}
-							</NavLink>
-						</li>
-					</Tooltip>
-					<Tooltip title='שתייה' arrow>
-						<li className='nav-item'>
-							<NavLink
-								className={` ${
-									isActive(productsPathes.beverages)
-										? "text-danger"
-										: ""
-								} nav-link`}
-								to={productsPathes.beverages}
-							>
-								{fontAwesomeIcon.beverages}
-							</NavLink>
-						</li>
-					</Tooltip>
-					<Tooltip title='מוצרים קפואים' arrow>
-						<li className='nav-item'>
-							<NavLink
-								className={` ${
-									isActive(productsPathes.forzen) ? "text-danger" : ""
-								} nav-link`}
-								to={productsPathes.forzen}
-							>
-								{fontAwesomeIcon.forzen}
-							</NavLink>
-						</li>
-					</Tooltip>
-					<Tooltip title='חטיפים' arrow>
-						<li className='nav-item'>
-							<NavLink
-								className={` ${
-									isActive(productsPathes.snacks) ? "text-danger" : ""
-								} nav-link`}
-								to={productsPathes.snacks}
-							>
-								{fontAwesomeIcon.snacks}
-							</NavLink>
-						</li>
-					</Tooltip>
-					{/* 
+
+					{navbarCategoryLinks.map(({label, path, icon}) => (
+						<Tooltip key={path} title={label} arrow>
+							<li className='nav-item'>
+								<NavLink
+									className={`${
+										isActive(path) ? "text-danger" : ""
+									} nav-link`}
+									to={path}
+								>
+									{icon}
+								</NavLink>
+							</li>
+						</Tooltip>
+					))}
+
 					{auth && isLoggedIn && (
 						<Tooltip title='הזמנות שלי' arrow>
 							<li className='nav-item'>
@@ -233,7 +106,7 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 								</NavLink>
 							</li>
 						</Tooltip>
-					)} */}
+					)}
 
 					<li className='nav-item'>
 						<NavLink
@@ -257,11 +130,11 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 							צור קשר
 						</NavLink>
 					</li>
-					{/* {auth && isLoggedIn && (
+					{auth && isLoggedIn && (
 						<Tooltip title='סל קניות' arrow>
 							<li className='nav-item cart-icon'>
-								<Box sx={{display: "flex", gap: 3}}>
-									<Badge badgeContent={3} variant='solid'>
+								<Box sx={{display: "flex", gap: 1}}>
+									<Badge badgeContent={1}>
 										<NavLink
 											className={` ${
 												isActive(path.Cart) ? "text-danger" : ""
@@ -270,12 +143,33 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 											to={path.Cart}
 										>
 											{fontAwesomeIcon.CartInoc}
-										</NavLink>{" "}
+										</NavLink>
 									</Badge>
 								</Box>
 							</li>
 						</Tooltip>
-					)} */}
+					)}
+
+					{!isLoggedIn ? (
+						<li>
+							<button
+								onClick={() => navigate(path.Login)}
+								className={`fw-bold position-absolute ${
+									isActive(path.Login) ? "" : ""
+								} nav-link`}
+								aria-current='page'
+								style={{
+									backgroundColor: "#00B336",
+									left: "6px",
+									bottom: "5px",
+								}}
+							>
+								התחבר
+							</button>
+						</li>
+					) : (
+						isLoggedIn && <AccountMenu logout={logout} />
+					)}
 				</MenuList>
 			</AppBar>
 			<div
@@ -288,7 +182,7 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 					right: "16px",
 					backgroundColor: "#1A1E22",
 					borderRadius: "100%",
-					top: "110px",
+					top: "105px",
 				}}
 			>
 				<span style={{color: "#66B2FF"}} className='fs-2'>
@@ -297,6 +191,6 @@ const NavBar: FunctionComponent<NavBarProps> = memo(() => {
 			</div>
 		</>
 	);
-});
+};
 
-export default NavBar;
+export default memo(NavBar);

@@ -2,7 +2,6 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@100;200;300;400;500;600;700&display=swap');
 
 #root {
-  /* background-color: rgba(88, 250, 88, 0.336); */
   font-family: "IBM Plex Sans Hebrew", sans-serif;
 }
 
@@ -23,18 +22,8 @@ img {
   -o-transition: 0.5s;
 }
 
-.logo {
-  position: relative;
-  left: 5px;
-  top: 120px;
-  height: 100px;
-  filter: drop-shadow(0px 0px 5px rgb(255, 255, 255));
-  -webkit-filter: drop-shadow(0px 0px 5px rgb(255, 255, 255));
-}
-
 .login {
-  background: radial-gradient(rgba(0, 255, 34, 0.411), rgb(0, 0, 0)), url("./assets/login-register.png");
-  background-position: bottom;
+  background: radial-gradient(#11171cbb, #16181ba2), url("./assets/login-register.png");  background-position: bottom;
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
@@ -44,7 +33,7 @@ img {
   flex-direction: column;
 
   & form {
-    max-width: 696px;
+    max-width: 600px;
     padding: 2rem;
     background-color: rgba(0, 0, 0, 0.8);
     margin: auto;
@@ -69,13 +58,6 @@ main p {
   padding: 1rem;
 }
 
-.logout {
-  margin: 1rem;
-
-  &:hover {
-    background: black !important;
-  }
-}
 
 .link-success:hover {
   transform: scale(1.2);
@@ -156,7 +138,7 @@ main .loader {
 
 
 .gradient {
-  background: radial-gradient(#11171cb4, #16181b8e), url("./assets/login-register.png");
+  background: radial-gradient(#11171c9a, #16181ba1), url("./assets/login-register.png");
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
@@ -176,12 +158,12 @@ main .loader {
 }
 
 .card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
-  -webkit-transform: translateY(-10px);
-  -moz-transform: translateY(-10px);
-  -ms-transform: translateY(-10px);
-  -o-transform: translateY(-10px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 12px rgba(255, 255, 255, 0.15);
+  -webkit-transform: translateY(-3px);
+  -moz-transform: translateY(-3px);
+  -ms-transform: translateY(-3px);
+  -o-transform: translateY(-3px);
 }
 
 .btn {
@@ -199,9 +181,7 @@ main .loader {
   -o-transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.btn:hover {
-  background-color: #00b368;
-}
+
 
 .modal-body {
   font-size: 1.1rem;
@@ -211,25 +191,19 @@ main .loader {
   background: #000000ec;
 }
 
-.nav-item:hover {
-  transform: translateY(-5px);
-  color: #fff;
-  -webkit-transform: translateY(-5px);
-  -moz-transform: translateY(-5px);
-  -ms-transform: translateY(-5px);
-  -o-transform: translateY(-5px);
-}
-
 .nav-link.active {
-  border-bottom: 3px solid #e60000 !important;
+  border: 1px solid #66B2FF !important;
 }
 
 
-.nav-link:hover {
+.nav-link {
   color: #fff;
-  background-color: #00b336;
-  border-radius: 5px;
+  border-radius: 7px;
   transition: all 0.3s ease;
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  -ms-border-radius: 7px;
+  -o-border-radius: 7px;
 }
 
 footer {

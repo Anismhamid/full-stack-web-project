@@ -37,7 +37,6 @@ function App() {
 		<UserProvider>
 			<ToastContainer />
 			<NavBar />
-
 			<SpeedDial
 				ariaLabel='cart'
 				sx={{position: "fixed", bottom: 16, right: 16}}
@@ -46,17 +45,6 @@ function App() {
 					navigate(path.Cart);
 				}}
 			/>
-			<SpeedDial
-				ariaLabel='my-orders'
-				sx={{position: "fixed", bottom: 16, right: 90}}
-				icon={fontAwesomeIcon.ordersList}
-				onClick={() => {
-					navigate(path.MyOrders);
-				}}
-			>
-				
-			</SpeedDial>
-
 			<Routes>
 				<Route path={path.Home} element={<Home />} />
 				<Route path={path.Login} element={<Login />} />

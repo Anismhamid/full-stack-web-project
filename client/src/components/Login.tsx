@@ -12,7 +12,6 @@ import {showSuccess} from "../atoms/Toast";
 interface LoginProps {}
 
 const Login: FunctionComponent<LoginProps> = () => {
-	// const dispatch = useDispatch<Dispatch<UserAction>>();
 	const {setAuth, setIsLoggedIn} = useUser();
 	const navigate = useNavigate();
 	const {decodedToken, setAfterDecode} = useToken();
