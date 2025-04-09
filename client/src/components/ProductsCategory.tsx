@@ -91,7 +91,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 				console.log(err);
 			})
 			.finally(() => setLoading(false));
-	}, [category]);
+	}, []);
 
 	const handleShowMore = () => {
 		setShowMoreLoading(true);
@@ -122,6 +122,11 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 											className='img-thumbnail rounded-3'
 											src={product.image_url}
 											alt={product.product_name}
+											style={{
+												height: "300px",
+												objectFit: "cover",
+												width: "100%",
+											}}
 										/>
 									</div>
 

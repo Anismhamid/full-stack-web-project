@@ -15,7 +15,7 @@ type Auth = {
 	};
 	image: {
 		url: string;
-		alt:string
+		alt: string;
 	};
 	role: string;
 	iat: number;
@@ -23,14 +23,26 @@ type Auth = {
 
 // UserContext type
 interface UserContextType {
-	auth: Auth | null;
-	setAuth: React.Dispatch<React.SetStateAction<Auth | null>>;
+	auth: Auth;
+	setAuth: React.Dispatch<React.SetStateAction<Auth>>;
 	isLoggedIn: boolean;
 	setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const defaultUserContext: UserContextType = {
-	auth: null,
+	auth: {
+		_id: "",
+		name: {
+			first: "",
+			last: "",
+		},
+		image: {
+			url: "",
+			alt: "",
+		},
+		role: "",
+		iat: 0,
+	},
 	setAuth: () => {},
 	isLoggedIn: false,
 	setIsLoggedIn: () => {},
@@ -51,8 +63,20 @@ interface UserProviderProps {
 }
 
 export const UserProvider: FunctionComponent<UserProviderProps> = ({children}) => {
-	const [auth, setAuth] = useState<Auth | null>(null);
 	const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+	const [auth, setAuth] = useState<Auth>({
+		_id: "",
+		name: {
+			first: "",
+			last: "",
+		},
+		image: {
+			url: "",
+			alt: "",
+		},
+		role: "",
+		iat: 0,
+	});
 
 	return (
 		<UserContext.Provider

@@ -1,18 +1,70 @@
-import {Avatar} from "@mui/material";
-import {FunctionComponent} from "react";
+import {Avatar, Button} from "@mui/material";
+import {FunctionComponent, useEffect, useState} from "react";
+import {getUserById} from "../services/usersServices";
+import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import {useUser} from "../context/useUSer";
 
 interface ProfileProps {}
 
 const Profile: FunctionComponent<ProfileProps> = () => {
 	const {auth} = useUser();
+	const [user, setUser] = useState<{
+		_id: string;
+		name: {
+			first: string;
+			last: string;
+		};
+		phone: {
+			phone_1: string;
+			phone_2: string;
+		};
+		address: {
+			city: string;
+			street: string;
+			houseNumber?: string;
+		};
+		email: string;
+		image: {
+			url: string;
+			alt: string;
+		};
+		role: string;
+		status: string;
+	}>({
+		_id: "",
+		name: {
+			first: "",
+			last: "",
+		},
+		phone: {
+			phone_1: "",
+			phone_2: "",
+		},
+		address: {
+			city: "",
+			street: "",
+			houseNumber: "",
+		},
+		email: "",
+		image: {
+			url: "",
+			alt: "",
+		},
+		role: "",
+		status: "",
+	});
+
+	useEffect(() => {
+		getUserById(auth._id).then((user) => setUser(user));
+	}, [auth]);
+
 	return (
 		<main className=' min-vh-100'>
 			<div className='container h-100'>
 				<div className=' d-flex align-items-center justify-content-center'>
 					<Avatar
-						src={auth?.image.url}
-						alt={`${auth?.image.alt}'s avatar`}
+						src={user.image.url || "/Logo.png"}
+						alt={`${user.image.alt}'s avatar`}
 						sx={{
 							width: 200,
 							height: 200,
@@ -29,16 +81,18 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 				<table className='table table-striped table-dark table-bordered'>
 					<thead>
 						<tr>
-							<th>שם משתמש</th>
-							<th>שם משפחה</th>
+							<th>שם מלא</th>
 							<th>דו"אל</th>
+							<th>טלפון</th>
+							<th>מחיקת חשבון</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
-							<td>1</td>
-							<td>2</td>
-							<td>3</td>
+							<td>{user.name.first}</td>
+							<td>{user.email}</td>
+							<td>{user.phone.phone_1}</td>
+							<td><Button color="error">{fontAwesomeIcon.trash}</Button></td>
 						</tr>
 					</tbody>
 				</table>
@@ -49,25 +103,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 				<div className='col-4 bg-danger'>2</div>
 				<div className='col-4 bg-success'>3</div>
 			</div>
-			{/* <div className='text-center'>
-					<Avatar
-						src={auth?.image.url}
-						alt={`${auth?.image.alt}'s avatar`}
-						sx={{width: 100, height: 100, marginBottom: 2,textAlign: "center"}}
-					/>
-					<Typography variant='h5'>
-						{auth?.name.first} {auth?.name.last}
-					</Typography>
-					<Typography variant='body1' color='textSecondary'>
-						<strong>Age:</strong> {"age"}
-					</Typography>
-					<Typography variant='body1' color='textSecondary'>
-						<strong>Location:</strong> {"location"}
-					</Typography>
-					<Typography variant='body1' color='textSecondary'>
-						<strong>Bio:</strong> {"bio"}
-					</Typography>
-				</div> */}
 		</main>
 	);
 };

@@ -30,21 +30,25 @@ import Snacks from "./components/Snacks.js";
 import Profile from "./components/Profile.js";
 import {SpeedDial} from "@mui/material";
 import {fontAwesomeIcon} from "./FontAwesome/Icons.js";
+import useToken from "./hooks/useToken.js";
 
 function App() {
+	const {decodedToken} = useToken();
 	const navigate = useNavigate();
 	return (
-		<UserProvider>
+		<>
 			<ToastContainer />
 			<NavBar />
-			<SpeedDial
-				ariaLabel='cart'
-				sx={{position: "fixed", bottom: 16, right: 16}}
-				icon={fontAwesomeIcon.CartInoc}
-				onClick={() => {
-					navigate(path.Cart);
-				}}
-			/>
+			{decodedToken && (
+				<SpeedDial
+					ariaLabel='cart'
+					sx={{position: "fixed", bottom: 16, right: 16}}
+					icon={fontAwesomeIcon.CartInoc}
+					onClick={() => {
+						navigate(path.Cart);
+					}}
+				/>
+			)}
 			<Routes>
 				<Route path={path.Home} element={<Home />} />
 				<Route path={path.Login} element={<Login />} />
@@ -71,7 +75,7 @@ function App() {
 				<Route path={path.Png} element={<PageNotFound />} />
 			</Routes>
 			<Footer />
-		</UserProvider>
+		</>
 	);
 }
 

@@ -44,10 +44,10 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 						aria-expanded={open ? "true" : undefined}
 					>
 						<Avatar
-							className=' text-light bg-success'
+							className='bg-primary'
 							sx={{width: 40, height: 40}}
 							src={auth && auth.image.url ? auth.image.url : "/svg/add.svg"}
-						></Avatar>
+						/>
 					</IconButton>
 				</Tooltip>
 			</Box>
@@ -90,7 +90,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 			>
 				<MenuItem onClick={() => navigate(path.Profile)}>
 					<Avatar
-						src={auth && auth.image.url ? auth.image.url : "/svg/add.svg"}
+						src={auth && auth.image.url ? auth.image.url : "/Logo.png"}
 					/>
 					החשבון שלי
 				</MenuItem>
@@ -101,7 +101,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 					הגדרות
 				</MenuItem>
 				<MenuItem onClick={() => logout()}>
-					{fontAwesomeIcon.LogOut} Logout
+					<ListItemIcon>{fontAwesomeIcon.LogOut}</ListItemIcon> יציאה
 				</MenuItem>
 			</Menu>
 		</Fragment>

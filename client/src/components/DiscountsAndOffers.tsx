@@ -2,7 +2,7 @@ import {FunctionComponent, useEffect, useState} from "react";
 import {Products} from "../interfaces/Products";
 import {getProductsInDiscount} from "../services/productsServices";
 import {Link} from "react-router-dom";
-import {path} from "../routes/routes";
+import {productsPathes} from "../routes/routes";
 import Loader from "../atoms/loader/Loader";
 
 interface DiscountsAndOffersProps {}
@@ -11,11 +11,30 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 	const [productsInDiscount, setProductsInDiscount] = useState<Products[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 
+	// Category to path mapping
+	const categoryToPath: Record<string, string> = {
+		Fruit: productsPathes.Fruits,
+		Vegetable: productsPathes.Vegetable,
+		Fish: productsPathes.fish,
+		Dairy: productsPathes.dairy,
+		Meat: productsPathes.meat,
+		Spices: productsPathes.spices,
+		Bakery: productsPathes.bakery,
+		Beverages: productsPathes.beverages,
+		Frozen: productsPathes.forzen,
+		Snacks: productsPathes.snacks,
+	};
+
 	useEffect(() => {
-		getProductsInDiscount().then((res) => {
-			setProductsInDiscount(res);
-			setLoading(false);
-		});
+		getProductsInDiscount()
+			.then((res) => {
+				setProductsInDiscount(res);
+				setLoading(false);
+			})
+			.catch((error) => {
+				console.error(error);
+				setLoading(false);
+			});
 	}, []);
 
 	if (loading) {
@@ -38,45 +57,44 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 				</p>
 			</div>
 			<div className='row m-auto'>
-				{productsInDiscount.map((productsInDiscount) => (
-					<div
-						className='col-md-4 col-lg-3 col-sm-10 m-auto'
-						key={productsInDiscount._id}
-					>
-						<div className='card mb-3'>
-							<div className='card-img-top object-fit-cover overflow-hidden'>
-								<Link
-									to={
-										productsInDiscount.category === "Fruit"
-											? path.Fruits
-											: path.Vegetable
-									}
-								>
-									<img
-										style={{
-											height: "150px",
-											width: "100%",
-										}}
-										className=' img-thumbnail rounded-3'
-										src={productsInDiscount.image_url}
-										alt={productsInDiscount.product_name}
-									/>
-								</Link>
-							</div>
-							<div className='card-body'>
-								<h5 className='card-title text-center'>
-									{productsInDiscount.product_name}
-								</h5>
-								<hr />
-								<h5 className='text-danger text-center'>
-									{productsInDiscount.sale
-										? `במבצע${productsInDiscount.discount}%`
-										: "הצעות בשבילך"}
-								</h5>
+				{productsInDiscount.map((product) => {
+					// Look up the category path from the map
+					const categoryPath = categoryToPath[product.category] || "";
+
+					return (
+						<div
+							className='col-md-4 col-lg-3 col-sm-10 m-auto'
+							key={product._id}
+						>
+							<div className='card mb-3'>
+								<div className='card-img-top object-fit-cover overflow-hidden'>
+									<Link to={categoryPath}>
+										<img
+											style={{
+												height: "150px",
+												width: "100%",
+											}}
+											className='img-thumbnail rounded-3'
+											src={product.image_url}
+											alt={product.product_name}
+										/>
+									</Link>
+								</div>
+								<div className='card-body'>
+									<h5 className='card-title text-center'>
+										{product.product_name}
+									</h5>
+									<hr />
+									<h5 className='text-danger text-center'>
+										{product.sale
+											? `במבצע ${product.discount}%`
+											: "הצעות בשבילך"}
+									</h5>
+								</div>
 							</div>
 						</div>
-					</div>
-				))}
+					);
+				})}
 			</div>
 		</main>
 	);

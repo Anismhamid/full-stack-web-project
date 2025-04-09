@@ -1,4 +1,4 @@
-import {FunctionComponent, useEffect, useState} from "react";
+import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import {Order} from "../interfaces/Order";
 import {getAllOrders, patchStatus} from "../services/orders";
 import {useNavigate} from "react-router-dom";
@@ -11,22 +11,23 @@ import RoleType from "../interfaces/UserType";
 interface AllTheOrdersProps {}
 
 const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
-	const navigate = useNavigate();
-	const {auth} = useUser();
-	const [loading, setLoading] = useState<boolean>(true);
 	const [orderStatuses, setOrderStatuses] = useState<{[orderNumber: string]: string}>(
 		{},
 	);
 	const [statusLoading, setStatusLoading] = useState<{[orderNumber: string]: boolean}>(
 		{},
 	); // Track loading for each status update
-
 	const [allOrders, setAllOrders] = useState<Order[]>([]);
+	const [loading, setLoading] = useState<boolean>(true);
 	const [searchQuery, setSearchQuery] = useState("");
+	const navigate = useNavigate();
+	const {auth} = useUser();
 
-	const filteredUsers = allOrders.filter((order) =>
-		order.orderNumber.toUpperCase().includes(searchQuery.toLowerCase()),
-	);
+	const filteredOrders = useMemo(() => {
+		return allOrders.filter((order) =>
+			order.orderNumber.toUpperCase().includes(searchQuery.toLowerCase()),
+		);
+	}, [allOrders, searchQuery]);
 
 	useEffect(() => {
 		getAllOrders()
@@ -45,25 +46,27 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 			.finally(() => {
 				setLoading(false);
 			});
-	}, [searchQuery]);
+	}, []);
 
-	const handleStatus = async (status: string, orderId: string) => {
-		setStatusLoading((prev) => ({...prev, [orderId]: true})); // loading state for specific order
-		try {
-			await patchStatus(status, orderId);
-			setOrderStatuses((prevStatuses) => ({
-				...prevStatuses,
-				[orderId]: status,
-			}));
-		} catch (error) {
-			console.error("Failed to update order status:", error);
-		} finally {
-			const a = setTimeout(() => {
-				setStatusLoading((prev) => ({...prev, [orderId]: false})); // Reset loading state
-			}, 1000);
-			return () => clearTimeout(a);
-		}
-	};
+	const handleStatus = useMemo(
+		() => async (status: string, orderId: string) => {
+			setStatusLoading((prev) => ({...prev, [orderId]: true})); // loading state for specific order
+			try {
+				await patchStatus(status, orderId);
+				setOrderStatuses((prevStatuses) => ({
+					...prevStatuses,
+					[orderId]: status,
+				}));
+			} catch (error) {
+				console.error("Failed to update order status:", error);
+			} finally {
+				setTimeout(() => {
+					setStatusLoading((prev) => ({...prev, [orderId]: false})); // Reset loading state
+				}, 1000);
+			}
+		},
+		[statusLoading,orderStatuses],
+	);
 
 	if (loading) {
 		return <Loader />;
@@ -87,8 +90,8 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 					/>
 				</form>
 				<div className='row'>
-					{filteredUsers.length ? (
-						filteredUsers.map((order) => (
+					{filteredOrders.length ? (
+						filteredOrders.map((order) => (
 							<div key={order.createdAt} className='mb-4 col-md-6 col-lg-3'>
 								<div className=' card p-4 shadow-sm'>
 									<h5 className='card-title text-center bg-primary text-white p-2 rounded'>

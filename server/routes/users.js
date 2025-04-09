@@ -109,7 +109,6 @@ router.post("/login", async (req, res) => {
 			return res.status(400).send("Invalid credentials");
 		}
 
-
 		user.activity.push(new Date().toISOString("he-IL"));
 		await user.save();
 
@@ -151,7 +150,7 @@ router.get("/:userId", auth, async (req, res) => {
 		)
 			return res.status(401).send("You Cannot access");
 
-		const user = await User.findOne({userId: req.params.userId}, {password: 0});
+		const user = await User.findOne({_id: req.params.userId}).select("-password");
 		if (!user) return res.status(404).send("user Not Found");
 
 		res.status(200).send(user);

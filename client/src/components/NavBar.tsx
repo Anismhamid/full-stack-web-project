@@ -1,6 +1,6 @@
-import {FunctionComponent, memo, useEffect, useState} from "react";
+import {FunctionComponent, memo, useEffect} from "react";
 import {NavLink, useLocation, useNavigate} from "react-router-dom";
-import {path, productsPathes} from "../routes/routes";
+import {path} from "../routes/routes";
 import {useUser} from "../context/useUSer";
 import useToken from "../hooks/useToken";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
@@ -172,6 +172,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					)}
 				</MenuList>
 			</AppBar>
+
 			<div
 				onClick={() => navigate(-1)}
 				className='position-fixed border border-light fw-bold link-success z-3 d-flex align-items-center justify-content-center'

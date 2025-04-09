@@ -54,6 +54,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 			});
 	}, []);
 
+
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {
 			const productName = product.product_name || "";
