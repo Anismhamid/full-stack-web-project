@@ -1,8 +1,13 @@
-<h1>E-Commerce Platform - Corner Market</h1>
+<main style="padding:10px; height:fit-content; line-height:1;border-radius:20px; width:100%">
+<h1 style="text-align:center; color:red">E-Commerce Platform - Corner Market</h1>
 
-This is a simple e-commerce application that allows users to browse and purchase various fresh products such as fruits, vegetables, fish, and dairy. Users can view categories of products, access discounts and offers, add items to the cart, and proceed to checkout.
+<h2 style="padding:10px ;color: black; background-color:white; height:fit-content; line-height:2; text-align:center;border-radius:20px">
+This is a simple e-commerce application that allows users to browse and purchase various fresh products such as fruits, vegetables, fish, and dairy etc.
+ Users can view categories of products, access discounts and offers, add items to the cart, and proceed to checkout</h2>
 
-## Table of Contents
+<div style=" height:fit-content; line-height:2;border-radius:10px; font-weight:600; max-width:500px;">
+
+<h2 style="font-weight:700;">Table of Contents</h2>
 
 1. [Project Overview](#project-overview)
 2. [Features](#features)
@@ -15,14 +20,11 @@ This is a simple e-commerce application that allows users to browse and purchase
 9. [API Integration](#api-integration)
 10. [License](#license)
 11. [How to Contribute](#how-to-contribute)
-
----
+</div>
 
 ## Project Overview
 
 This project is an e-commerce platform that offers a variety of fresh products directly from local suppliers. Customers can select products, view available discounts, and proceed to checkout. The application supports multiple payment and collection methods like credit card, cash on delivery, and self-collection. The checkout process calculates the final price based on product discounts and delivery options.
-
----
 
 ## Features
 
@@ -32,30 +34,155 @@ This project is an e-commerce platform that offers a variety of fresh products d
 -   **Responsive Design**: Fully responsive and optimized for both mobile and desktop devices.
 -   **Authentication**: Secure user authentication and token management.
 -   **Order Management**: Users can place orders with different payment and delivery options.
+-   **Receipts Generation**: Automatically generates a detailed receipt for each order, including business info, customer details, product list, delivery fees, and discounts
+
+    -   ![Receipts Preview](client/src/assets/fonts/WhatsApp%20Image%202025-04-12%20at%2018.21.43_09a9152e.jpg)
+
+-   **Information Included**: The receipt includes:
+    -   Business Information (name, address, contact details)
+    -   Customer’s Name and Order Information
+    -   List of Products (with name, quantity, and price)
+    -   Delivery Fee (if applicable)
+    -   Discounts Applied
+    -   Total Amount Due
+-   **Export Options**: Users can download PDF File directly from the receipts page
+
+-   **Real-Time Updates with Socket.IO**: The platform uses **Socket.IO** for real-time updates, providing a seamless experience for users.
+    -   **Order Status Updates**: Customers are instantly notified about changes in their order status (e.g., "Order Processed", "Out for Delivery").
+    -   **Discount Alerts**: Users can get instant notifications on newly available discounts and offers.
+    -   **Socket.IO Client**: The frontend is connected to the backend through **Socket.IO** client, ensuring that the user interface stays up-to-date without needing to refresh the page
+    -   **Admin/Moderator Order Notifications**: Admin or moderator users receive real-time notifications about new orders, allowing them to process and manage them efficiently.
+
+## Technologies
+
+### 🖥️ Frontend
+
+-   **Framework:**: React 19
+
+-   **Build Tool**: Vite
+
+-   **Routing**: React Router DOM v7
+
+-   **State Management**:
+
+    -   `useState`, `useContextApi`
+    -   Real-time updates via **Socket.IO Client** for instant notifications (e.g., order updates, discounts, etc.)
+
+-   **Styling & UI:**
+    -   **Bootstrap v5**
+    -   **React Bootstrap**
+    -   **MUI (Material UI)**
+    -   **MUI Joy UI (beta)**
+    -   **Emotion (@emotion/react, @emotion/styled)**
+    -   **Font Awesome (React)**
+    -   **React Toastify**
+    -   **CSS**
+-   **API Communication:**
+    -   **Axios** (for API requests)
+-   **Form Handling & Validation:**
+    -   **Formik**
+    -   **Yup**
+
+## 🧪 Development & Tooling
+
+-   **TypeScript**
+-   **Vite**
+-   **ESLint**
+-   **React Refresh**
+-   **Database:** MongoDB Atlas (via Mongoose)
+
+## 🛠️ Backend
+
+-   **Framework:** Express.js
+-   **Runtime:** Node.js
+-   **Database:** MongoDB Atlas (via Mongoose)
+
+## 🔌 Real-time Communication
+
+-   **WebSockets:** Powered by **Socket.IO** for real-time communication. Enables features like:
+    -   Live order status updates
+    -   Real-time notifications for admins/moderators when new orders are placed
+    -   Discount announcements pushed to connected clients
+
+## 🌐 Environment Configuration
+
+-   **dotenv** handles environment-specific settings such as database URIs and API keys.
+-   Supports separate configs for development and production environments.
+
+## 🔐 Security
+
+-   **Helmet:** Secures HTTP headers to prevent common attacks (XSS, clickjacking, etc.)
+-   **express-rate-limit:** Implements IP-based rate limiting to prevent abuse and DDoS attacks.
+
+## 🔑 Authentication & Authorization
+
+-   **jsonwebtoken:** Used for generating and verifying JWTs for secure login and access control.
+-   **bcryptjs:** Securely hashes user passwords before storing them in the database.
+
+## 🧾 Validation
+
+-   **Joi:** Schema-based validation for incoming request data across all endpoints.
+
+## 📋 Logging
+
+-   Custom middleware logs server activity.
+-   Logs are persisted in files to assist with debugging, auditing, and monitoring.
+
+## 🌍 CORS
+
+-   **CORS middleware:** Enables safe cross-origin resource sharing between frontend and backend apps.
+
+## 🧱 Routing Structure
+
+-   Modular, RESTful API structure for clean separation of concerns:
+    -   `/api/users`: Authentication, user profiles
+    -   `/api/products`: Product management
+    -   `/api/orders`: Order placement and tracking
+    -   `/api/carts`: Cart operations
+    -   `/api/discounts`: Promotional offers and discounts
+
+## 🛠️ Tooling & Debugging
+
+-   **chalk:** Adds color-coded output to terminal logs
+-   **express-list-routes:** Logs all available routes during development
+-   **cross-env:** Cross-platform `.env` variable support (Windows/macOS/Linux)
 
 ---
 
-# Technologies
+## 🚧 Rate Limiting
 
-## Frontend
+-   Rate limits requests from a single IP to prevent brute force attacks and reduce server overload using **express-rate-limit**.
 
--   **Frontend**: React, vite, React Router
--   **State Management**: React's `useState`, `useContextApi` `useEffect`, Formik, Yup
--   **Styling**: Bootstrap, React bootstrap, React toastify
--   **API Communication**: Axios or Fetch (for API requests)
--   **Form Validation**: Yup with Formik
--   **Routing**: React Router DOM
+## 🔐 Security Features
 
-## Backend
+-   Enhanced protection through **Helmet**
+-   Limits abusive requests through **rate-limiting**
 
--   **Backend Framework:** Express.js
--   **Database:** MongoDB (via Mongoose)-(Atlas)
--   **Environment Variables:** dotenv (configures environment-specific variables)
--   **Security:** Helmet (for HTTP header security)
--   **Rate Limiting:** express-rate-limit (limits the number of requests per IP)
--   **Logging:** Custom Logger Middleware (with logToFile function)
--   **CORS:** CORS (Cross-Origin Resource Sharing) for handling cross-origin requests
--   **Routes:** Modular route handling for Products, Users, Carts, Orders, Discounts
+## 📡 Real-time Notifications with Socket.IO
+
+-   **Admins/Moderators** receive instant push notifications when:
+    -   A new order is placed
+    -   Order status updates occur
+    -   New discounts go live
+-   No page refresh required; client stays in sync in real time
+
+## 📘 Logging System
+
+-   All important backend events are recorded
+-   Logs are written to a file for long-term monitoring and debugging
+
+## 📁 Modular Routes
+
+-   Backend follows a **modular structure** for clean code organization and scalability.
+
+## 🗃️ MongoDB + Mongoose
+
+-   **Mongoose** manages MongoDB collections and schemas
+-   Simplifies database operations and validation
+
+## 📋 Route Listing in Dev Mode
+
+-   In **development**, routes are printed in the console using **express-list-routes** to assist with debugging and mapping API endpoints.
 
 ## API Endpoints
 
@@ -75,43 +202,15 @@ This project is an e-commerce platform that offers a variety of fresh products d
 -   **Environment Configuration**
     -   Based on the environment (production or development), different .env files are loaded to set up environment-specific configurations (e.g., DB connection, API keys).
 
-# Rate Limiting
-
--   Implemented with the express-rate-limit middleware to limit the number of requests an IP can make within a 24-hour window. This helps prevent abuse and reduces the risk of DDoS attacks.
-
-# Security
-
--   Using helmet middleware to enhance the security of HTTP headers and prevent common vulnerabilities like Cross-Site Scripting (XSS), clickjacking, etc.
-
-# Logging
-
--   Custom logger middleware captures logs and writes them to a file for persistence and auditing.
-
-# Modular Routes:
-
--   Routes are organized by resources (products, users, carts, orders, discounts), improving scalability and maintainability.
-
-# CORS
-
--   CORS middleware ensures that the server can accept requests from different domains, facilitating smooth integration between the frontend and backend.
-
-# MongoDB with Mongoose
-
--   Mongoose is used to handle database connections and schema definitions for MongoDB, making data interactions more seamless and easier to manage.
-
-# Route Listing in Development Mode
-
--   In development mode, all routes in the Express app are logged to the console using the express-list-routes package, providing an overview of available routes.
-
 # Server
 
 -   The Express server listens on a port, and depending on the environment, it will either run in development or production mode, adjusting its behavior accordingly.
 
 ---
 
-## Setup
+# Setup
 
-Ensure you have the following prerequisites installed
+### Ensure you have the following prerequisites installed
 
 -   **Node.js** (v20.18.x or higher): [Download Node.js](https://nodejs.org/)
 -   **npm**: Node Package Manager (automatically installed with Node.js)
@@ -120,128 +219,305 @@ Ensure you have the following prerequisites installed
 -   **Postman/Insomnia**: For API testing, download
     -   [Postman](https://www.postman.com/downloads/) or [Insomnia](https://insomnia.rest/download).
 
-## Installation
+# Installation
 
-**Clone the repository**
+### **Clone the repository**
 
 ```bash
 https://github.com/Anismhamid/full-stack-web-project.git
 ```
 
-**Move to the root file `full-stack-web-project` if nedded.**
+### **Navigate to the project folder** `full-stack-web-project` if nedded
 
 ```bash
 cd full-stack-web-project
 ```
 
-**Install dependencies from root file `full-stack-web-project`**
+### **Install dependencies from root folder** `full-stack-web-project`
 
 ```bash
 npm install
 ```
 
-# Run and install the application
+# Run the application
 
-**Development mode**
+### **Development mode**
 
 ```bash
 npm run start:dev
 ```
 
--   This will start the development Client on http://localhost:5173
--   This will start the development Server on http://localhost:8209
+### **The application will run in development mode on:**
+
+-   Client : http://localhost:5173
+
+-   Server : http://localhost:8209
 
 ---
 
-**Production mode**
+### **Production mode**
 
 ```bash
 npm run start:prod
 ```
 
--   This will start the development Client on http://localhost:http://localhost:4173/
--   This will start the development Server on http://localhost:8201
+### **The application will run in production mode on:**
 
-## Features
+-   Client : http://localhost:4173
 
-1. **Browse Categories:** Visit pages like Fish, Dairy, Fruits, etc., to explore products.
+-   Server : http://localhost:8201
 
-2. **View Discounts and Offers:** Check out products on discount with real-time updates.
+---
 
-3. **Add to Cart:** Add your favorite items to the shopping cart.
+## File structure
 
-4. **Proceed to Checkout:** Fill in your delivery and payment details and place an order.
+```bash
+full-stack-web-project/
+├── client/                          # React frontend
+│   ├── public/                      # Static assets (e.g., images, fonts)
+│   ├── src/                         # Source code
+│   │   ├── assets/                  # Images, fonts, etc.
+│   │   │   └── fonts/               # Fonts (if any)
+│   │   ├── atoms/                   # Atomic (small) reusable components
+│   │   │   ├── toasts/              # Toast-related components (e.g., SocketToast, Toast)
+│   │   │   │   └── SocketToast.tsx
+│   │   │   ├── modals/              # Modal components (e.g., AddProductModal, LoginModal)
+│   │   │   │   └── AddProductModal.tsx
+│   │   │   ├── loader/              # Loader components (e.g., Spinner, Progress)
+│   │   │   │   └── Loader.tsx
+│   │   │   ├── userMenu/            # User Menu components
+│   │   │   │   └── AccountMenu.tsx
+│   │   │   ├── buttons/             # Button components (optional if needed)
+│   │   │   ├── NavigationButtons.tsx
+│   │   │   └── RemoveFromCart.tsx
+│   │   ├── FontAwesome/             # Font Awesome icons setup
+│   │   ├── components/              # Main React components (e.g., pages, complex UI elements)
+│   │   ├── context/                 # React context providers
+│   │   ├── helpers/                 # Utility/helper functions
+│   │   ├── hooks/                   # Custom React hooks
+│   │   ├── interfaces/              # TypeScript interfaces
+│   │   ├── routes/                  # Route definitions
+│   │   ├── services/                # API and logic services
+│   │   ├── App.tsx                  # Main app component
+│   │   ├── index.css                # Global CSS
+│   │   ├── main.tsx                 # Entry point
+│   │   └── vite-env.d.ts            # Vite environment typing
+│   ├── .env                         # Dev environment variables
+│   ├── .env.production              # Production environment variables
+│   ├── README.md                    # Frontend-specific readme
+│   ├── eslint.config.js             # ESLint configuration
+│   ├── index.html                   # HTML template
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── tsconfig.app.json            # TypeScript app config
+│   ├── tsconfig.json                # Global TypeScript config
+│   ├── tsconfig.node.json           # Node-specific TypeScript config
+│   └── vite.config.ts               # Vite build configuration
+├── server/                         # Express backend
+│   ├── access/                      # Authentication/Authorization related code (optional)
+│   │   └── .log                     # Access logs (if needed)
+│   ├── logs/                        # Application logs
+│   │   └── app.log                  # Application runtime logs
+│   ├── controllers/                 # Route controllers (e.g., orders)
+│   │   ├── orderController.ts       # Example controller
+│   ├── middlewares/                 # Auth, logger, etc.
+│   │   ├── auth/                    # Auth middleware
+│   │   └── logger.ts                # Logger middleware
+│   ├── models/                      # Mongoose schemas/models
+│   │   ├── Cart.ts                  # Cart model
+│   │   ├── Order.ts                 # Order model
+│   │   ├── Product.ts               # Product model
+│   │   ├── Receipt.ts               # Receipt model
+│   │   └── User.ts                  # User model
+│   ├── routes/                      # API route definitions
+│   │   ├── carts.ts                 # Cart routes
+│   │   ├── discountAndOffers.ts     # Discount routes
+│   │   ├── orders.ts                # Order routes
+│   │   ├── products.ts              # Product routes
+│   │   ├── receipt.ts               # Receipt routes
+│   │   └── users.ts                 # User routes
+│   ├── schema/                      # Validation schemas (e.g., Joi validation)
+│   │   ├── orderSchema.ts           # Order validation schema
+│   │   └── productSchema.ts         # Product validation schema
+│   ├── socket/                      # Socket-related logic
+│   │   └── orderSocket.ts           # Order socket logic
+│   ├── .env                         # Environment variables for backend
+│   ├── .env.production              # Production environment variables
+│   ├── package-lock.json
+│   ├── package.json
+│   └── README.md                    # Backend-specific documentation
+├── .gitattributes                   # Git ignore file
+├── .gitignore                   # Git ignore file
+├── package-lock.json                    # Root-level dependencies (e.g., concurrently for frontend & backend)
+├── package.json                    # Root-level dependencies (e.g., concurrently for frontend & backend)
+└── README.md                       # Root-level project documentation
 
-5. **Checkout Flow**
-   The checkout process starts after the user has added products to the cart.
+```
 
-6. During checkout, the user selects the payment method (credit card or cash on delivery) and delivery method (delivery or self-collection).
+## 🧩 Components Overview
 
-    - Once all information is provided, the user confirms the order and is redirected to the order confirmation page.
+All category-based components reuse the `ProductCategory` component to dynamically fetch and display items for their respective categories.
 
-## Components Overview
+---
 
-1. Fish
+### 🥭 Fruit
 
-    - Displays the fish products available for purchase.
-    - It uses the ProductCategory component to fetch and render the fish-related products.
+-   Displays fruit products such as apples, bananas, oranges, etc.
+-   Uses the reusable `ProductCategory` component for display.
 
-2. Dairy
+### 🥦 Vegetable
 
-    - Displays dairy products available for purchase.
-    - Similar to the Fish component, it uses the ProductCategory component to render products in this category.
+-   Renders vegetable items like cucumbers, tomatoes, carrots, etc.
+-   Uses the reusable `ProductCategory` component for display.
 
-3. Discounts and Offers
+### 🐟 Fish
 
-    - Fetches and displays products currently on sale.
-    - Displays a list of discounted products, showing the discount percentage, and allows users to click and view more details.
+-   Shows a variety of fresh fish available for purchase.
+-   Uses the reusable `ProductCategory` component for display.
 
-4. Contact
+### 🧀 Dairy
 
-    - Displays the company’s contact information, including email, phone, and address. It provides a form for users to get in touch with customer service.
+-   Lists dairy products including milk, cheese, yogurt, and more.
+-   Uses the reusable `ProductCategory` component for display.
 
-5. Cart
+### 🍖 Meat
 
-    - Manages the shopping cart, allowing users to view, update, and delete items from the cart.
+-   Displays meat products like chicken, beef, and lamb.
+-   Uses the reusable `ProductCategory` component for display.
 
-6. Checkout
+### 🌶️ Spices
 
-    - Handles the checkout process.
-    - Users can select their preferred payment method, delivery method, and finalize the order.
-    - The component calculates the total amount, applying any discounts or delivery fees.
+-   Contains spice products like turmeric, cumin, pepper, etc.
+-   Uses the reusable `ProductCategory` component for display.
 
-## Services
+### 🍞 Bakery
 
-1.  cart
+-   Renders bakery items such as bread, pastries, and cakes.
+-   Uses the reusable `ProductCategory` component for display.
 
-    -   Contains functions for fetching and updating the cart. The primary function is getCartItems, which retrieves the cart data from the backend.
+### 🧃 Beverages
 
-2.  productsServices
+-   Displays beverage items like juices, soft drinks, and more.
+-   Uses the reusable `ProductCategory` component for display.
 
-    -   Contains functions for interacting with the products API.
-    -   The getProductsInDiscount function retrieves discounted products.
+### 🧊 Frozen
 
-3.  orders
-    -   Handles placing orders. The postOrder function sends order details to the backend.
+-   Lists frozen food products available in the store.
+-   Uses the reusable `ProductCategory` component for display.
 
-## API Integration
+### 🍪 Snacks
 
-1. Cart API
+-   Renders snack products including chips, cookies, and packaged goods.
+-   Uses the reusable `ProductCategory` component for display.
 
-    - **GET /cart/items:** Fetches the current items in the cart.
-    - **POST /order:** Sends the order data (including products, payment method, and collection method) to the server for processing.
+### 💸 Discounts and Offers
 
-2. Products API
+-   Displays discounted items currently on sale.
+-   Shows discount percentage and product details.
+-   Uses the reusable `ProductCategory` component for display.
 
-    - **GET /products/discounts:** Fetches products that are currently on sale.
+---
 
-3. Order API
-    - **POST /orders:** Submits the order and processes the checkout details.
+### 🛒 Cart
 
-## License
+-   Allows users to manage their shopping cart:
+    -   Add, update, or remove products
+    -   View cart summary
+    -   Continue to checkout
 
-# This project is licensed under the MIT License - see the LICENSE file for details.
+### 📦 Checkout
 
-## How to Contribute
+-   Handles the complete checkout flow:
+    -   Choose delivery and payment methods
+    -   Apply discounts
+    -   Calculates total cost including delivery fees and discounts
 
-If you'd like to contribute to this project, feel free to fork the repository, make your changes, and submit a pull request. Contributions are welcome! Be sure to follow the coding style and include tests for any new features.
+### 🧾 Receipt
+
+-   Displays a detailed receipt for completed orders.
+-   Includes:
+    -   Business information
+    -   Customer name and order details
+    -   Product breakdown (name, quantity, price)
+    -   Delivery fees (if applicable)
+    -   Discounts applied
+    -   Final total amount
+-   Provides an option to **download the receipt as a PDF**.
+
+### 📞 Contact
+
+-   Shows company contact details (email, phone, address).
+-   Includes a contact form for customer inquiries.
+
+### ℹ️ About
+
+-   Shares details about the company's mission, services, and values.
+-   Helps customers understand the brand better.
+
+---
+
+# ⚙️ Frontend Services
+
+All services are responsible for handling data communication with the backend API using `axios`. They manage logic such as sending, receiving, and processing data across features like users, orders, products, and carts.
+
+---
+
+## 🛒 Cart Service
+
+Handles operations related to user carts:
+
+-   `addToCart()` – Add a product to the user's cart
+-   `getCartItems()` – Fetch all items currently in the user's cart
+-   `DeleteCartItems()` – Remove a specific product from the cart by name
+
+---
+
+## 📦 Orders Service
+
+Responsible for order placement and management:
+
+-   `postOrder()` – Submit a new order
+-   `getUserOrders()` – Retrieve all orders placed by a specific user
+-   `getAllOrders()` – Fetch all orders (admin access)
+-   `getOrderByOrderNumber()` – Get details of a specific order by its number
+-   `patchStatus()` – Update the status of an order (e.g., "Processing", "Delivered")
+
+---
+
+## 🧺 Products Service
+
+Handles all product-related operations:
+
+-   `getAllProducts()` – Fetch all available products
+-   `getProductsByCategory()` – Get products filtered by category name
+-   `getProductByspicificName()` – Get a single product by name
+-   `createNewProduct()` – Add a new product (Admin/Moderator only)
+-   `updateProduct()` – Update an existing product by name
+-   `deleteProduct()` – Remove a product by name (Admin/Moderator only)
+-   `getProductsInDiscount()` – Fetch limited discounted products (up to 6)
+
+---
+
+## 👤 Users Service
+
+Handles all user account operations:
+
+-   `registerNewUser()` – Register a new user account
+-   `loginUser()` – Log in and receive a JWT token
+-   `getAllUsers()` – Admin route to retrieve all users
+-   `getUserById()` – Fetch specific user details by ID
+-   `patchUserRole()` – Update a user's role (admin/moderator/Client)
+
+---
+
+## 🧾 Receipts Service
+
+Manages order receipt history and data:
+
+-   `getUserReceiptsById()` – Get all receipts associated with a user
+-   `getUsersReceipts()` – Admin route to retrieve all receipts across users (Admin/Moderator Only)
+
+### Have questions, ideas, or want to collaborate?
+
+-   Feel free to reach out at: [anesmhamed1@gmail.com](mailto:anesmhamed1@gmail.com)
+</main>

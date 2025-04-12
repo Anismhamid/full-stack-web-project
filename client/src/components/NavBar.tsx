@@ -8,6 +8,7 @@ import AccountMenu from "../atoms/userMenu/AccountMenu";
 import {AppBar, Badge, Box, MenuList, Tooltip} from "@mui/material";
 import RoleType from "../interfaces/UserType";
 import {navbarCategoryLinks} from "../helpers/navCategoryies";
+import {emptyAuthValues} from "../interfaces/authValues";
 
 interface NavBarProps {}
 
@@ -34,7 +35,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 
 	const logout = () => {
 		localStorage.removeItem("token");
-		setAuth(null);
+		setAuth(emptyAuthValues);
 		setIsLoggedIn(false);
 		setAfterDecode(null);
 		navigate(path.Home);
@@ -122,6 +123,17 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					<li className='nav-item'>
 						<NavLink
 							className={`${
+								isActive(path.Receipt) ? "text-danger fw-bold" : ""
+							} nav-link`}
+							aria-current='page'
+							to={path.Receipt}
+						>
+							קבלות
+						</NavLink>
+					</li>
+					<li className='nav-item'>
+						<NavLink
+							className={`${
 								isActive(path.Contact) ? "text-danger " : ""
 							} nav-link`}
 							aria-current='page'
@@ -183,7 +195,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					right: "16px",
 					backgroundColor: "#1A1E22",
 					borderRadius: "100%",
-					top: "105px",
+					top: "25%",
 				}}
 			>
 				<span style={{color: "#66B2FF"}} className='fs-2'>

@@ -77,6 +77,14 @@ router.post("/", async (req, res) => {
 
 		await cart.save();
 
+		const io = req.app.get("io");
+		io.emit("user:registered", {
+			id: user._id,
+			name: user.name,
+			email: user.email,
+			role: user.role,
+		});
+
 		// creatre token
 		const token = Jwt.sign(
 			_.pick(user, ["_id", "name.first", "name.last", "role"]),
@@ -111,6 +119,12 @@ router.post("/login", async (req, res) => {
 
 		user.activity.push(new Date().toISOString("he-IL"));
 		await user.save();
+
+		const io = req.app.get("io");
+		io.emit("user:newUserLoggedIn", {
+			email: user.email,
+			role: user.role,
+		});
 
 		const token = Jwt.sign(
 			_.pick(user, ["_id", "name.first", "name.last", "role", "image.url"]),

@@ -17,55 +17,52 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 		return <div>{error}</div>;
 	}
 
-	if (!cartItems || !cartItems.products) {
-		return <div>No products found in this order.</div>;
+	if (!cartItems) {
+		return (
+			<h2 className='text-center bg-primary text-white rounded p-3 mb-4'>
+				No products found in this order.
+			</h2>
+		);
 	}
 
 	return (
 		<main className='gradient min-vh-100'>
-			<div className='container'>
-				<h1 className='text-center mb-4'>Order Details</h1>
+			<div className='container p-2 mb-5'>
+				<h1 className='text-center bg-primary text-white rounded p-3 mb-4'>
+					{orderNumber}
+				</h1>
 				<div className='row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4'>
-					{cartItems.products.map((product, index) => {
-						const {
-							product_name,
-							product_image,
-							quantity,
-							sale,
-							discount,
-							product_price,
-						} = product;
-						return (
-							<div key={product_image + index + 1} className='col'>
-								<div className='card h-100 shadow-sm border-0'>
-									<img
-										src={product_image}
-										alt={product_name}
-										className='card-img-top'
-										style={{
-											height: "300px",
-											objectFit: "cover",
-										}}
-									/>
-									<div className='card-body d-flex flex-column'>
-										<h5 className='card-title'>{product_name}</h5>
-										<h5>{sale ? `מבצע${discount}` : ""}</h5>
-										<h6 className='card-subtitle mb-2 text-muted'>
-											כמות: {quantity}
-										</h6>
-										<h6 className='card-subtitle mb-2 text-success fw-bold fs-5'>
-											מחיר{" "}
-											{product_price.toLocaleString("he-IL", {
-												style: "currency",
-												currency: "ILS",
-											})}
-										</h6>
-										<h5>{discount < 0 ? "מחיר אחרי מבצע" : ""}</h5>
-									</div>
+					{cartItems.products.map((product, index) => (
+						<div key={product.product_image + index + 1} className='col'>
+							<div className='card h-100 shadow-sm border-0'>
+								<img
+									src={product.product_image}
+									alt={product.product_name || "Product image"}
+									className='card-img-top'
+									role='img'
+								/>
+								<div className='card-body d-flex flex-column'>
+									<h5 className='card-title'>{product.product_name}</h5>
+									<h5>
+										{product.sale ? `מבצע${product.discount}` : ""}
+									</h5>
+									<h6 className='card-subtitle mb-2 text-muted'>
+										כמות: {product.quantity}
+									</h6>
+									<h6 className='card-subtitle mb-2 text-success fw-bold fs-5'>
+										מחיר{" "}
+										{product.product_price.toLocaleString("he-IL", {
+											style: "currency",
+											currency: "ILS",
+										})}
+									</h6>
+									<h5>
+										{product.discount < 0 ? "מחיר אחרי מבצע" : ""}
+									</h5>
 								</div>
 							</div>
-						);
-					})}
+						</div>
+					))}
 				</div>
 			</div>
 		</main>

@@ -8,6 +8,7 @@ import {loginUser} from "../services/usersServices";
 import {useUser} from "../context/useUSer";
 import useToken from "../hooks/useToken";
 import {showSuccess} from "../atoms/Toast";
+import {emptyAuthValues} from "../interfaces/authValues";
 
 interface LoginProps {}
 
@@ -45,7 +46,7 @@ const Login: FunctionComponent<LoginProps> = () => {
 					navigate(path.Home);
 				}
 			} catch (error) {
-				setAuth(null);
+				setAuth(emptyAuthValues);
 				setIsLoggedIn(false);
 				resetForm();
 			}

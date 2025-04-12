@@ -116,25 +116,21 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 								className='col-md-6 col-lg-3 col-sm-10 m-auto my-3 '
 								key={product.product_name}
 							>
-								<div className='card  h-100'>
-									<div className='card-img-top object-fit-lg-cover overflow-hidden'>
-										<img
-											className='img-thumbnail rounded-3'
-											src={product.image_url}
-											alt={product.product_name}
-											style={{
-												height: "300px",
-												objectFit: "cover",
-												width: "100%",
-											}}
-										/>
-									</div>
+								<div className='card h-100'>
+									<img
+										src={product.image_url}
+										alt={product.product_name}
+										className='card-img-top'
+										role='img'
+									/>
 
 									<div className='card-body'>
 										<h5 className='card-title'>
 											{product.product_name}
 										</h5>
-										<hr />
+										<h5 className='card-title text-muted'>
+											{product.description}
+										</h5>
 										<h5
 											className={` text-center ${
 												product.quantity_in_stock <= 0
@@ -232,7 +228,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 												<img src='/svg/add.svg' alt='' />
 											</button>
 										</div>
-										<div className='card-footer row'>
 											<button
 												onClick={() => {
 													handleAdd(
@@ -245,7 +240,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 													);
 												}}
 												disabled={product.quantity_in_stock <= 0}
-												className={`w-100 ${
+												className={`w-100 shadow ${
 													product.quantity_in_stock <= 0
 														? "btn btn-danger"
 														: "btn btn-success"
@@ -255,12 +250,13 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 													? "אזל מהמלאי"
 													: "הוספה לסל"}
 											</button>
+										<div className='card-footer mt-3'>
 
 											{((auth && auth.role === RoleType.Admin) ||
 												(auth &&
 													auth.role ===
 														RoleType.Moderator)) && (
-												<div className='mt-3 rounded'>
+												<div className='mt-3 rounded d-flex align-items-center justify-content-around'>
 													<Tooltip title='edit'>
 														<button
 															className='btn m-auto text-datk bg-warning'

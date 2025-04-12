@@ -9,6 +9,7 @@ import {loginUser} from "../services/usersServices";
 import {useUser} from "../context/useUSer";
 import useToken from "../hooks/useToken";
 import {showSuccess} from "./Toast";
+import {emptyAuthValues} from "../interfaces/authValues";
 interface ForAllModalProps {
 	show: boolean;
 	onHide: Function;
@@ -45,7 +46,7 @@ const ForAllModal: FunctionComponent<ForAllModalProps> = ({onHide, show}) => {
 					onHide();
 				}
 			} catch (error) {
-				setAuth(null);
+				setAuth(emptyAuthValues);
 				setIsLoggedIn(false);
 				resetForm();
 			}
@@ -62,9 +63,9 @@ const ForAllModal: FunctionComponent<ForAllModalProps> = ({onHide, show}) => {
 						onSubmit={formik.handleSubmit}
 						className=''
 					>
-						{/* <h2 className='display-6 my-5 text-dark fw-bold text-center'>
-							התחבר
-						</h2> */}
+						<h2 className='display-6 my-5 text-dark fw-bold text-center'>
+							התחברות
+						</h2>
 						<div className='form-floating my-3'>
 							<input
 								type='email'

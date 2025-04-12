@@ -5,21 +5,10 @@ import React, {
 	ReactNode,
 	FunctionComponent,
 } from "react";
+import {AuthValues, emptyAuthValues} from "../interfaces/authValues";
 
-// Define the Auth type
-type Auth = {
-	_id: string;
-	name: {
-		first: string;
-		last: string;
-	};
-	image: {
-		url: string;
-		alt: string;
-	};
-	role: string;
-	iat: number;
-};
+// Auth type
+type Auth = AuthValues;
 
 // UserContext type
 interface UserContextType {
@@ -30,19 +19,7 @@ interface UserContextType {
 }
 
 const defaultUserContext: UserContextType = {
-	auth: {
-		_id: "",
-		name: {
-			first: "",
-			last: "",
-		},
-		image: {
-			url: "",
-			alt: "",
-		},
-		role: "",
-		iat: 0,
-	},
+	auth: emptyAuthValues,
 	setAuth: () => {},
 	isLoggedIn: false,
 	setIsLoggedIn: () => {},
@@ -64,19 +41,7 @@ interface UserProviderProps {
 
 export const UserProvider: FunctionComponent<UserProviderProps> = ({children}) => {
 	const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-	const [auth, setAuth] = useState<Auth>({
-		_id: "",
-		name: {
-			first: "",
-			last: "",
-		},
-		image: {
-			url: "",
-			alt: "",
-		},
-		role: "",
-		iat: 0,
-	});
+	const [auth, setAuth] = useState<Auth>(emptyAuthValues);
 
 	return (
 		<UserContext.Provider

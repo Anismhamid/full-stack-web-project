@@ -24,6 +24,7 @@ export enum path {
 	MyOrders = "/orders",
 	OrderDetails = "/orderDetails/:orderNumber",
 	Checkout = "/checkout",
+	Receipt = "/receipt",
 	Contact = "/contact",
 	About = "/about",
 	Cart = "/cart",

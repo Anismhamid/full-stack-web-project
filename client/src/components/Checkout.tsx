@@ -11,6 +11,7 @@ import {showError, showInfo} from "../atoms/Toast";
 import Loader from "../atoms/loader/Loader";
 import {Order} from "../interfaces/Order";
 import Checkbox from "@mui/material/Checkbox";
+import Receipt from "./Receipt";
 
 interface CheckoutProps {}
 
@@ -19,6 +20,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 	const navigate = useNavigate();
 	const [cartItems, setCartItems] = useState<CartType[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
+	const [orderDetails, setOrderDetails] = useState<Order | null>(null);
 
 	const formik = useFormik({
 		initialValues: {
@@ -114,6 +116,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 		try {
 			setLoading(true);
 			await postOrder(newOrder as Order);
+			setOrderDetails(newOrder as Order);
 			navigate(path.MyOrders);
 			setLoading(false);
 		} catch (error) {

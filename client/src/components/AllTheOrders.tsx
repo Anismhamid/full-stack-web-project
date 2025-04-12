@@ -7,6 +7,9 @@ import Loader from "../atoms/loader/Loader";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import NavigathionButtons from "../atoms/NavigathionButtons";
 import RoleType from "../interfaces/UserType";
+import {io} from "socket.io-client";
+import {showNewOrderToast} from "../atoms/bootStrapToast/SocketToast";
+import {Form} from "react-bootstrap";
 
 interface AllTheOrdersProps {}
 
@@ -30,9 +33,28 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	}, [allOrders, searchQuery]);
 
 	useEffect(() => {
+		const socket = io(import.meta.env.VITE_API_SOCKET_URL, {
+			transports: ["websocket"],
+		});
+
+		socket.on("new order", (newOrder) => {
+			setAllOrders((prevOrders) => [newOrder, ...prevOrders]);
+			showNewOrderToast({
+				navigate,
+				navigateTo: `/orderDetails/${newOrder.orderNumber}`,
+				orderNum: newOrder.orderNumber,
+			});
+		});
+
+		return () => {
+			socket.disconnect();
+		};
+	}, []);
+
+	useEffect(() => {
 		getAllOrders()
 			.then((res) => {
-				setAllOrders(res);
+				setAllOrders(res.reverse());
 
 				const initialStatuses: {[orderId: string]: string} = {};
 				res.forEach((order: {orderNumber: string | number; status: string}) => {
@@ -65,7 +87,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 				}, 1000);
 			}
 		},
-		[statusLoading,orderStatuses],
+		[statusLoading, orderStatuses],
 	);
 
 	if (loading) {
@@ -77,30 +99,30 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 			<div className='container py-5 mt-5'>
 				<h1 className='text-center bg-light rounded'>כל ההזמנות</h1>
 				{/* שדה חיפוש */}
-				<form className='text-center text-light' role='search'>
+				<Form className='text-center text-light p-3 my-3 m-auto' role='search'>
 					<h3>חפש הזמנה</h3>
 					<input
 						autoComplete='on'
-						className='form-control me-2 w-100 mb-5 mt-3 border border-success'
+						className='form-control me-2 w-50 mb-5 mt-3 border border-success'
 						type='search'
 						placeholder='חפש לפי שם או אימייל'
 						aria-label='חפש לפי שם או אימייל'
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
 					/>
-				</form>
+				</Form>
 				<div className='row'>
 					{filteredOrders.length ? (
 						filteredOrders.map((order) => (
 							<div key={order.createdAt} className='mb-4 col-md-6 col-lg-3'>
-								<div className=' card p-4 shadow-sm'>
+								<div className='card p-4 shadow'>
 									<h5 className='card-title text-center bg-primary text-white p-2 rounded'>
 										<strong>מ"ס הזמנה:</strong> {order.orderNumber}
 									</h5>
 									<div className='d-flex flex-column align-items-start mb-3'>
-										<div className=' my-1'>
-											<strong>ID מזמין:</strong>
-											<span className='font-weight-bold'>
+										<div className='my-1'>
+											<strong className=' me-1'>ID מזמין</strong>
+											<span className='fw-bold rounded'>
 												{order.userId}
 											</span>
 										</div>
@@ -165,7 +187,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 
 									{((auth && auth.role === RoleType.Admin) ||
 										(auth && auth.role === RoleType.Moderator)) && (
-										<div className='d-flex align-items-center justify-content-around'>
+										<div className='d-flex align-items-center justify-content-around mb-3'>
 											<button
 												onClick={() =>
 													handleStatus(

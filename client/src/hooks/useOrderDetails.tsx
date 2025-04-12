@@ -21,7 +21,7 @@ const useOrderDetails = (orderNumber: string) => {
 		};
 
 		fetchOrder();
-		window.scroll(0, 0);
+		window.scroll(0, 100);
 	}, [orderNumber]);
 
 	return {cartItems, loading, error};

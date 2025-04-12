@@ -14,7 +14,6 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import "../node_modules/bootstrap/dist/js/bootstrap.min.js";
 import UsersManagement from "./components/UsersManagement.js";
-import {UserProvider} from "./context/useUSer.js";
 import {ToastContainer} from "react-toastify";
 import Orders from "./components/Orders.js";
 import OrederDetails from "./components/OrederDetails.js";
@@ -31,10 +30,58 @@ import Profile from "./components/Profile.js";
 import {SpeedDial} from "@mui/material";
 import {fontAwesomeIcon} from "./FontAwesome/Icons.js";
 import useToken from "./hooks/useToken.js";
+import {io} from "socket.io-client";
+import {useEffect} from "react";
+import {useUser} from "./context/useUSer.js";
+import RoleType from "./interfaces/UserType.js";
+import {showNewOrderToast} from "./atoms/bootStrapToast/SocketToast.js";
+import {showInfo} from "./atoms/Toast.js";
+import Receipt from "./components/Receipt.js";
 
 function App() {
 	const {decodedToken} = useToken();
+	const {auth} = useUser();
+
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		const socket = io(import.meta.env.VITE_API_SOCKET_URL, {
+			transports: ["websocket"],
+		});
+
+		socket.on("new order", (newOrder) => {
+			const orderNum = newOrder.orderNumber;
+			console.log("New order received in real-time:", orderNum);
+
+			if (auth.role === RoleType.Admin || auth.role === RoleType.Moderator) {
+				showNewOrderToast({
+					navigate,
+					navigateTo: `/orderDetails/${orderNum}`,
+					orderNum,
+				});
+			}
+		});
+
+		if (auth.role === RoleType.Admin) {
+			socket.on("user:registered", (user) => {
+				showInfo(`${user.email} ${user.role} משתמש חדש נרשם`);
+			});
+			socket.on("user:newUserLoggedIn", (user) => {
+				showInfo(
+					user.role === RoleType.Client
+						? `${user.email} משתמש התחבר`
+						: user.role === RoleType.Admin
+							? `${user.email} משתמש  אדמן התחבר`
+							: `${user.email} משתמש  מנחה התחבר`,
+				);
+			});
+		}
+
+		return () => {
+			socket.disconnect();
+		};
+	}, []);
+
 	return (
 		<>
 			<ToastContainer />
@@ -61,6 +108,7 @@ function App() {
 				<Route path={path.MyOrders} element={<Orders />} />
 				<Route path={path.OrderDetails} element={<OrederDetails />} />
 				<Route path={path.AllTheOrders} element={<AllTheOrders />} />
+				<Route path={path.Receipt} element={<Receipt />} />
 				<Route path={productsPathes.Fruits} element={<Fruits />} />
 				<Route path={productsPathes.Vegetable} element={<Vegetable />} />
 				<Route path={productsPathes.fish} element={<Fish />} />

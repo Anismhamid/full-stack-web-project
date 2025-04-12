@@ -54,7 +54,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 			});
 	}, []);
 
-
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {
 			const productName = product.product_name || "";
@@ -114,23 +113,21 @@ const Home: FunctionComponent<HomeProps> = () => {
 		<main className='gradient min-vh-100 main'>
 			{((auth && auth.role === RoleType.Admin) ||
 				(auth && auth.role === RoleType.Moderator)) && (
-				<>
-					<SpeedDial
-						ariaLabel='SpeedDial basic example'
-						sx={{position: "fixed", bottom: 90, right: 16}}
-						icon={<SpeedDialIcon />}
-					>
-						{actions.map((action) => (
-							<SpeedDialAction
-								key={action.name}
-								icon={action.icon}
-								tooltipTitle={action.name}
-								tooltipOpen={true}
-								onClick={action.addClick}
-							/>
-						))}
-					</SpeedDial>
-				</>
+				<SpeedDial
+					ariaLabel='SpeedDial basic example'
+					sx={{position: "fixed", bottom: 90, right: 16}}
+					icon={<SpeedDialIcon />}
+				>
+					{actions.map((action) => (
+						<SpeedDialAction
+							key={action.name}
+							icon={action.icon}
+							tooltipTitle={action.name}
+							tooltipOpen={true}
+							onClick={action.addClick}
+						/>
+					))}
+				</SpeedDial>
 			)}
 
 			{/* Search and filter products */}
@@ -323,57 +320,56 @@ const Home: FunctionComponent<HomeProps> = () => {
 				<DiscountsAndOffers />
 
 				{/* Fruits  */}
-				<p className=' bg-transparent text-light fs-1'>פירות</p>
+				<p className=' bg-transparent text-light display-4 fw-bold'>פירות</p>
 				<hr className=' text-light' />
 
 				<Fruits />
 
 				{/* Vegetable section */}
-				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				<p className=' bg-transparent text-light display-4 fw-bold'>דגים</p>
 				<hr className=' text-light' />
 
 				<Vegentable />
 
 				{/* fish */}
-				<p className=' bg-transparent text-light fs-1'>דגים</p>
+				<p className=' bg-transparent text-light display-4 fw-bold'>דגים</p>
 				<hr className=' text-light' />
 				<Fish />
 
 				{/* dairy */}
+				<p className=' bg-transparent text-light display-4 fw-bold'>מוצרי חלב</p>
+				<hr className=' text-light' />
 				<Dairy />
 
 				{/* meat */}
-				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				<p className=' bg-transparent text-light display-4 fw-bold'>בשרים</p>
 				<hr className=' text-light' />
 				<Meat />
 
 				{/* spices */}
-				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				<p className=' bg-transparent text-light display-4 fw-bold'>תבלינים</p>
 				<hr className=' text-light' />
 				<Spices />
 
-				{/* spices */}
-				<p className=' bg-transparent text-light fs-1'>ירקות</p>
-				<hr className=' text-light' />
-				<Spices />
-
-				{/* bakery */}
-				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				{/* Bakery */}
+				<p className=' bg-transparent text-light display-4 fw-bold'>מאפים</p>
 				<hr className=' text-light' />
 				<Bakery />
 
 				{/* beverages */}
-				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				<p className=' bg-transparent text-light display-4 fw-bold'>משקאות</p>
 				<hr className=' text-light' />
 				<Beverages />
 
 				{/* forzen */}
-				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				<p className=' bg-transparent text-light display-4 fw-bold'>
+					מוצרים קפואים
+				</p>
 				<hr className=' text-light' />
 				<Frozen />
 
 				{/* snacks */}
-				<p className=' bg-transparent text-light fs-1'>ירקות</p>
+				<p className=' bg-transparent text-light display-4 fw-bold'>חטיפים</p>
 				<hr className=' text-light' />
 				<Snacks />
 

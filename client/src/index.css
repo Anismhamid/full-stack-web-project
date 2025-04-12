@@ -1,5 +1,6 @@
 @import "../node_modules/bootstrap/dist/css/bootstrap.rtl.min.css";
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@100;200;300;400;500;600;700&display=swap');
+@import "react-toastify/dist/ReactToastify.css";
 
 #root {
   font-family: "IBM Plex Sans Hebrew", sans-serif;
@@ -22,8 +23,14 @@ img {
   -o-transition: 0.5s;
 }
 
+
+.profile {
+  background: linear-gradient(rgba(34, 40, 58, 0.829), rgba(255, 255, 255, 0));
+}
+
 .login {
-  background: radial-gradient(#11171cbb, #16181ba2), url("./assets/login-register.png");  background-position: bottom;
+  background: radial-gradient(#11171c00, #16181b), url("./assets/login-register.png");
+  background-position: bottom;
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
@@ -33,9 +40,9 @@ img {
   flex-direction: column;
 
   & form {
-    max-width: 600px;
+    max-width: 350px;
     padding: 2rem;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: #11171cd8;
     margin: auto;
     margin-bottom: 4rem;
     border-radius: 20px;
@@ -138,7 +145,8 @@ main .loader {
 
 
 .gradient {
-  background: radial-gradient(#11171c9a, #16181ba1), url("./assets/login-register.png");
+  background: radial-gradient(#11171c00,
+      #11171c), url("./assets/login-register.png");
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
@@ -185,6 +193,14 @@ main .loader {
 
 .modal-body {
   font-size: 1.1rem;
+  background: #03090F;
+  border: 2px solid #ffffff;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  color: #66B2FF;
 }
 
 .nav {
