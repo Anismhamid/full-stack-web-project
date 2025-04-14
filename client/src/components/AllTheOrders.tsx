@@ -87,6 +87,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 				}, 1000);
 			}
 		},
+
 		[statusLoading, orderStatuses],
 	);
 
@@ -95,8 +96,8 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	}
 
 	return (
-		<main className='gradient min-vh-100'>
-			<div className='container py-5 mt-5'>
+		<main className=' min-vh-100'>
+			<div className='container bg-gradient rounded  py-5 mt-5'>
 				<h1 className='text-center bg-light rounded'>כל ההזמנות</h1>
 				{/* שדה חיפוש */}
 				<Form className='text-center text-light p-3 my-3 m-auto' role='search'>
@@ -114,15 +115,15 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 				<div className='row'>
 					{filteredOrders.length ? (
 						filteredOrders.map((order) => (
-							<div key={order.createdAt} className='mb-4 col-md-6 col-lg-3'>
-								<div className='card p-4 shadow'>
+							<div key={order.createdAt} className='mb-4 col-md-6 col-lg-4'>
+								<div className='card p-3 shadow'>
 									<h5 className='card-title text-center bg-primary text-white p-2 rounded'>
 										<strong>מ"ס הזמנה:</strong> {order.orderNumber}
 									</h5>
-									<div className='d-flex flex-column align-items-start mb-3'>
+									<div className='mb-3'>
 										<div className='my-1'>
-											<strong className=' me-1'>ID מזמין</strong>
-											<span className='fw-bold rounded'>
+											<strong className=''>ID מזמין</strong>
+											<span className='fw-bold rounded d-block text-danger'>
 												{order.userId}
 											</span>
 										</div>
@@ -184,77 +185,63 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 											</span>
 										</div>
 									</div>
-
-									{((auth && auth.role === RoleType.Admin) ||
-										(auth && auth.role === RoleType.Moderator)) && (
-										<div className='d-flex align-items-center justify-content-around mb-3'>
-											<button
-												onClick={() =>
-													handleStatus(
-														"Preparing",
-														order.orderNumber,
-													)
-												}
-												className='btn btn-primary'
-												disabled={
-													order.status === "Preparing" ||
-													order.status === "Delivered" ||
-													order.status === "Shipped"
-												}
-											>
-												{statusLoading[order.orderNumber]
-													? "טוען..."
-													: "הכנה"}
-											</button>
-											<button
-												onClick={() =>
-													handleStatus(
-														"Delivered",
-														order.orderNumber,
-													)
-												}
-												className='btn btn-info'
-												disabled={
-													order.status === "Delivered" ||
-													order.status === "Shipped"
-												}
-											>
-												{statusLoading[order.orderNumber]
-													? "טוען..."
-													: "נשלח"}
-											</button>
-											<button
-												onClick={() =>
-													handleStatus(
-														"Shipped",
-														order.orderNumber,
-													)
-												}
-												className='btn btn-success'
-												disabled={order.status === "Shipped"}
-											>
-												{statusLoading[order.orderNumber]
-													? "טוען..."
-													: "נמסר"}
-											</button>
-											<button
-												onClick={() =>
-													handleStatus(
-														"Cancelled",
-														order.orderNumber,
-													)
-												}
-												className='btn btn-danger'
-												disabled={
-													statusLoading[order.orderNumber]
-												}
-											>
-												{statusLoading[order.orderNumber]
-													? "טוען..."
-													: "ביטול"}
-											</button>
-										</div>
-									)}
+									<div className='mb-3 mx-auto text-center'>
+										{((auth && auth.role === RoleType.Admin) ||
+											(auth &&
+												auth.role === RoleType.Moderator)) && (
+											<>
+												<button
+													onClick={() =>
+														handleStatus(
+															"Preparing",
+															order.orderNumber,
+														)
+													}
+													className='btn btn-primary'
+													disabled={
+														order.status === "Preparing" ||
+														order.status === "Delivered" ||
+														order.status === "Shipped"
+													}
+												>
+													{statusLoading[order.orderNumber]
+														? "טוען..."
+														: "הכנה"}
+												</button>
+												<button
+													onClick={() =>
+														handleStatus(
+															"Delivered",
+															order.orderNumber,
+														)
+													}
+													className='btn btn-info'
+													disabled={
+														order.status === "Delivered" ||
+														order.status === "Shipped"
+													}
+												>
+													{statusLoading[order.orderNumber]
+														? "טוען..."
+														: "נשלח"}
+												</button>
+												<button
+													onClick={() =>
+														handleStatus(
+															"Shipped",
+															order.orderNumber,
+														)
+													}
+													className='btn btn-success'
+													disabled={order.status === "Shipped"}
+												>
+													{statusLoading[order.orderNumber]
+														? "טוען..."
+														: "נמסר"}
+												</button>
+											</>
+										)}
+									</div>
 
 									<div className='mb-3'>
 										<strong>שיטת תשלום:</strong>{" "}

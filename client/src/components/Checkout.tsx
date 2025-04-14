@@ -2,25 +2,31 @@ import {FunctionComponent, useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {Cart as CartType} from "../interfaces/Cart";
 import {getCartItems} from "../services/cart";
-import useToken from "../hooks/useToken";
 import {path} from "../routes/routes";
-import {postOrder} from "../services/orders"; // Ensure postOrder is imported
+import {postOrder} from "../services/orders";
 import {useFormik} from "formik";
 import * as yup from "yup";
 import {showError, showInfo} from "../atoms/Toast";
 import Loader from "../atoms/loader/Loader";
 import {Order} from "../interfaces/Order";
 import Checkbox from "@mui/material/Checkbox";
-import Receipt from "./Receipt";
+import {useUser} from "../context/useUSer";
+import {Button} from "@mui/material";
+import PaymentModal from "../atoms/pymentModal/PymentModal";
 
 interface CheckoutProps {}
 
 const Checkout: FunctionComponent<CheckoutProps> = () => {
-	const {decodedToken} = useToken();
+	const {auth} = useUser();
 	const navigate = useNavigate();
 	const [cartItems, setCartItems] = useState<CartType[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [orderDetails, setOrderDetails] = useState<Order | null>(null);
+	const [newOrder, setNewOrder] = useState<Order | null>(null);
+	const [showPymentModal, setShowPymentModal] = useState<boolean>(false);
+
+	const onShowPymentModal = () => setShowPymentModal(true);
+	const hidePymentModal = () => setShowPymentModal(false);
 
 	const formik = useFormik({
 		initialValues: {
@@ -53,7 +59,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 
 	// Fetch the cart items when the component mounts
 	useEffect(() => {
-		if (decodedToken) {
+		if (auth) {
 			getCartItems()
 				.then((items) => {
 					setCartItems(items);
@@ -63,7 +69,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 					console.log(err);
 				});
 		}
-	}, [decodedToken]);
+	}, [auth]);
 
 	// Calculate total amount of the cart
 	const totalAmount = cartItems.reduce((total, item) => {
@@ -104,7 +110,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 		);
 
 		const newOrder = {
-			userId: decodedToken._id,
+			userId: auth._id,
 			products: [...itemsToOrder],
 			payment: value.payment,
 			cashOnDelivery: value.cashOnDelivery,
@@ -113,26 +119,35 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 			deliveryFee: value.delivery ? deliveryFee : 0,
 			totalAmount: finalAmount,
 		};
+		setNewOrder(newOrder as Order);
 		try {
-			setLoading(true);
-			await postOrder(newOrder as Order);
-			setOrderDetails(newOrder as Order);
-			navigate(path.MyOrders);
+			if (value.payment) {
+				setLoading(true);
+				onShowPymentModal();
+				setLoading(false);
+				return;
+			} else {
+				await postOrder(newOrder as Order);
+				setOrderDetails(newOrder as Order);
+				navigate(path.MyOrders);
+			}
+
 			setLoading(false);
 		} catch (error) {
 			showError("שגיאה בביצוע ההזמנה");
 		}
 	};
 
+
 	if (loading) return <Loader />;
 
 	return (
-		<main className='login min-vh-100 '>
-			<div className='container py-5'>
-				<h1 className='text-center'>בחר שיטת תשלום</h1>
+		<main className='min-vh-100 '>
+			<div className='container'>
+				<h1 className='text-center'>בחירת שיטת תשלום ואיסוף</h1>
 
 				{/* Cart Summary */}
-				<div className='mt-4'>
+				<section className='mt-4'>
 					<h4>סיכום הסל</h4>
 					<ul className='list-group'>
 						{cartItems.length ? (
@@ -141,26 +156,28 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 									{item.products.map((product) => (
 										<li
 											key={product.product_name}
-											className='list-group-item d-flex justify-content-between align-items-center'
+											className='list-group-item d-flex align-items-center justify-content-between'
 										>
-											<div>
-												<img
-													style={{width: "100px"}}
-													className='img-fluid me-5 rounded'
-													src={product.product_image}
-													alt={product.product_name}
-												/>
-												<strong>{product.product_name}</strong> -{" "}
-												{product.quantity} ק"ג
-												<div className='text-muted'>
-													{product.product_price.toLocaleString(
-														"he-IL",
-														{
-															style: "currency",
-															currency: "ILS",
-														},
-													)}
-												</div>
+											<img
+												className='img-fluid rounded'
+												src={product.product_image}
+												alt={product.product_name}
+												style={{width: "100px"}}
+											/>
+
+											<strong>{product.product_name}</strong>
+
+											{product.discount
+												? `מבצע ${product.discount}%`
+												: "אין מבצע"}
+											<div className='text-muted text-danger'>
+												{product.product_price.toLocaleString(
+													"he-IL",
+													{
+														style: "currency",
+														currency: "ILS",
+													},
+												)}
 											</div>
 										</li>
 									))}
@@ -171,96 +188,79 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 						)}
 					</ul>
 					<hr />
-				</div>
+				</section>
 
 				{/* Payment Methods Selection */}
-				<form onSubmit={formik.handleSubmit} className='mt-5 text-light'>
+				<form onSubmit={formik.handleSubmit} className='mt-5'>
 					<h4>בחר שיטת תשלום</h4>
 					<div className='mt-3'>
-						{/* Credit Card */}
 						<div className='form-check mb-2'>
 							<Checkbox
-								className='form-check-input text-light'
-								id='creditCard'
+								id='payment'
 								name='payment'
-								checked={formik.values.payment ? true : false}
-								value={formik.values.payment ? "true" : "false"}
-								onBlur={formik.handleBlur}
+								checked={formik.values.payment}
 								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
 								disabled={formik.values.cashOnDelivery}
 							/>
-							<label className='form-check-label' htmlFor='creditCard'>
+							<label htmlFor='payment' className='form-check-label'>
 								כרטיס אשראי
 							</label>
 						</div>
-
-						{/* Cash on Delivery */}
 						<div className='form-check'>
 							<Checkbox
 								id='cashOnDelivery'
 								name='cashOnDelivery'
-								checked={formik.values.cashOnDelivery ? true : false}
-								value={formik.values.cashOnDelivery ? "true" : "false"}
-								className='form-check-input text-light'
-								onBlur={formik.handleBlur}
+								checked={formik.values.cashOnDelivery}
 								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
 								disabled={formik.values.payment}
 							/>
-							<label className='form-check-label' htmlFor='cashOnDelivery'>
+							<label htmlFor='cashOnDelivery' className='form-check-label'>
 								מזומן
 							</label>
 						</div>
 					</div>
 
-					{/* Collection Methods Selection */}
-					<div className='mt-5'>
-						<h4>בחר שיטת איסוף</h4>
-						<div>
-							{/* SelfCollection */}
-							<div className='form-check'>
-								<Checkbox
-									className='form-check-input text-light'
-									id='selfCollection'
-									name='selfCollection'
-									checked={formik.values.selfCollection ? true : false}
-									value={
-										formik.values.selfCollection ? "true" : "false"
-									}
-									onBlur={formik.handleBlur}
-									onChange={formik.handleChange}
-									disabled={formik.values.delivery}
-								/>
-								<label
-									className='form-check-label'
-									htmlFor='selfCollection'
-								>
-									איסוף עצמי
-								</label>
-							</div>
-
-							{/* Delivery */}
-
-							<div className='form-check'>
-								<Checkbox
-									className='form-check-input text-light '
-									id='delivery'
-									name='delivery'
-									checked={formik.values.delivery}
-									value={formik.values.delivery ? "true" : "false"}
-									onBlur={formik.handleBlur}
-									onChange={formik.handleChange}
-									disabled={formik.values.selfCollection}
-								/>
-								<label className='form-check-label' htmlFor='delivery'>
-									משלוח
-									<span className='text-danger fw-bold ms-2'>
-										+ {deliveryFee}
-									</span>
-								</label>
-							</div>
+					<h4 className='mt-5'>בחר שיטת איסוף</h4>
+					<div>
+						<div className='form-check'>
+							<Checkbox
+								id='selfCollection'
+								name='selfCollection'
+								checked={formik.values.selfCollection}
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+								disabled={formik.values.delivery}
+							/>
+							<label htmlFor='selfCollection' className='form-check-label'>
+								איסוף עצמי
+							</label>
+						</div>
+						<div className='form-check'>
+							<Checkbox
+								id='delivery'
+								name='delivery'
+								checked={formik.values.delivery}
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+								disabled={formik.values.selfCollection}
+							/>
+							<label htmlFor='delivery' className='form-check-label'>
+								משלוח
+								<span className='text-danger fw-bold ms-2'>
+									+{" "}
+									{deliveryFee.toLocaleString("he-IL", {
+										style: "currency",
+										currency: "ILS",
+									})}
+								</span>
+							</label>
 						</div>
 					</div>
+
 					<hr />
+					{/* --- Total Display --- */}
 					<div className='form-floating'>
 						<strong className='me-2'>סך הכל:</strong>
 						<input
@@ -271,26 +271,59 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 								currency: "ILS",
 							})}
 							className='form-control bg-black text-light border-0 fs-4 text-center w-50 m-auto'
-							id='totalAmount'
 							disabled
 						/>
 					</div>
-					{/* Checkout Button */}
-					<div className='d-flex justify-content-center mt-4'>
-						<button
+
+					{/* --- Submit Button --- */}
+					<div className=' d-flex align-items-start my-5'>
+						<Button
 							type='submit'
 							disabled={
 								(!formik.values.payment &&
 									!formik.values.cashOnDelivery) ||
 								(!formik.values.selfCollection && !formik.values.delivery)
 							}
-							className='btn btn-primary'
+							className='btn btn-primary me-5'
 						>
 							אישור
-						</button>
+						</Button>
+						<Button
+							onClick={() => navigate(-1)}
+							color='error'
+							className='btn btn-danger me-5'
+						>
+							ביטול
+						</Button>
 					</div>
 				</form>
 			</div>
+			<PaymentModal
+				order={newOrder}
+				show={showPymentModal}
+				onHide={hidePymentModal}
+				onConfirm={async () => {
+					if (!newOrder) return;
+
+					try {
+						const orderToSend = {
+							...newOrder,
+							// creditCard: cardData, // אופציונלי – תסיר אם לא שומרים בצד לקוח
+						};
+
+						setLoading(true);
+						await postOrder(orderToSend);
+						setOrderDetails(orderToSend);
+						navigate(path.MyOrders);
+						showInfo("התשלום התקבל וההזמנה נשלחה");
+						setLoading(false);
+					} catch (error) {
+						console.error(error);
+						showError("אירעה שגיאה בביצוע התשלום");
+						setLoading(false);
+					}
+				}}
+			/>
 		</main>
 	);
 };

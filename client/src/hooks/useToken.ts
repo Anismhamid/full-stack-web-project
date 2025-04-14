@@ -4,7 +4,11 @@ import {useEffect, useState} from "react";
 interface DecodedToken {
 	exp: number;
 	iat: number;
-	[key: string]: any;
+	sub: string;
+	name: string;
+	email: string;
+	picture: string;
+	[key: string]: any; // כל נתון נוסף שהטוקן יכול להכיל
 }
 
 function useToken() {
@@ -29,9 +33,10 @@ function useToken() {
 				localStorage.removeItem("token");
 				setAfterDecode(null);
 			}
+		} else {
+			setAfterDecode(null);
 		}
 	}, [token]);
-
 
 	return {decodedToken, setAfterDecode};
 }

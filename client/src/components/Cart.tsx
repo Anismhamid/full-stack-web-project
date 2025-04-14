@@ -6,9 +6,8 @@ import {useNavigate} from "react-router-dom";
 import {path} from "../routes/routes";
 import NavigathionButtons from "../atoms/NavigathionButtons";
 import Loader from "../atoms/loader/Loader";
-
-import Tooltip from "@mui/material/Tooltip";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
+import { Button,Tooltip } from "@mui/material";
 
 interface CartProps {}
 
@@ -68,45 +67,30 @@ const Cart: FunctionComponent<CartProps> = () => {
 	}
 
 	return (
-		<main className='gradient min-vh-100'>
-			<div className='container py-5'>
-				<h1 className='text-center border rounded p-2'>סל קניות</h1>
-				<div className=''>
-					<ul className='list-group'>
-						{items.length ? (
-							items.map((item, index) => (
-								<div key={index} className=''>
-									{item.products.map((product) => (
-										<li
-											key={product.product_name}
-											className='my-3 list-group-item d-flex justify-content-between align-items-center rounded-4'
-										>
-											<div className='border rounded-3 pe-2'>
-												<img
-													style={{
-														height: "150px",
-														width: "150px",
-													}}
-													className='img-fluid me-5 rounded'
-													src={product.product_image}
-													alt={product.product_name}
-												/>
-												{product.sale ? (
-													<>
-														<h5 className='text-muted m-3'>
-															{product.product_price.toLocaleString(
-																"he-IL",
-																{
-																	style: "currency",
-																	currency: "ILS",
-																},
-															)}
-														</h5>
-														<strong className='me-2 text-danger'>
-															במבצע {product.discount}% |
-														</strong>
-													</>
-												) : (
+		<main className=' min-vh-100'>
+			<div className='container'>
+				<h1 className='text-center'>סל קניות</h1>
+				<ul className='list-group'>
+					{items.length ? (
+						items.map((item, index) => (
+							<div key={index} className=''>
+								{item.products.map((product) => (
+									<li
+										key={product.product_name}
+										className='my-3 list-group-item d-flex justify-content-between align-items-center rounded-4'
+									>
+										<div className='border rounded-3 pe-2'>
+											<img
+												style={{
+													height: "150px",
+													width: "150px",
+												}}
+												className='img-fluid me-5 rounded'
+												src={product.product_image}
+												alt={product.product_name}
+											/>
+											{product.sale ? (
+												<>
 													<h5 className='text-muted m-3'>
 														{product.product_price.toLocaleString(
 															"he-IL",
@@ -116,50 +100,60 @@ const Cart: FunctionComponent<CartProps> = () => {
 															},
 														)}
 													</h5>
-												)}
-												<strong>{product.product_name}</strong> -
-												{product.quantity} ק"ג{" "}
-											</div>
-											<Tooltip title='Delete'>
-												<button
-													onClick={() => {
-														handleDelete(
-															product.product_name,
-														);
-													}}
-													className='btn bg-black m-auto text-danger bg-danger-subtle'
-												>
-													{fontAwesomeIcon.trash}
-												</button>
-											</Tooltip>
-										</li>
-									))}
-									<hr />
-									<h4 className='text-right rounded border bg-light p-2'>
-										<strong>סך הכל:</strong>{" "}
-										{totalAmount.toLocaleString("he-IL", {
-											style: "currency",
-											currency: "ILS",
-										})}
-									</h4>
+													<strong className='me-2 text-danger'>
+														במבצע {product.discount}% |
+													</strong>
+												</>
+											) : (
+												<h5 className='text-muted m-3'>
+													{product.product_price.toLocaleString(
+														"he-IL",
+														{
+															style: "currency",
+															currency: "ILS",
+														},
+													)}
+												</h5>
+											)}
+											<strong>{product.product_name}</strong> -
+											{product.quantity} ק"ג{" "}
+										</div>
+										<Tooltip title='Delete'>
+											<button
+												onClick={() => {
+													handleDelete(product.product_name);
+												}}
+												className='btn  m-auto text-danger bg-danger-subtle'
+											>
+												{fontAwesomeIcon.trash}
+											</button>
+										</Tooltip>
+									</li>
+								))}
+								<h4 className='text-right my-5'>
+									<strong>סך הכל:</strong>{" "}
+									{totalAmount.toLocaleString("he-IL", {
+										style: "currency",
+										currency: "ILS",
+									})}
+								</h4>
 
-									<div className='d-flex justify-content-center mt-3'>
-										<button
-											disabled={totalAmount == 0}
-											onClick={() => navigate(path.Checkout)}
-											className='btn btn-primary'
-										>
-											המשך לקופה
-										</button>
-									</div>
-									<NavigathionButtons />
+								<div className='d-flex justify-content-center mt-3'>
+									<Button
+										disabled={totalAmount == 0}
+										onClick={() => navigate(path.Checkout)}
+										className='btn btn-primary'
+									>
+										המשך לקופה
+									</Button>
 								</div>
-							))
-						) : (
-							<h5 className='text-danger'>אין מוצרים בסל</h5>
-						)}
-					</ul>
-				</div>
+								<NavigathionButtons />
+							</div>
+						))
+					) : (
+						<h5 className='text-danger'>אין מוצרים בסל</h5>
+					)}
+				</ul>
 			</div>
 		</main>
 	);

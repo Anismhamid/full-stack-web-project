@@ -35,8 +35,7 @@ This project is an e-commerce platform that offers a variety of fresh products d
 -   **Authentication**: Secure user authentication and token management.
 -   **Order Management**: Users can place orders with different payment and delivery options.
 -   **Receipts Generation**: Automatically generates a detailed receipt for each order, including business info, customer details, product list, delivery fees, and discounts
-
-    -   ![Receipts Preview](client/src/assets/fonts/WhatsApp%20Image%202025-04-12%20at%2018.21.43_09a9152e.jpg)
+    -   ![Website Receipts Preview](client/src/assets/Untitled.png)
 
 -   **Information Included**: The receipt includes:
     -   Business Information (name, address, contact details)
@@ -46,6 +45,8 @@ This project is an e-commerce platform that offers a variety of fresh products d
     -   Discounts Applied
     -   Total Amount Due
 -   **Export Options**: Users can download PDF File directly from the receipts page
+
+    -   ![PDF Receipt Preview](client/src/assets/fonts/WhatsApp%20Image%202025-04-12%20at%2018.21.43_09a9152e.jpg)
 
 -   **Real-Time Updates with Socket.IO**: The platform uses **Socket.IO** for real-time updates, providing a seamless experience for users.
     -   **Order Status Updates**: Customers are instantly notified about changes in their order status (e.g., "Order Processed", "Out for Delivery").

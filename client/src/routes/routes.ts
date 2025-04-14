@@ -21,6 +21,7 @@ export enum path {
 	Fruits = "/fruits",
 	Vegetable = "/vegetable",
 	AllTheOrders = "/all-orders",
+	PrivacyAndPolicy = "/Privacy-and-policy",
 	MyOrders = "/orders",
 	OrderDetails = "/orderDetails/:orderNumber",
 	Checkout = "/checkout",

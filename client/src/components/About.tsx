@@ -4,7 +4,7 @@ interface AboutProps {}
 
 const About: FunctionComponent<AboutProps> = () => {
 	return (
-		<main className='gradient min-vh-100'>
+		<main className='min-vh-100'>
 			<div className='container py-5'>
 				<div className='row justify-content-center'>
 					<div className='col-md-8 text-center'>

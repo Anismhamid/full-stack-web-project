@@ -12,16 +12,17 @@ export const emptyAuthValues = {
 	iat: 0,
 };
 
+
 export interface AuthValues {
-	_id: string;
+	_id?: string;
 	name: {
 		first: string;
 		last: string;
 	};
-	image: {
+	image?: {
 		url: string;
 		alt: string;
 	};
-	role: string;
-	iat: number;
+	role?: string;
+	iat?: number;
 }

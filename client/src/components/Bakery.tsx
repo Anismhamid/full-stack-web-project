@@ -5,7 +5,7 @@ interface BakeryProps {}
 
 const Bakery: FunctionComponent<BakeryProps> = () => {
 	return (
-		<main className='gradient min-vh-100'>
+		<main className=' min-vh-100'>
 			<div className='container'>
 				<h1 className='text-center mb-4 rounded display-6 fw-bold'>
 					מוצרי המאפה שלנו - טריים, איכותיים ומגוונים!

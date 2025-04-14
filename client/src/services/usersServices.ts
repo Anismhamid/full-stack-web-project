@@ -1,8 +1,28 @@
 import axios from "axios";
 import {UserLogin, UserRegister} from "../interfaces/User";
 import {showError, showSuccess} from "../atoms/Toast";
+import {jwtDecode} from "jwt-decode";
 
 const api = `${import.meta.env.VITE_API_URL}/users`;
+
+interface GoogleJwtPayload {
+	email: string;
+	email_verified: string;
+	exp: string;
+	family_name: string;
+	given_name: string;
+	iat: string;
+	iss: string;
+	name: string;
+	picture: string; // הוספת picture
+	sub: string;
+	typ: string;
+	aud: string;
+	azp: string;
+	jti: string;
+	kid: string;
+	nbf: string;
+}
 
 /**
  * Register a new user
@@ -21,6 +41,51 @@ export const registerNewUser = async (newUserData: UserRegister) => {
 	}
 };
 
+export const handleGoogleLogin = async (response: any) => {
+	try {
+		const decoded = jwtDecode<GoogleJwtPayload>(response.credential);
+		const {email, given_name, family_name, picture, sub} = decoded;
+
+		if (!email || !sub) {
+			throw new Error("Missing required Google user info");
+		}
+
+		const userData = {
+			googleId: sub,
+			email,
+			name: {
+				first: given_name,
+				last: family_name,
+			},
+			image: {
+				url: picture,
+				alt: given_name,
+			},
+		};
+
+		const res = await axios.post(
+			`${import.meta.env.VITE_API_URL}/google-login`,
+			userData,
+		);
+		console.log("User logged in:", res.data);
+		return res.data;
+	} catch (error) {
+		console.error("Error during Google login:", error);
+	}
+};
+
+
+export	const verifyGoogleToken = async (token: string) => {
+		const url = `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`;
+		try {
+			const response = await axios.get(url);
+			return response.data;
+		} catch (error) {
+			throw new Error("Failed to verify Google token");
+		}
+	};
+
+
 /**
  * Login user and get a token
  * @param userData - User credentials (Email and Password)
@@ -30,8 +95,14 @@ export const loginUser = async (userData: UserLogin) => {
 	try {
 		const response = await axios.post(`${api}/login`, userData);
 		return response.data;
-	} catch (error) {
-		showError("Invalid email or password");
+	} catch (error: any) {
+		if (error.request.response === "Too Many Requests") {
+			showError(error.request.response);
+		} else {
+			// showError("Invalid email or password");
+			showError(error.response.statusText);
+		}
+		console.log();
 		return null;
 	}
 };

@@ -1,17 +1,24 @@
 import {FunctionComponent, useEffect, useState} from "react";
 import {UserRegister} from "../interfaces/User";
 import {getAllUsers, patchUserRole} from "../services/usersServices";
-import {styled} from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, {tableCellClasses} from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import {Box, Button, FormControl, MenuItem, Select} from "@mui/material";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import RoleType from "../interfaces/UserType";
+import {
+	styled,
+	Box,
+	Button,
+	FormControl,
+	MenuItem,
+	Select,
+	TableContainer,
+	tableCellClasses,
+	Table,
+	TableCell,
+	TableBody,
+	TableRow,
+	TableHead,
+	Paper,
+} from "@mui/material";
 
 interface UersManagementProps {}
 
@@ -93,11 +100,9 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 	};
 
 	return (
-		<main className='gradient min-vh-100 bg-light'>
+		<main className='min-vh-100'>
 			<div className='container'>
-				<h1 className='text-center bg-primary text-white rounded p-3 mb-4'>
-					ניהול משתמשים
-				</h1>
+				<h1 className='text-center display-6 rounded p-3 mb-4'>ניהול משתמשים</h1>
 
 				{/* Search Form */}
 				<div className='d-flex justify-content-center mb-4'>

@@ -10,6 +10,7 @@ import {AuthValues, emptyAuthValues} from "../interfaces/authValues";
 // Auth type
 type Auth = AuthValues;
 
+
 // UserContext type
 interface UserContextType {
 	auth: Auth;

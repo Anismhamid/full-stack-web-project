@@ -10,9 +10,7 @@ import {Products} from "../interfaces/Products";
 import {handleAddToCart, handleQuantity} from "../helpers/fruitesFunctions";
 import Loader from "../atoms/loader/Loader";
 import ForAllModal from "../atoms/LoginModal";
-import SpeedDial from "@mui/material/SpeedDial";
-import SpeedDialIcon from "@mui/material/SpeedDialIcon";
-import SpeedDialAction from "@mui/material/SpeedDialAction";
+import {SpeedDial,SpeedDialIcon,SpeedDialAction} from "@mui/material";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import {path} from "../routes/routes";
 import RoleType from "../interfaces/UserType";
@@ -110,7 +108,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 	}
 
 	return (
-		<main className='gradient min-vh-100 main'>
+		<main className='min-vh-100 main'>
 			{((auth && auth.role === RoleType.Admin) ||
 				(auth && auth.role === RoleType.Moderator)) && (
 				<SpeedDial
@@ -296,7 +294,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 								);
 							})
 						) : (
-							<p className=' rounded border border-light mt-3 text-center lead'>
+							<p className='rounded border border-light mt-3 text-center lead'>
 								חפש לפי/
 								<strong className='text-danger fw-bold mx-1'>
 									שם מוצר
@@ -320,56 +318,56 @@ const Home: FunctionComponent<HomeProps> = () => {
 				<DiscountsAndOffers />
 
 				{/* Fruits  */}
-				<p className=' bg-transparent text-light display-4 fw-bold'>פירות</p>
-				<hr className=' text-light' />
+				<p className='display-4 fw-bold mt-5'>פירות</p>
+				<hr className=' text-primary' />
 
 				<Fruits />
 
 				{/* Vegetable section */}
-				<p className=' bg-transparent text-light display-4 fw-bold'>דגים</p>
-				<hr className=' text-light' />
+				<p className='display-4 fw-bold mt-5'>ירקות</p>
+				<hr className=' text-primary' />
 
 				<Vegentable />
 
 				{/* fish */}
-				<p className=' bg-transparent text-light display-4 fw-bold'>דגים</p>
+				<p className='display-4 fw-bold mt-5'>דגים</p>
 				<hr className=' text-light' />
 				<Fish />
 
 				{/* dairy */}
-				<p className=' bg-transparent text-light display-4 fw-bold'>מוצרי חלב</p>
+				<p className='display-4 fw-bold mt-5'>מוצרי חלב</p>
 				<hr className=' text-light' />
 				<Dairy />
 
 				{/* meat */}
-				<p className=' bg-transparent text-light display-4 fw-bold'>בשרים</p>
+				<p className='display-4 fw-bold mt-5'>בשרים</p>
 				<hr className=' text-light' />
 				<Meat />
 
 				{/* spices */}
-				<p className=' bg-transparent text-light display-4 fw-bold'>תבלינים</p>
+				<p className='display-4 fw-bold mt-5'>תבלינים</p>
 				<hr className=' text-light' />
 				<Spices />
 
 				{/* Bakery */}
-				<p className=' bg-transparent text-light display-4 fw-bold'>מאפים</p>
+				<p className='display-4 fw-bold mt-5'>מאפים</p>
 				<hr className=' text-light' />
 				<Bakery />
 
 				{/* beverages */}
-				<p className=' bg-transparent text-light display-4 fw-bold'>משקאות</p>
+				<p className='display-4 fw-bold mt-5'>משקאות</p>
 				<hr className=' text-light' />
 				<Beverages />
 
 				{/* forzen */}
-				<p className=' bg-transparent text-light display-4 fw-bold'>
+				<p className='display-4 fw-bold mt-5'>
 					מוצרים קפואים
 				</p>
 				<hr className=' text-light' />
 				<Frozen />
 
 				{/* snacks */}
-				<p className=' bg-transparent text-light display-4 fw-bold'>חטיפים</p>
+				<p className='display-4 fw-bold mt-5'>חטיפים</p>
 				<hr className=' text-light' />
 				<Snacks />
 

@@ -25,15 +25,15 @@ img {
 
 
 .profile {
-  background: linear-gradient(rgba(34, 40, 58, 0.829), rgba(255, 255, 255, 0));
+  background: linear-gradient(rgba(34, 40, 58, 0.884), rgba(255, 255, 255, 0));
 }
 
 .login {
-  background: radial-gradient(#11171c00, #16181b), url("./assets/login-register.png");
-  background-position: bottom;
+  background: radial-gradient(#11171c00, #16181b);
   background-repeat: no-repeat;
-  background-size: cover;
+  background-position: center;
   background-attachment: fixed;
+  background-size: contain;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,14 +55,7 @@ img {
 
 
 h1 {
-  margin-top: 100px;
-  background: #ffffffa4;
-}
-
-.about-section p,
-main p {
-  background: #ffffffa4;
-  padding: 1rem;
+  margin: 10rem auto;
 }
 
 
@@ -145,19 +138,18 @@ main .loader {
 
 
 .gradient {
-  background: radial-gradient(#11171c00,
-      #11171c), url("./assets/login-register.png");
+  /* background: radial-gradient(#11171c00,
+      #11171c); */
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
   background-size: cover;
-  margin: 0;
   overflow: hidden;
 }
 
 .card {
   border-radius: 10px;
-  box-shadow: 0 5px 6px rgb(49, 49, 49);
+  box-shadow: 0 0px 0px rgba(255, 255, 255, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   -webkit-transition: transform 0.3s ease, box-shadow 0.3s ease;
   -moz-transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -166,15 +158,15 @@ main .loader {
 }
 
 .card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 12px rgba(255, 255, 255, 0.15);
-  -webkit-transform: translateY(-3px);
-  -moz-transform: translateY(-3px);
-  -ms-transform: translateY(-3px);
-  -o-transform: translateY(-3px);
+  transform: translateY(-5px);
+  box-shadow: 0 5px 10px rgb(36, 36, 36);
+  -webkit-transform: translateY(-5px);
+  -moz-transform: translateY(-5px);
+  -ms-transform: translateY(-5px);
+  -o-transform: translateY(-5px);
 }
 
-.btn {
+/* .btn {
   border-radius: 10px;
   font-weight: bold;
   padding: 10px 15px;
@@ -187,7 +179,7 @@ main .loader {
   -moz-transition: background-color 0.3s ease, transform 0.2s ease;
   -ms-transition: background-color 0.3s ease, transform 0.2s ease;
   -o-transition: background-color 0.3s ease, transform 0.2s ease;
-}
+} */
 
 
 
@@ -203,9 +195,6 @@ main .loader {
   color: #66B2FF;
 }
 
-.nav {
-  background: #000000ec;
-}
 
 .nav-link.active {
   border: 1px solid #66B2FF !important;

@@ -75,7 +75,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 			.then((res) => {
 				setProducts(res);
 
-				setVisibleProducts(res.slice(0, 10));
+				setVisibleProducts(res.slice(0, 15));
 
 				const initialQuantities = res.reduce(
 					(acc: any, product: {product_name: string}) => {
@@ -106,20 +106,21 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 	}
 
 	return (
-		<main className='m-auto min-vh-100'>
+		<main className='min-vh-100'>
 			<div className='container m-auto my-5'>
 				<div className='row'>
 					{visibleProducts.map((product) => {
 						const productQuantity = quantities[product.product_name] || 1;
 						return (
 							<div
-								className='col-md-6 col-lg-3 col-sm-10 m-auto my-3 '
+								className='col-md-6 col-lg-3 col-sm-10 my-3 '
 								key={product.product_name}
 							>
 								<div className='card h-100'>
 									<img
 										src={product.image_url}
 										alt={product.product_name}
+										style={{height:"400px", width:"100%"}}
 										className='card-img-top'
 										role='img'
 									/>

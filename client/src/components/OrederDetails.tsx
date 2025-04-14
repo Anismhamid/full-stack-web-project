@@ -26,7 +26,7 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 	}
 
 	return (
-		<main className='gradient min-vh-100'>
+		<main className=' min-vh-100'>
 			<div className='container p-2 mb-5'>
 				<h1 className='text-center bg-primary text-white rounded p-3 mb-4'>
 					{orderNumber}

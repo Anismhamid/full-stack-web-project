@@ -6,7 +6,7 @@ interface FishProps {}
 
 const Fish: FunctionComponent<FishProps> = () => {
 	return (
-		<main className='gradient min-vh-100'
+		<main className=' min-vh-100'
 >
 			<div className='container'>
 				<h1 className='text-center mb-4 p-2 rounded display-6 fw-bold'>

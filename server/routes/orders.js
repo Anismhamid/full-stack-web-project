@@ -9,41 +9,6 @@ router.post("/", auth, (req, res, next) => {
 	createOrder(req, res, next);
 });
 
-// Post new order from checkOut
-// router.post("/", auth, async (req, res) => {
-// 	try {
-// 		// validate body
-// 		const {error} = orderSchema.validate(req.body);
-// 		if (error) return res.status(400).send(error.details[0].message);
-
-// 		const {products, deliveryFee, totalAmount} = req.body;
-
-// 		if (!products) return res.status(400).send("No products provided for the order.");
-
-// 		const orderNumber = await generateOrderNumber();
-
-// 		// Create a new order
-// 		const newOrder = new Order({
-// 			...req.body,
-// 			userId: req.payload._id,
-// 			orderNumber: orderNumber,
-// 			deliveryFee: deliveryFee,
-// 			totalAmount: totalAmount,
-// 		});
-
-// 		// Save the order to the database
-// 		await newOrder.save();
-
-// 		io.on("new order", newOrder);
-
-// 		console.log(module.exports);
-
-// 		return res.status(201).send(newOrder); // Return the created order
-// 	} catch (error) {
-// 		return res.status(400).send(error.message); // Return server error
-// 	}
-// });
-
 // Get orders for a specific user
 router.get("/:userId", auth, async (req, res) => {
 	const userId = req.params.userId;

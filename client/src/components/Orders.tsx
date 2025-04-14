@@ -24,7 +24,7 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 
 	useEffect(() => {
 		setLoading(true);
-		getUserOrders(auth?._id as string)
+		getUserOrders(auth._id)
 			.then((res) => {
 				setOrders(res);
 
@@ -40,7 +40,7 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 			.finally(() => {
 				setLoading(false);
 			});
-	}, [auth]);
+	}, []);
 
 	// Handle order status update
 	const handleStatus = async (status: string, orderId: string) => {
@@ -66,7 +66,7 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 	}
 
 	return (
-		<main className='gradient min-vh-100'>
+		<main className=' min-vh-100'>
 			<div className='container py-5 mt-5'>
 				<h1 className='text-center bg-light rounded'>הזמנות שלי</h1>
 				<div className='row'>
@@ -98,40 +98,47 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 													"Pending"
 														? "text-danger"
 														: orderStatuses[
-																order.orderNumber
-														  ] === "Shipped"
-														? "text-success"
-														: orderStatuses[
-																order.orderNumber
-														  ] === "Delivered"
-														? "text-info"
-														: orderStatuses[
-																order.orderNumber
-														  ] === "Preparing"
-														? "text-primary"
-														: orderStatuses[
-																order.orderNumber
-														  ] === "Cancelled"
-														? "text-danger"
-														: ""
+																	order.orderNumber
+															  ] === "Shipped"
+															? "text-success"
+															: orderStatuses[
+																		order.orderNumber
+																  ] === "Delivered"
+																? "text-info"
+																: orderStatuses[
+																			order
+																				.orderNumber
+																	  ] === "Preparing"
+																	? "text-primary"
+																	: orderStatuses[
+																				order
+																					.orderNumber
+																		  ] ===
+																		  "Cancelled"
+																		? "text-danger"
+																		: ""
 												}`}
 											>
 												{orderStatuses[order.orderNumber] ===
 												"Pending"
 													? "בהמתנה"
 													: orderStatuses[order.orderNumber] ===
-													  "Shipped"
-													? "נמסר"
-													: orderStatuses[order.orderNumber] ===
-													  "Delivered"
-													? "נשלח"
-													: orderStatuses[order.orderNumber] ===
-													  "Preparing"
-													? "ההזמנה שלך בהכנה"
-													: orderStatuses[order.orderNumber] ===
-													  "Cancelled"
-													? "בוטל"
-													: ""}
+														  "Shipped"
+														? "נמסר"
+														: orderStatuses[
+																	order.orderNumber
+															  ] === "Delivered"
+															? "נשלח"
+															: orderStatuses[
+																		order.orderNumber
+																  ] === "Preparing"
+																? "ההזמנה שלך בהכנה"
+																: orderStatuses[
+																			order
+																				.orderNumber
+																	  ] === "Cancelled"
+																	? "בוטל"
+																	: ""}
 											</span>
 										</div>
 									</div>

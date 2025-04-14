@@ -42,7 +42,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 	}
 
 	return (
-		<main className='gradient min-vh-100'>
+		<main className=' min-vh-100'>
 			<div className='container rounded rounded-3'>
 				<h1 className='w-100 text-center mb-4 p-2 rounded display-5 fw-bold'>
 					הצעות ומבצעים

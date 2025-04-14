@@ -4,11 +4,14 @@ import {UserLogin} from "../interfaces/User";
 import * as yup from "yup";
 import {Link, useNavigate} from "react-router-dom";
 import {path} from "../routes/routes";
-import {loginUser} from "../services/usersServices";
+import {loginUser, verifyGoogleToken} from "../services/usersServices";
 import {useUser} from "../context/useUSer";
 import useToken from "../hooks/useToken";
-import {showSuccess} from "../atoms/Toast";
+import {showError, showSuccess} from "../atoms/Toast";
 import {emptyAuthValues} from "../interfaces/authValues";
+import {GoogleLogin} from "@react-oauth/google";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 interface LoginProps {}
 
@@ -32,32 +35,69 @@ const Login: FunctionComponent<LoginProps> = () => {
 		}),
 		onSubmit: async (values, {resetForm}) => {
 			try {
-				const token = await loginUser(values); // Assume token is returned from login
+				const token = await loginUser(values);
 				if (token) {
 					// Save token to localStorage
 					localStorage.setItem("token", token);
-
 					setAfterDecode(token);
 					setAuth(decodedToken);
 					setIsLoggedIn(true);
-
 					showSuccess("התחברת בהצלחה!");
-
 					navigate(path.Home);
 				}
 			} catch (error) {
 				setAuth(emptyAuthValues);
 				setIsLoggedIn(false);
 				resetForm();
+				// Handle the error better here
+				console.error("Login failed:", error);
 			}
 		},
 	});
+
+	const handleGoogleLoginSuccess = async (response: any) => {
+		const token = response.credential;
+		localStorage.setItem("token", token);
+
+		try {
+			const userInfo = await verifyGoogleToken(token);
+			if (userInfo) {
+				// 👇 Send verified userInfo to backend
+				const {data} = await axios.post(
+					"http://localhost:8209/api/google-login",
+					{
+						googleId: userInfo.sub,
+						email: userInfo.email,
+						name: {
+							first: userInfo.given_name,
+							last: userInfo.family_name || "",
+						},
+						image: {
+							url: userInfo.picture,
+							alt: "Google profile image",
+						},
+					},
+				);
+
+				localStorage.setItem("token", data.token);
+				setAuth(jwtDecode(data.token));
+				setIsLoggedIn(true);
+				showSuccess("התחברת בהצלחה!");
+				navigate(path.Home);
+			} else {
+				showError("Google token verification failed.");
+			}
+		} catch (error: any) {
+			showError("Error with Google login: " + error.message);
+			console.error("Error with Google login:", error);
+		}
+	};
 
 	useEffect(() => {
 		if (localStorage.token) {
 			navigate(path.Home);
 		}
-	}, []);
+	}, [navigate]);
 
 	return (
 		<main className='login min-vh-100'>
@@ -102,7 +142,12 @@ const Login: FunctionComponent<LoginProps> = () => {
 							</div>
 						)}
 					</div>
-
+					<div className='mt-4'>
+						<GoogleLogin
+							onSuccess={handleGoogleLoginSuccess}
+							onError={() => console.error("Google login failed")}
+						/>
+					</div>
 					<button type='submit' className='btn btn-success w-100'>
 						התחברות
 					</button>
@@ -112,6 +157,7 @@ const Login: FunctionComponent<LoginProps> = () => {
 						</span>
 						<Link to={path.Register}>לחץ כאן להרשמה</Link>
 					</div>
+					<Link to={path.PrivacyAndPolicy}>מדיניות הפרטיות</Link>
 				</form>
 			</div>
 		</main>
