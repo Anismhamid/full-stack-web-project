@@ -14,7 +14,7 @@ interface GoogleJwtPayload {
 	iat: string;
 	iss: string;
 	name: string;
-	picture: string; // הוספת picture
+	picture: string;
 	sub: string;
 	typ: string;
 	aud: string;
@@ -74,17 +74,15 @@ export const handleGoogleLogin = async (response: any) => {
 	}
 };
 
-
-export	const verifyGoogleToken = async (token: string) => {
-		const url = `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`;
-		try {
-			const response = await axios.get(url);
-			return response.data;
-		} catch (error) {
-			throw new Error("Failed to verify Google token");
-		}
-	};
-
+export const verifyGoogleToken = async (token: string) => {
+	const url = `${import.meta.env.VITE_API_VIREFY_TOKEN}${token}`;
+	try {
+		const response = await axios.get(url);
+		return response.data;
+	} catch (error) {
+		throw new Error("Failed to verify Google token");
+	}
+};
 
 /**
  * Login user and get a token

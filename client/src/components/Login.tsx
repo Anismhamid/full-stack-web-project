@@ -62,9 +62,9 @@ const Login: FunctionComponent<LoginProps> = () => {
 		try {
 			const userInfo = await verifyGoogleToken(token);
 			if (userInfo) {
-				// 👇 Send verified userInfo to backend
+				// Send verified userInfo to backend
 				const {data} = await axios.post(
-					"http://localhost:8209/api/google-login",
+					`${import.meta.env.VITE_API_URL}/google-login`,
 					{
 						googleId: userInfo.sub,
 						email: userInfo.email,

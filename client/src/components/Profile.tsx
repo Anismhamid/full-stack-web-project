@@ -1,6 +1,5 @@
 import {FunctionComponent, useEffect, useState} from "react";
 import {getUserById} from "../services/usersServices";
-// import {useUser} from "../context/useUSer";
 import RoleType from "../interfaces/UserType";
 import {Link, useNavigate} from "react-router-dom";
 import {
@@ -18,7 +17,6 @@ interface ProfileProps {}
 
 const Profile: FunctionComponent<ProfileProps> = () => {
 	const navigate = useNavigate();
-	// const {auth} = useUser();
 	const {decodedToken} = useToken();
 	const [user, setUser] = useState<
 		Partial<{
