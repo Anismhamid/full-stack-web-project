@@ -10,7 +10,6 @@ import {AuthValues, emptyAuthValues} from "../interfaces/authValues";
 // Auth type
 type Auth = AuthValues;
 
-
 // UserContext type
 interface UserContextType {
 	auth: Auth;
@@ -40,6 +39,11 @@ interface UserProviderProps {
 	children: ReactNode;
 }
 
+/**
+ *  user provider component
+ * @param {children}
+ * @returns auth states
+ */
 export const UserProvider: FunctionComponent<UserProviderProps> = ({children}) => {
 	const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 	const [auth, setAuth] = useState<Auth>(emptyAuthValues);

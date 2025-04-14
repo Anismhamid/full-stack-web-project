@@ -2,7 +2,10 @@ import {FunctionComponent} from "react";
 import ProductCategory from "./ProductsCategory";
 
 interface SnacksProps {}
-
+/**
+ * Mains snacks
+ * @returns snacks products
+ */
 const Snacks: FunctionComponent<SnacksProps> = () => {
 	return (
 		<main className=' min-vh-100'>
@@ -10,6 +13,7 @@ const Snacks: FunctionComponent<SnacksProps> = () => {
 				<h1 className='text-center mb-4 p-2 rounded display-6 fw-bold'>
 					הממתקים שלנו - איכות גבוהה, טריים ומגוונים!
 				</h1>
+
 				<hr />
 				<p className='text-center mb-4 p-2 rounded lead'>
 					כאן תוכלו למצוא מגוון רחב של ממתקים, שמיוצרים מחומרים טבעיים ונשמרים

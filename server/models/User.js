@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
 	{
+		googleId: {
+			type: String,
+			unique: true,
+			sparse: true,
+		},
 		name: {
 			type: {
 				first: {type: String, required: true, minlength: 2, maxlength: 50},
@@ -10,7 +15,7 @@ const userSchema = new mongoose.Schema(
 		},
 		phone: {
 			type: {
-				phone_1: {type: String, required: true},
+				phone_1: {type: String},
 				phone_2: {type: String},
 			},
 		},
@@ -28,10 +33,9 @@ const userSchema = new mongoose.Schema(
 			match: [/\S+@\S+\.\S+/, "Please enter a valid email"], // אימות תקינות האימייל
 		},
 		password: {
+			require: true,
 			type: String,
-			required: true,
 			minlength: 6,
-			maxlength: 60,
 		},
 		image: {
 			type: {
@@ -46,7 +50,7 @@ const userSchema = new mongoose.Schema(
 			enum: ["Admin", "Moderator", "Client"],
 			default: "Client",
 		},
-		activity: {type: Array, required: true},
+		activity: {type: Array},
 		registrAt: {type: String},
 		createdAt: {
 			type: Date,

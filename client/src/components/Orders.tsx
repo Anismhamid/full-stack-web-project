@@ -10,6 +10,10 @@ import RoleType from "../interfaces/UserType";
 
 interface OrdersProps {}
 
+/**
+ * Navigates orders
+ * @returns auth orders
+ */
 const Orders: FunctionComponent<OrdersProps> = () => {
 	const navigate = useNavigate();
 	const {auth} = useUser();
@@ -20,11 +24,11 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 	);
 	const [statusLoading, setStatusLoading] = useState<{[orderNumber: string]: boolean}>(
 		{},
-	); // Track loading for each status update
+	); // Tracking loading for each status update
 
 	useEffect(() => {
 		setLoading(true);
-		getUserOrders(auth._id)
+		getUserOrders(auth._id as string)
 			.then((res) => {
 				setOrders(res);
 
@@ -42,7 +46,7 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 			});
 	}, []);
 
-	// Handle order status update
+	// Handle to update order status
 	const handleStatus = async (status: string, orderId: string) => {
 		setStatusLoading((prev) => ({...prev, [orderId]: true})); // loading state for specific order
 		try {
@@ -67,12 +71,12 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 
 	return (
 		<main className=' min-vh-100'>
-			<div className='container py-5 mt-5'>
-				<h1 className='text-center bg-light rounded'>הזמנות שלי</h1>
+			<div className='container'>
+				<h1 className='text-center'>הזמנות שלי</h1>
 				<div className='row'>
 					{orders.length ? (
 						orders.map((order) => (
-							<div key={order.createdAt} className='mb-4 col-md-6'>
+							<div key={order.createdAt} className='mb-4 col-md-6 col-lg-3'>
 								<div className='card p-4 shadow-sm'>
 									<h5 className='card-title text-center bg-primary text-white p-2 rounded'>
 										<strong>מ"ס הזמנה:</strong> {order.orderNumber}

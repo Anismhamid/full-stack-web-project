@@ -1,4 +1,5 @@
 export interface ReceiptsType {
+	userId: string;
 	orderNumber: string;
 	orderDate: string;
 	customer: {

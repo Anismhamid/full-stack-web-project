@@ -63,7 +63,7 @@ const ForAllModal: FunctionComponent<ForAllModalProps> = ({onHide, show}) => {
 						onSubmit={formik.handleSubmit}
 						className=''
 					>
-						<h2 className='display-6 my-5 text-dark fw-bold text-center'>
+						<h2 className='display-6 my-5 fw-bold text-center'>
 							התחברות
 						</h2>
 						<div className='form-floating my-3'>

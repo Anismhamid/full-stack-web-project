@@ -14,7 +14,10 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import useToken from "../hooks/useToken";
 
 interface ProfileProps {}
-
+/**
+ * profile
+ * @returns auth profile
+ */
 const Profile: FunctionComponent<ProfileProps> = () => {
 	const navigate = useNavigate();
 	const {decodedToken} = useToken();
@@ -96,7 +99,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 				<div className=' d-flex align-items-center' style={{height: "350px"}}>
 					<Link to={""}>
 						<img
-							className=' border border-light rounded-4'
+							className='border border-light rounded-4'
 							src={
 								user.image?.url ||
 								"https://media2.giphy.com/media/l0MYO6VesS7Hc1uPm/200.webp?cid=ecf05e47hxvvpx851ogwi8s26zbj1b3lay9lke6lzvo76oyx&ep=v1_gifs_search&rid=200.webp&ct=g"
@@ -116,8 +119,8 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 							<Button
 								variant='contained'
 								color='warning'
-								// EditProfile
-								onClick={() => navigate(path.Home)}
+								// Edit Profile
+								onClick={() => navigate(path.CompleteProfile)}
 							>
 								עריכת פרטים אישיים
 							</Button>

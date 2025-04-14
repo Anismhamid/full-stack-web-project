@@ -2,9 +2,13 @@ import {FunctionComponent} from "react";
 import ProductCategory from "./ProductsCategory";
 
 interface SpicesProps {}
-
+/**
+ * Mains spices
+ * @returns spices products
+ */
 const Spices: FunctionComponent<SpicesProps> = () => {
 	return (
+		
 		<main className=' min-vh-100'>
 			<div className='container'>
 				<h1 className='text-center mb-4 p-2 rounded display-6 fw-bold'>

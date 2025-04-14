@@ -64,7 +64,8 @@ export const postOrder = async (order: Order) => {
 	try {
 		const orders = await axios.post(
 			api,
-			{...order},
+			{...order,
+			},
 			{
 				headers: {Authorization: localStorage.getItem("token")},
 			},

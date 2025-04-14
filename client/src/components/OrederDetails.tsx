@@ -5,6 +5,10 @@ import useOrderDetails from "../hooks/useOrderDetails";
 
 interface OrderDetailsProps {}
 
+/**
+ * Order products Details
+ * @returns Order products
+ */
 const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 	const {orderNumber} = useParams<{orderNumber: string}>();
 	const {cartItems, loading, error} = useOrderDetails(orderNumber as string);

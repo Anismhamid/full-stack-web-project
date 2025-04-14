@@ -3,7 +3,6 @@ export interface Order {
 	orderNumber: string;
 	products: [
 		{
-			_id?: string;
 			product_name: string;
 			product_image: string;
 			product_price: number;

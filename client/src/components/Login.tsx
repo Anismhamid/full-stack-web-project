@@ -11,10 +11,13 @@ import {showError, showSuccess} from "../atoms/Toast";
 import {emptyAuthValues} from "../interfaces/authValues";
 import {GoogleLogin} from "@react-oauth/google";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 interface LoginProps {}
-
+/**
+ * Sets auth
+ * @returns
+ */
 const Login: FunctionComponent<LoginProps> = () => {
 	const {setAuth, setIsLoggedIn} = useUser();
 	const navigate = useNavigate();
@@ -49,8 +52,7 @@ const Login: FunctionComponent<LoginProps> = () => {
 				setAuth(emptyAuthValues);
 				setIsLoggedIn(false);
 				resetForm();
-				// Handle the error better here
-				console.error("Login failed:", error);
+				showError("Login failed");
 			}
 		},
 	});
@@ -70,11 +72,11 @@ const Login: FunctionComponent<LoginProps> = () => {
 						email: userInfo.email,
 						name: {
 							first: userInfo.given_name,
-							last: userInfo.family_name || "",
+							last: userInfo.family_name,
 						},
 						image: {
 							url: userInfo.picture,
-							alt: "Google profile image",
+							alt: userInfo.given_name,
 						},
 					},
 				);
@@ -83,7 +85,7 @@ const Login: FunctionComponent<LoginProps> = () => {
 				setAuth(jwtDecode(data.token));
 				setIsLoggedIn(true);
 				showSuccess("התחברת בהצלחה!");
-				navigate(path.Home);
+				navigate(path.CompleteProfile);
 			} else {
 				showError("Google token verification failed.");
 			}
@@ -97,7 +99,7 @@ const Login: FunctionComponent<LoginProps> = () => {
 		if (localStorage.token) {
 			navigate(path.Home);
 		}
-	}, [navigate]);
+	}, [navigate, verifyGoogleToken]);
 
 	return (
 		<main className='login min-vh-100'>
@@ -142,15 +144,15 @@ const Login: FunctionComponent<LoginProps> = () => {
 							</div>
 						)}
 					</div>
+					<button type='submit' className='btn btn-success w-100'>
+						התחברות
+					</button>
 					<div className='mt-4'>
 						<GoogleLogin
 							onSuccess={handleGoogleLoginSuccess}
 							onError={() => console.error("Google login failed")}
 						/>
 					</div>
-					<button type='submit' className='btn btn-success w-100'>
-						התחברות
-					</button>
 					<div className='mt-3'>
 						<span className='text-light fw-bold me-1'>
 							עדיין אין לך חשבון ?

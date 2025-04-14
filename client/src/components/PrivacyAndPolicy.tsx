@@ -1,7 +1,10 @@
 import {FunctionComponent} from "react";
 
 interface PrivacyAdnPolicyProps {}
-
+/**
+ * Mains privacy and policy
+ * @returns  
+ */
 const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
 	return (
 		<main className='min-vh-100 bg-light py-5 px-3'>

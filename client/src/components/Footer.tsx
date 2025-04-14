@@ -3,7 +3,10 @@ import {Link, NavLink} from "react-router-dom";
 import {path, productsPathes} from "../routes/routes";
 
 interface FooterProps {}
-
+/**
+ * Footers
+ * @returns footer
+ */
 const Footer: FunctionComponent<FooterProps> = () => {
 	return (
 		<footer className='text-white pt-4 pb-2 bottom-0 start-0 end-0'>
@@ -14,7 +17,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
 						<h3>שוק הבינה</h3>
 						<p>פירות וירקות טריים ואורגניים נשלחים אליכם עד דלת הבית</p>
 						<hr />
-            <p>
+						<p>
 							צור איתנו קשר:
 							<Link
 								to='mailto:support@fruitsandveg.com'
@@ -23,6 +26,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
 								support@fruitsandveg.com
 							</Link>
 						</p>
+
 						<p>
 							טלפון:
 							<Link

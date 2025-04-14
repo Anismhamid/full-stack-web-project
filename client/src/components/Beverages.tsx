@@ -2,7 +2,10 @@ import {FunctionComponent} from "react";
 import ProductCategory from "./ProductsCategory";
 
 interface BeveragesProps {}
-
+/**
+ * Mains beverages
+ * @returns beverages products
+ */
 const Beverages: FunctionComponent<BeveragesProps> = () => {
 	return (
 		<main className=' min-vh-100'>
@@ -19,6 +22,7 @@ const Beverages: FunctionComponent<BeveragesProps> = () => {
 			</div>
 			<ProductCategory category='beverages' />
 		</main>
+		
 	);
 };
 

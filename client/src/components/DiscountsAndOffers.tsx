@@ -6,7 +6,10 @@ import {productsPathes} from "../routes/routes";
 import Loader from "../atoms/loader/Loader";
 
 interface DiscountsAndOffersProps {}
-
+/**
+ * Products in discount
+ * @returns Products in discount
+ */
 const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 	const [productsInDiscount, setProductsInDiscount] = useState<Products[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);

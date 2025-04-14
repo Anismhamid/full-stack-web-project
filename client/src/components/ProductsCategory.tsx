@@ -14,7 +14,11 @@ import RoleType from "../interfaces/UserType";
 interface ProductCategoryProps {
 	category: string;
 }
-
+/**
+ * Categorys product by category
+ * @param {category}
+ * @returns products by categoties
+ */
 const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) => {
 	const [productNameToUpdate, setProductNameToUpdate] = useState<string>("");
 	const [products, setProducts] = useState<Products[]>([]);
@@ -120,7 +124,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 									<img
 										src={product.image_url}
 										alt={product.product_name}
-										style={{height:"400px", width:"100%"}}
+										style={{height: "400px", width: "100%"}}
 										className='card-img-top'
 										role='img'
 									/>
@@ -229,30 +233,29 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 												<img src='/svg/add.svg' alt='' />
 											</button>
 										</div>
-											<button
-												onClick={() => {
-													handleAdd(
-														product.product_name,
-														quantities,
-														product.price,
-														product.image_url,
-														product.sale || false,
-														product.discount || 0,
-													);
-												}}
-												disabled={product.quantity_in_stock <= 0}
-												className={`w-100 shadow ${
-													product.quantity_in_stock <= 0
-														? "btn btn-danger"
-														: "btn btn-success"
-												}`}
-											>
-												{product.quantity_in_stock <= 0
-													? "אזל מהמלאי"
-													: "הוספה לסל"}
-											</button>
+										<button
+											onClick={() => {
+												handleAdd(
+													product.product_name,
+													quantities,
+													product.price,
+													product.image_url,
+													product.sale || false,
+													product.discount || 0,
+												);
+											}}
+											disabled={product.quantity_in_stock <= 0}
+											className={`w-100 shadow ${
+												product.quantity_in_stock <= 0
+													? "btn btn-danger"
+													: "btn btn-success"
+											}`}
+										>
+											{product.quantity_in_stock <= 0
+												? "אזל מהמלאי"
+												: "הוספה לסל"}
+										</button>
 										<div className='card-footer mt-3'>
-
 											{((auth && auth.role === RoleType.Admin) ||
 												(auth &&
 													auth.role ===

@@ -15,13 +15,16 @@ import {Button} from "@mui/material";
 import PaymentModal from "../atoms/pymentModal/PymentModal";
 
 interface CheckoutProps {}
-
+/**
+ * Auths checkout
+ * @returns chooise of payments and delivery
+ */
 const Checkout: FunctionComponent<CheckoutProps> = () => {
 	const {auth} = useUser();
 	const navigate = useNavigate();
 	const [cartItems, setCartItems] = useState<CartType[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [orderDetails, setOrderDetails] = useState<Order | null>(null);
+	const [, setOrderDetails] = useState<Order | null>(null);
 	const [newOrder, setNewOrder] = useState<Order | null>(null);
 	const [showPymentModal, setShowPymentModal] = useState<boolean>(false);
 
@@ -137,7 +140,6 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 			showError("שגיאה בביצוע ההזמנה");
 		}
 	};
-
 
 	if (loading) return <Loader />;
 
@@ -308,7 +310,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 					try {
 						const orderToSend = {
 							...newOrder,
-							// creditCard: cardData, // אופציונלי – תסיר אם לא שומרים בצד לקוח
+							// creditCard: cardData, // אופציונלי –  אם שומרים בצד לקוח
 						};
 
 						setLoading(true);

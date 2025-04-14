@@ -1,9 +1,11 @@
 import {FunctionComponent} from "react";
 import ProductCategory from "./ProductsCategory";
 
-
 interface FrozenProps {}
-
+/**
+ * Mains frozen
+ * @returns frozen products
+ */
 const Frozen: FunctionComponent<FrozenProps> = () => {
 	return (
 		<main className=' min-vh-100'>
@@ -18,6 +20,7 @@ const Frozen: FunctionComponent<FrozenProps> = () => {
 					ושירות מצוין כדי שתהנו מכל מוצר קפוא בנוחות ובקלות.
 				</p>
 			</div>
+
 			<ProductCategory category='forzen' />
 		</main>
 	);

@@ -1,7 +1,10 @@
 import {FunctionComponent} from "react";
 
 interface AboutProps {}
-
+/**
+ * Mains about
+ * @returns  
+ */
 const About: FunctionComponent<AboutProps> = () => {
 	return (
 		<main className='min-vh-100'>
@@ -18,6 +21,7 @@ const About: FunctionComponent<AboutProps> = () => {
 								עם מגוון רחב של מוצרים איכותיים.
 							</p>
 						</div>
+						
 
 						{/* lifestyle and services */}
 						<section className='about-section'>

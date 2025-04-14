@@ -2,7 +2,10 @@ import {FunctionComponent} from "react";
 import {Link} from "react-router-dom";
 
 interface ContactProps {}
-
+/**
+ * Mains contact
+ * @returns contact infomation
+ */
 const Contact: FunctionComponent<ContactProps> = () => {
 	return (
 		<main className=' min-vh-100'>
@@ -14,6 +17,7 @@ const Contact: FunctionComponent<ContactProps> = () => {
 						<h3 className='mb-3 text-center mb-4'>
 							שוק הבינה - פירות וירקות אורגניים
 						</h3>
+						
 						<p className='mb-4 lead text-start'>
 							אנו ב"שוק הבינה" גאים להציע פירות וירקות טריים ואורגניים
 							שנשלחים ישירות אליכם עד דלת הבית, עם דגש על איכות ושירות ברמה

@@ -46,7 +46,10 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
 		border: 0,
 	},
 }));
-
+/**
+ * Users uers management
+ * @returns all users table for management
+ */
 const UersManagement: FunctionComponent<UersManagementProps> = () => {
 	const [users, setUsers] = useState<UserRegister[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");

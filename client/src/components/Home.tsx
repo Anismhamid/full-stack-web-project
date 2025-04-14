@@ -10,7 +10,7 @@ import {Products} from "../interfaces/Products";
 import {handleAddToCart, handleQuantity} from "../helpers/fruitesFunctions";
 import Loader from "../atoms/loader/Loader";
 import ForAllModal from "../atoms/LoginModal";
-import {SpeedDial,SpeedDialIcon,SpeedDialAction} from "@mui/material";
+import {SpeedDial, SpeedDialIcon, SpeedDialAction} from "@mui/material";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import {path} from "../routes/routes";
 import RoleType from "../interfaces/UserType";
@@ -24,6 +24,11 @@ import Frozen from "./Frozen";
 import Snacks from "./Snacks";
 
 interface HomeProps {}
+
+/**
+ * Home page
+ * @returns All products by categories
+ */
 
 const Home: FunctionComponent<HomeProps> = () => {
 	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
@@ -360,9 +365,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 				<Beverages />
 
 				{/* forzen */}
-				<p className='display-4 fw-bold mt-5'>
-					מוצרים קפואים
-				</p>
+				<p className='display-4 fw-bold mt-5'>מוצרים קפואים</p>
 				<hr className=' text-light' />
 				<Frozen />
 

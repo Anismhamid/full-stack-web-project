@@ -2,7 +2,10 @@ import {FunctionComponent} from "react";
 import ProductCategory from "./ProductsCategory";
 
 interface VegentableProps {}
-
+/**
+ * Mains vegentable
+ * @returns vegentable products
+ */
 const Vegentable: FunctionComponent<VegentableProps> = () => {
 	return (
 		<main className=' min-vh-100'>

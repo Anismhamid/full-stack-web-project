@@ -5,9 +5,14 @@ import {UserRegister} from "../interfaces/User";
 import {Link, useNavigate} from "react-router-dom";
 import {path} from "../routes/routes";
 import {registerNewUser} from "../services/usersServices";
+import {MenuItem, TextField} from "@mui/material";
+import {cities} from "../interfaces/cities";
 
 interface RegisterProps {}
-
+/**
+ * register new user
+ * @returns input fileds for register user
+ */
 const Register: FunctionComponent<RegisterProps> = () => {
 	const navigate = useNavigate();
 	const formik = useFormik<UserRegister>({
@@ -87,59 +92,56 @@ const Register: FunctionComponent<RegisterProps> = () => {
 	});
 
 	return (
-		<main className='login min-vh-100'>
+		<main className='min-vh-100'>
 			<div className='container pt-5 mt-5'>
-				<form autoComplete='off' noValidate onSubmit={formik.handleSubmit}>
+				<form
+					style={{maxWidth: "800px", margin: "auto"}}
+					autoComplete='off'
+					noValidate
+					onSubmit={formik.handleSubmit}
+				>
 					<h6 className='display-6 text-light text-center'>הרשמה</h6>
 
 					{/* first - last name  */}
 					<div className='row'>
 						<div className='col-md-6'>
-							<div className='form-floating mb-3'>
-								<input
-									aria-label='first name'
-									type='text'
-									name='name.first'
-									value={formik.values.name.first}
-									onChange={formik.handleChange}
-									className='form-control'
-									id='name.first'
-									placeholder=''
-								/>
-								<label htmlFor='name.first'>
-									שם פרטי
-									<span className='text-danger fw-bold ms-1'>*</span>
-								</label>
-								{formik.errors.name?.first &&
-									formik.touched.name?.first && (
-										<div className='text-danger'>
-											{formik.errors.name?.first}
-										</div>
-									)}
-							</div>
+							<TextField
+								label='שם'
+								name='name.first'
+								type='text'
+								value={formik.values.name.first}
+								onChange={formik.handleChange}
+								error={
+									formik.touched.name?.first &&
+									Boolean(formik.errors.name?.first)
+								}
+								helperText={
+									formik.touched.name?.first &&
+									formik.errors.name?.first
+								}
+								fullWidth
+								className='my-2'
+								variant='outlined'
+							/>
 						</div>
 						<div className='col-md-6'>
-							<div className='form-floating mb-3'>
-								<input
-									type='text'
-									name='name.last'
-									value={formik.values.name.last}
-									onChange={formik.handleChange}
-									className='form-control'
-									id='name.last'
-									placeholder=''
-								/>
-								<label htmlFor='name.last'>
-									שם משפחה
-									<span className='text-danger fw-bold ms-1'>*</span>
-								</label>
-								{formik.errors.name?.last &&
-									formik.touched.name?.last && (
-										<div className='text-danger'>
-											{formik.errors.name.last}
-										</div>
-									)}
-							</div>
+							<TextField
+								label='שם משפחה'
+								name='name.last'
+								type='text'
+								value={formik.values.name.last}
+								onChange={formik.handleChange}
+								error={
+									formik.touched.name?.last &&
+									Boolean(formik.errors.name?.last)
+								}
+								helperText={
+									formik.touched.name?.last && formik.errors.name?.last
+								}
+								fullWidth
+								className='my-2'
+								variant='outlined'
+							/>
 						</div>
 					</div>
 
@@ -147,43 +149,36 @@ const Register: FunctionComponent<RegisterProps> = () => {
 					<hr className='text-light' />
 					<div className='row'>
 						<div className='col-md-6'>
-							<div className='form-floating mb-3'>
-								<input
-									type='text'
-									name='phone.phone_1'
-									value={formik.values.phone.phone_1}
-									onChange={formik.handleChange}
-									className='form-control'
-									id='phone.phone_1'
-									placeholder='phone.phone_1'
-								/>
-								<label htmlFor='מ"ס טלופן '>
-									מ"ס טלופן{" "}
-									<span className=' text-danger fw-bold'>*</span>
-								</label>
-								{formik.touched.phone?.phone_1 &&
-									formik.errors.phone?.phone_1 && (
-										<div className='text-danger fw-bold'>
-											{formik.errors.phone.phone_1}
-										</div>
-									)}
-							</div>
+							<TextField
+								label='טלופן ראשי'
+								name='phone.phone_1'
+								type='text'
+								value={formik.values.phone.phone_1}
+								onChange={formik.handleChange}
+								error={
+									formik.touched.phone?.phone_1 &&
+									Boolean(formik.errors.phone?.phone_1)
+								}
+								helperText={
+									formik.touched.phone?.phone_1 &&
+									formik.errors.phone?.phone_1
+								}
+								fullWidth
+								className='my-2'
+								variant='outlined'
+							/>
 						</div>
 						<div className='col-md-6'>
-							<div className='form-floating mb-3'>
-								<input
-									type='text'
-									name='phone.phone_2'
-									value={formik.values.phone.phone_2}
-									onChange={formik.handleChange}
-									className='form-control'
-									id='phone.phone_2'
-									placeholder=''
-								/>
-								<label htmlFor='phone.phone_2'>
-									מ"ס טלפון שני (אופציונלי)
-								</label>
-							</div>
+							<TextField
+								label='טלופן שני (לא חובה)'
+								name='phone.phone_2'
+								type='text'
+								value={formik.values.phone.phone_2}
+								onChange={formik.handleChange}
+								fullWidth
+								className='my-2'
+								variant='outlined'
+							/>
 						</div>
 					</div>
 
@@ -191,47 +186,40 @@ const Register: FunctionComponent<RegisterProps> = () => {
 					<hr className='text-light' />
 					<div className='row'>
 						<div className='col-md-6'>
-							<div className='form-floating mb-3'>
-								<input
-									type='email'
-									name='email'
-									value={formik.values.email}
-									onChange={formik.handleChange}
-									className='form-control'
-									id='email'
-									placeholder=''
-								/>
-								<label htmlFor='email'>
-									דו"אל <span className='text-danger fw-bold'>*</span>
-								</label>
-								{formik.touched.email && formik.errors.email && (
-									<div className='text-danger fw-bold'>
-										{formik.errors.email}
-									</div>
-								)}
-							</div>
+							<TextField
+								label='דו"אל'
+								name='email'
+								type='email'
+								value={formik.values.email}
+								onChange={formik.handleChange}
+								error={
+									formik.touched.email && Boolean(formik.errors.email)
+								}
+								helperText={formik.touched.email && formik.errors.email}
+								fullWidth
+								className='my-2'
+								variant='outlined'
+							/>
 						</div>
 
 						<div className='col-md-6'>
-							<div className='form-floating mb-3'>
-								<input
-									type='password'
-									name='password'
-									value={formik.values.password}
-									onChange={formik.handleChange}
-									className='form-control'
-									id='password'
-									placeholder=''
-								/>
-								<label htmlFor='password'>
-									סיסמה <span className=' text-danger fw-bold'>*</span>
-								</label>
-								{formik.errors.password && formik.touched.password && (
-									<div className='text-danger'>
-										{formik.errors.password}
-									</div>
-								)}
-							</div>
+							<TextField
+								label='סיסמה'
+								type='password'
+								name='password'
+								value={formik.values.password}
+								onChange={formik.handleChange}
+								error={
+									formik.touched.password &&
+									Boolean(formik.errors.password)
+								}
+								helperText={
+									formik.touched.password && formik.errors.password
+								}
+								fullWidth
+								className='my-2'
+								variant='outlined'
+							/>
 						</div>
 					</div>
 
@@ -239,34 +227,31 @@ const Register: FunctionComponent<RegisterProps> = () => {
 					<hr className=' text-light' />
 
 					<h6 className='text-primary mb-2 text-center'>(אופציונלי)</h6>
+
 					<div className='row'>
 						<div className='col-6'>
-							<div className='form-floating mb-3'>
-								<input
-									type='text'
-									name='image.url'
-									value={formik.values.image?.url}
-									onChange={formik.handleChange}
-									className='form-control'
-									id='imageUrl'
-									placeholder=''
-								/>
-								<label htmlFor='imageUrl'>קישור לתמונה</label>
-							</div>
+							<TextField
+								label='קישור לתמונה'
+								type='text'
+								name='image.url'
+								value={formik.values.image?.url}
+								onChange={formik.handleChange}
+								fullWidth
+								className='my-2'
+								variant='outlined'
+							/>
 						</div>
 						<div className='col-6'>
-							<div className='form-floating mb-3'>
-								<input
-									type='text'
-									name='image.alt'
-									value={formik.values.image?.alt}
-									onChange={formik.handleChange}
-									className='form-control'
-									id='imageAlt'
-									placeholder=''
-								/>
-								<label htmlFor='imageAlt'>שם התמונה</label>
-							</div>
+							<TextField
+								label='שם תמונה'
+								type='text'
+								name='image.alt'
+								value={formik.values.image?.alt}
+								onChange={formik.handleChange}
+								fullWidth
+								className='my-2'
+								variant='outlined'
+							/>
 						</div>
 					</div>
 
@@ -274,71 +259,72 @@ const Register: FunctionComponent<RegisterProps> = () => {
 					<hr className='text-light' />
 					<div className='row'>
 						<div className='col-md-4'>
-							<div className='form-floating mb-3'>
-								<input
-									type='text'
-									name='address.city'
-									value={formik.values.address.city}
-									onChange={formik.handleChange}
-									className='form-control'
-									id='address.city'
-									placeholder=''
-								/>
-								<label htmlFor='address.city'>
-									עיר
-									<span className=' text-danger fw-bold ms-1'>*</span>
-								</label>
-								{formik.touched.address?.city &&
-									formik.errors.address?.city && (
-										<div className='text-danger fw-bold'>
-											{formik.errors.address.city}
-										</div>
-									)}
-							</div>
+							<TextField
+								select
+								label='עיר'
+								name='address.city'
+								value={formik.values.address.city}
+								onChange={formik.handleChange}
+								error={
+									formik.touched.address?.city &&
+									Boolean(formik.errors.address?.city)
+								}
+								helperText={
+									formik.touched.address?.city &&
+									formik.errors.address?.city
+								}
+								fullWidth
+								className='my-2'
+								variant='outlined'
+							>
+								<MenuItem value=''>
+									<em>בחר עיר</em>
+								</MenuItem>
+								{cities.map((city, idx) => (
+									<MenuItem key={idx} value={city}>
+										{city}
+									</MenuItem>
+								))}
+							</TextField>
 						</div>
 
 						<div className='col-md-4'>
-							<div className='form-floating mb-3'>
-								<input
-									type='text'
-									name='address.street'
-									value={formik.values.address.street}
-									onChange={formik.handleChange}
-									className='form-control'
-									id='address.street'
-									placeholder=''
-								/>
-								<label htmlFor='address.street'>
-									שם רחוב
-									<span className=' text-danger fw-bold ms-1'>*</span>
-								</label>
-								{formik.touched.address?.street &&
-									formik.errors.address?.street && (
-										<div className='text-danger fw-bold'>
-											{formik.errors.address.street}
-										</div>
-									)}
-							</div>
+							<TextField
+								label='רחוב'
+								name='address.street'
+								type='text'
+								value={formik.values.address?.street}
+								onChange={formik.handleChange}
+								error={
+									formik.touched.address?.street &&
+									Boolean(formik.errors.address?.street)
+								}
+								helperText={
+									formik.touched.address?.street &&
+									formik.errors.address?.street
+								}
+								fullWidth
+								className='my-2'
+								variant='outlined'
+							/>
 						</div>
 						<div className='col-md-4'>
-							<div className='form-floating mb-3'>
-								<input
-									type='text'
-									name='address.houseNumber'
-									value={formik.values.address.houseNumber}
-									onChange={formik.handleChange}
-									className='form-control'
-									id='address.houseNumber'
-									placeholder=''
-								/>
-								<label htmlFor='address.houseNumber'>מ"ס בית</label>
-							</div>
+							<TextField
+								label='מספר בית'
+								name='address.houseNumber'
+								type='text'
+								value={formik.values.address?.houseNumber}
+								onChange={formik.handleChange}
+								fullWidth
+								className='my-2'
+								variant='outlined'
+							/>
 						</div>
 					</div>
-					<button type='submit' className='btn btn-success w-100'>
+					<button type='submit' className='btn btn-success w-100 mt-5'>
 						הרשמה
 					</button>
-					<div className='mt-3'>
+					<div className='mt-5'>
 						<span className='text-light fw-bold me-1'>יש לך חשבון ?</span>
 						<Link to={path.Login}>לחץ כאן להתחבר</Link>
 					</div>

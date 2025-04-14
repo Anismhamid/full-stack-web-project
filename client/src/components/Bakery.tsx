@@ -2,7 +2,10 @@ import {FunctionComponent} from "react";
 import ProductCategory from "./ProductsCategory";
 
 interface BakeryProps {}
-
+/**
+ * Mains bakery
+ * @returns bakery product
+ */
 const Bakery: FunctionComponent<BakeryProps> = () => {
 	return (
 		<main className=' min-vh-100'>

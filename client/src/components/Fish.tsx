@@ -3,11 +3,13 @@ import {FunctionComponent} from "react";
 import ProductCategory from "./ProductsCategory";
 
 interface FishProps {}
-
+/**
+ * Mains fish
+ * @returns fishs products
+ */
 const Fish: FunctionComponent<FishProps> = () => {
 	return (
-		<main className=' min-vh-100'
->
+		<main className=' min-vh-100'>
 			<div className='container'>
 				<h1 className='text-center mb-4 p-2 rounded display-6 fw-bold'>
 					הדגים שלנו - טריים, איכותיים ומגוונים!
@@ -20,6 +22,7 @@ const Fish: FunctionComponent<FishProps> = () => {
 					את המועדף עליו.
 				</p>
 			</div>
+
 			<ProductCategory category='fish' />
 		</main>
 	);

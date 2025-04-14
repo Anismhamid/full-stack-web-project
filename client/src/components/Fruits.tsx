@@ -2,7 +2,10 @@ import {FunctionComponent} from "react";
 import ProductCategory from "./ProductsCategory";
 
 interface FruitsProps {}
-
+/**
+ * Mains fruits
+ * @returns fruits products
+ */
 const Fruits: FunctionComponent<FruitsProps> = () => {
 	return (
 		<main className=' min-vh-100'>

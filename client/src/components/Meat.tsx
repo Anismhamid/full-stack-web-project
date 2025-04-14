@@ -2,10 +2,11 @@ import {FunctionComponent} from "react";
 import ProductCategory from "./ProductsCategory";
 
 interface MeatProps {}
-
+/**
+ * Mains meat
+ * @returns meat products
+ */
 const Meat: FunctionComponent<MeatProps> = () => {
-
-
 	return (
 		<main className=' min-vh-100'>
 			<div className='container'>

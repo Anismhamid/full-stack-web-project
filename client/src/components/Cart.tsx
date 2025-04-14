@@ -7,16 +7,23 @@ import {path} from "../routes/routes";
 import NavigathionButtons from "../atoms/NavigathionButtons";
 import Loader from "../atoms/loader/Loader";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
-import { Button,Tooltip } from "@mui/material";
+import {Button, Tooltip} from "@mui/material";
 
 interface CartProps {}
 
+/**
+ * Cart
+ * @returns Cart items
+ */
 const Cart: FunctionComponent<CartProps> = () => {
 	const [items, setItems] = useState<CartType[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const {decodedToken} = useToken();
 	const navigate = useNavigate();
-
+	/**
+	 * Deleteing product from cart by name
+	 * @param product_name
+	 */
 	const handleDelete = (product_name: string) => {
 		setItems((prev: CartType[]) => {
 			return prev.map((item: any) => {

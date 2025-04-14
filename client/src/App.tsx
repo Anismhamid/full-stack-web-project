@@ -48,6 +48,7 @@ import {
 	SpeedDial,
 } from "@mui/material";
 import PrivacyAdnPolicy from "./components/PrivacyAndPolicy.js";
+import CompleteProfile from "./components/CompleteProfile.js";
 
 function App() {
 	const {decodedToken} = useToken();
@@ -142,7 +143,7 @@ function App() {
 						<FormControlLabel value='dark' control={<Radio />} label='Dark' />
 					</RadioGroup>
 				</FormControl>
-				<CssBaseline />
+			
 				<ToastContainer />
 				<NavBar />
 				{decodedToken && (
@@ -178,6 +179,7 @@ function App() {
 					<Route path={path.AllTheOrders} element={<AllTheOrders />} />
 					<Route path={path.Receipt} element={<Receipt />} />
 					<Route path={path.PrivacyAndPolicy} element={<PrivacyAdnPolicy />} />
+					<Route path={path.CompleteProfile} element={<CompleteProfile />} />
 					<Route path={productsPathes.Fruits} element={<Fruits />} />
 					<Route path={productsPathes.Vegetable} element={<Vegetable />} />
 					<Route path={productsPathes.fish} element={<Fish />} />

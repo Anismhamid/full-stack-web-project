@@ -7,12 +7,13 @@ import Loader from "../atoms/loader/Loader";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import NavigathionButtons from "../atoms/NavigathionButtons";
 import RoleType from "../interfaces/UserType";
-import {io} from "socket.io-client";
-import {showNewOrderToast} from "../atoms/bootStrapToast/SocketToast";
 import {Form} from "react-bootstrap";
 
 interface AllTheOrdersProps {}
-
+/**
+ * All Orders
+ * @returns All Orders and orders statuses
+ */
 const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	const [orderStatuses, setOrderStatuses] = useState<{[orderNumber: string]: string}>(
 		{},
@@ -31,25 +32,6 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 			order.orderNumber.toUpperCase().includes(searchQuery.toLowerCase()),
 		);
 	}, [allOrders, searchQuery]);
-
-	useEffect(() => {
-		const socket = io(import.meta.env.VITE_API_SOCKET_URL, {
-			transports: ["websocket"],
-		});
-
-		socket.on("new order", (newOrder) => {
-			setAllOrders((prevOrders) => [newOrder, ...prevOrders]);
-			showNewOrderToast({
-				navigate,
-				navigateTo: `/orderDetails/${newOrder.orderNumber}`,
-				orderNum: newOrder.orderNumber,
-			});
-		});
-
-		return () => {
-			socket.disconnect();
-		};
-	}, []);
 
 	useEffect(() => {
 		getAllOrders()
@@ -98,9 +80,9 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	return (
 		<main className=' min-vh-100'>
 			<div className='container bg-gradient rounded  py-5 mt-5'>
-				<h1 className='text-center bg-light rounded'>כל ההזמנות</h1>
+				<h1 className='text-center'>כל ההזמנות</h1>
 				{/* שדה חיפוש */}
-				<Form className='text-center text-light p-3 my-3 m-auto' role='search'>
+				<Form className='text-center p-3 my-3 m-auto' role='search'>
 					<h3>חפש הזמנה</h3>
 					<input
 						autoComplete='on'
@@ -112,7 +94,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 						onChange={(e) => setSearchQuery(e.target.value)}
 					/>
 				</Form>
-				<div className='row'>
+				<div className='row w-100'>
 					{filteredOrders.length ? (
 						filteredOrders.map((order) => (
 							<div key={order.createdAt} className='mb-4 col-md-6 col-lg-4'>

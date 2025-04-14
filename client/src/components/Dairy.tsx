@@ -2,7 +2,10 @@ import {FunctionComponent} from "react";
 import ProductCategory from "./ProductsCategory";
 
 interface DairyProps {}
-
+/**
+ * Mains dairy
+ * @returns dairy products
+ */
 const Dairy: FunctionComponent<DairyProps> = () => {
 	return (
 		<main className=' min-vh-100'>
@@ -19,6 +22,7 @@ const Dairy: FunctionComponent<DairyProps> = () => {
 			</div>
 			<ProductCategory category='dairy' />
 		</main>
+		
 	);
 };
 
