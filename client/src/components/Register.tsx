@@ -93,14 +93,14 @@ const Register: FunctionComponent<RegisterProps> = () => {
 
 	return (
 		<main className='min-vh-100'>
-			<div className='container pt-5 mt-5'>
+			<div className='container pt-5'>
 				<form
 					style={{maxWidth: "800px", margin: "auto"}}
 					autoComplete='off'
 					noValidate
 					onSubmit={formik.handleSubmit}
 				>
-					<h6 className='display-6 text-light text-center'>הרשמה</h6>
+					<h6 className='display-6 text-center'>הרשמה</h6>
 
 					{/* first - last name  */}
 					<div className='row'>

@@ -3,20 +3,20 @@ import {FunctionComponent} from "react";
 interface PrivacyAdnPolicyProps {}
 /**
  * Mains privacy and policy
- * @returns  
+ * @returns
  */
 const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
 	return (
-		<main className='min-vh-100 bg-light py-5 px-3'>
-			<div className='container bg-white shadow p-5 rounded-4'>
+		<main className='min-vh-100 py-5 px-3'>
+			<div className='container border border-primary shadow p-5 rounded-4'>
 				<h1 className='text-center mb-4 text-primary'>מדיניות פרטיות</h1>
-				<p className='text-muted text-center mb-5'>
+				<p className='text-center mb-5'>
 					עודכן לאחרונה: <strong>13/04/2025</strong>
 				</p>
 
-				<section className='mb-4'>
-					<h2 className='h5 text-dark'>1. מבוא</h2>
-					<p>
+				<section className='my-5'>
+					<h2 className='display-6 '>1. מבוא</h2>
+					<p className=' lead'>
 						ביישום שלנו <strong>שוק בפינה</strong> אנחנו שומרים על פרטיותך
 						ומבינים את החשיבות שבשמירה על המידע האישי שלך. מדיניות זו מסבירה
 						כיצד אנו אוספים, משתמשים ומגנים על המידע האישי שלך, כולל בעת
@@ -24,9 +24,9 @@ const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
 					</p>
 				</section>
 
-				<section className='mb-4'>
-					<h2 className='h5 text-dark'>2. איזה מידע אנו אוספים?</h2>
-					<p>
+				<section className='my-5'>
+					<h2 className='display-6 '>2. איזה מידע אנו אוספים?</h2>
+					<p className=' lead'>
 						בעת התחברות באמצעות Google, אנו מקבלים את המידע הבא מחשבון הגוגל
 						שלך:
 					</p>
@@ -44,14 +44,14 @@ const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
 							באפליקציה.
 						</li>
 					</ul>
-					<p className='mt-2'>
+					<p className=' lead my-2'>
 						בנוסף, אנו עשויים לשמור מידע טכני כגון כתובת IP, סוג דפדפן ומערכת
 						הפעלה, לצרכי אבטחה ושיפור השירות.
 					</p>
 				</section>
 
-				<section className='mb-4'>
-					<h2 className='h5 text-dark'>3. כיצד אנו משתמשים במידע?</h2>
+				<section className='my-5'>
+					<h2 className='display-6 '>3. כיצד אנו משתמשים במידע?</h2>
 					<ul>
 						<li>לביצוע רישום ואימות זהות המשתמש.</li>
 						<li>לשיפור חוויית המשתמש באפליקציה.</li>
@@ -60,16 +60,16 @@ const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
 					</ul>
 				</section>
 
-				<section className='mb-4'>
-					<h2 className='h5 text-dark'>4. שקיפות והסכמה</h2>
-					<p>
+				<section className='my-5'>
+					<h2 className='display-6 '>4. שקיפות והסכמה</h2>
+					<p className=' lead'>
 						בעת התחברות דרך גוגל, תתבקש לאשר גישה למידע שלך. אנו מבקשים רק את
 						ההרשאות ההכרחיות לתפקוד תקין של השירות, תוך שמירה על שקיפות מלאה.
 					</p>
 				</section>
 
-				<section className='mb-4'>
-					<h2 className='h5 text-dark'>5. שיתוף מידע עם צדדים שלישיים</h2>
+				<section className='my-5'>
+					<h2 className='display-6 '>5. שיתוף מידע עם צדדים שלישיים</h2>
 					<ul>
 						<li>
 							<strong>שירותים חיצוניים:</strong> מידע יועבר אך ורק לספקים
@@ -82,25 +82,25 @@ const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
 					</ul>
 				</section>
 
-				<section className='mb-4'>
-					<h2 className='h5 text-dark'>6. הגנה על המידע</h2>
-					<p>
+				<section className='my-5'>
+					<h2 className='display-6 '>6. הגנה על המידע</h2>
+					<p className=' lead'>
 						אנו נוקטים באמצעים טכנולוגיים וארגוניים מתקדמים לשמירה על המידע
 						שלך. יחד עם זאת, אין אבטחה מוחלטת, ולכן אנו ממליצים להימנע משיתוף
 						סיסמאות ולבחור בסיסמה חזקה.
 					</p>
 				</section>
 
-				<section className='mb-4'>
-					<h2 className='h5 text-dark'>7. עדכונים למדיניות</h2>
-					<p>
+				<section className='my-5'>
+					<h2 className='display-6 '>7. עדכונים למדיניות</h2>
+					<p className=' lead'>
 						ייתכנו שינויים במדיניות מעת לעת. נודיע על כך בתוך האפליקציה או
 						באמצעות הודעה ישירה. שימוש מתמשך באפליקציה מהווה הסכמה לעדכונים.
 					</p>
 				</section>
 
-				<section className='mb-4'>
-					<h2 className='h5 text-dark'>8. הזכויות שלך</h2>
+				<section className='my-5'>
+					<h2 className='display-6 '>8. הזכויות שלך</h2>
 					<ul>
 						<li>זכות לעיין במידע האישי השמור עליך.</li>
 						<li>זכות לתקן מידע שגוי או חסר.</li>
@@ -109,16 +109,16 @@ const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
 				</section>
 
 				<section className='mb-5'>
-					<h2 className='h5 text-dark'>9. יצירת קשר</h2>
-					<p>
+					<h2 className='display-6 '>9. יצירת קשר</h2>
+					<p className=' lead'>
 						בכל שאלה, בירור או בקשה הנוגעת לפרטיות, ניתן ליצור קשר בטלפון:{" "}
-						<strong>053-834-6915</strong>
+						<strong className='d-block'>053-834-6915</strong>
 					</p>
 				</section>
 
 				<section>
-					<h2 className='h5 text-dark'>10. הסכמת המשתמש</h2>
-					<p>
+					<h2 className='display-6 '>10. הסכמת המשתמש</h2>
+					<p className=' lead'>
 						השימוש באפליקציה מהווה אישור לכך שקראת, הבנת והסכמת למדיניות
 						פרטיות זו. אם אינך מסכים – אנא הימנע מהשימוש.
 					</p>

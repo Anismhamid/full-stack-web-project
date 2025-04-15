@@ -119,10 +119,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
 				{/* Footer Bottom */}
 				<div className='row' dir='ltr'>
 					<div className='col text-center mt-3'>
-						<p>
-							&copy; 2025 The market of knowledge Store. All rights
-							reserved.
-						</p>
+						<p>&copy; 2025 Corner Market Store. All rights reserved.</p>
 					</div>
 				</div>
 			</div>

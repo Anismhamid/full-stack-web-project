@@ -12,6 +12,7 @@ import {emptyAuthValues} from "../interfaces/authValues";
 import {GoogleLogin} from "@react-oauth/google";
 import axios from "axios";
 import {jwtDecode} from "jwt-decode";
+import {TextField} from "@mui/material";
 
 interface LoginProps {}
 /**
@@ -102,50 +103,42 @@ const Login: FunctionComponent<LoginProps> = () => {
 	}, [navigate, verifyGoogleToken]);
 
 	return (
-		<main className='login min-vh-100'>
-			<div className='container'>
-				<form autoComplete='off' noValidate onSubmit={formik.handleSubmit}>
-					<div className='form-floating mb-3'>
-						<input
-							type='email'
-							name='email'
-							value={formik.values.email}
-							onChange={formik.handleChange}
-							className='form-control'
-							id='email'
-							placeholder=''
-						/>
-						<label id='email' htmlFor='email'>
-							דו"אל *
-						</label>
-						{formik.touched.email && formik.errors.email && (
-							<div className='text-danger fw-bold'>
-								{formik.errors.email}
-							</div>
-						)}
-					</div>
+		<main className='min-vh-50'>
+			<div className='container p-5'>
+				<form
+					style={{maxWidth: "400px", margin: "auto"}}
+					autoComplete='off'
+					noValidate
+					onSubmit={formik.handleSubmit}
+				>
+					<TextField
+						label='דו"אל'
+						type='email'
+						name='email'
+						value={formik.values.email}
+						onChange={formik.handleChange}
+						error={formik.touched.email && Boolean(formik.errors.email)}
+						helperText={formik.touched.email && formik.errors.email}
+						fullWidth
+						className='my-2'
+						variant='outlined'
+					/>
 
-					<div className='form-floating mb-3'>
-						<input
-							type='password'
-							name='password'
-							value={formik.values.password}
-							onChange={formik.handleChange}
-							className='form-control'
-							id='password'
-							placeholder=''
-						/>
-						<label id='password' htmlFor='password'>
-							סיסמה *
-						</label>
-						{formik.errors.password && formik.touched.password && (
-							<div className='text-danger fw-bold'>
-								{formik.errors.password}
-							</div>
-						)}
-					</div>
-					<button type='submit' className='btn btn-success w-100'>
-						התחברות
+					<TextField
+						label='סיסמה'
+						type='password'
+						name='password'
+						value={formik.values.password}
+						onChange={formik.handleChange}
+						error={formik.touched.password && Boolean(formik.errors.password)}
+						helperText={formik.touched.password && formik.errors.password}
+						fullWidth
+						className='my-2'
+						variant='outlined'
+					/>
+
+					<button type='submit' className='btn btn-success w-100 mt-2'>
+						כניסה
 					</button>
 					<div className='mt-4'>
 						<GoogleLogin
@@ -159,7 +152,10 @@ const Login: FunctionComponent<LoginProps> = () => {
 						</span>
 						<Link to={path.Register}>לחץ כאן להרשמה</Link>
 					</div>
-					<Link to={path.PrivacyAndPolicy}>מדיניות הפרטיות</Link>
+					<div className=' my-3 d-flex justify-content-center gap-3'>
+						<Link to={path.PrivacyAndPolicy}>מדיניות הפרטיות</Link>
+						<Link to={path.TermOfUse}>תנאי השימוש</Link>
+					</div>
 				</form>
 			</div>
 		</main>
