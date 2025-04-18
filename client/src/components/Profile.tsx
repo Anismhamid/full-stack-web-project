@@ -12,6 +12,8 @@ import {
 import {path} from "../routes/routes";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import useToken from "../hooks/useToken";
+import Loader from "../atoms/loader/Loader";
+import {useUser} from "../context/useUSer";
 
 interface ProfileProps {}
 /**
@@ -19,22 +21,20 @@ interface ProfileProps {}
  * @returns auth profile
  */
 const Profile: FunctionComponent<ProfileProps> = () => {
+	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 	const {decodedToken} = useToken();
-	const [user, setUser] = useState<
-		Partial<{
-			_id: string;
-			name: {first: string; last: string};
-			phone: {phone_1: string; phone_2: string};
-			address: {city: string; street: string; houseNumber?: string};
-			email: string;
-			image: {url: string; alt: string};
-			role: string;
-			status: string;
-			activity: string[];
-		}>
-	>({
-		_id: "",
+
+	const [user, setUser] = useState<{
+		name: {first: string; last: string};
+		phone: {phone_1: string; phone_2: string};
+		address: {city: string; street: string; houseNumber?: string};
+		email: string;
+		image: {url: string; alt: string};
+		role: string;
+		status: string;
+		activity: string[];
+	}>({
 		name: {first: "", last: ""},
 		phone: {phone_1: "", phone_2: ""},
 		address: {city: "", street: "", houseNumber: ""},
@@ -45,92 +45,73 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 		activity: [],
 	});
 
-	const isGoogleUser = !!decodedToken?.sub && !decodedToken?._id;
+	const updateProfile = () => {
+		// Logic to update the profile
+		console.log("Updating profile...");
+		navigate(path.CompleteProfile);
+	};
+
+	const changePassword = () => {
+		// Navigate to the change password page
+		// navigate(path.ChangePassword);
+	};
+
+	const contactSupport = () => {
+		// Logic to handle contacting support
+		navigate(path.Contact);
+	};
 
 	useEffect(() => {
-		const fetchUser = async () => {
-			try {
-				// משתמש גוגל
-				if (decodedToken?.sub) {
-					setUser({
-						_id: decodedToken.sub,
-						name: {
-							first: decodedToken.given_name || "",
-							last: decodedToken.family_name || "",
-						},
-						email: decodedToken.email,
-						image: {
-							url: decodedToken.picture || "",
-							alt: "Google Profile",
-						},
-						role: "Client",
-						phone: {
-							phone_1: "",
-							phone_2: "",
-						},
-						address: {
-							city: "",
-							street: "",
-							houseNumber: "",
-						},
-						status: "active",
-						activity: [],
-					});
-				}
-
-				// משתמש רגיל
-				else if (decodedToken?._id) {
-					const userFromDb = await getUserById(decodedToken._id);
-					setUser(userFromDb);
-				}
-			} catch (err) {
-				console.error("Error fetching user:", err);
-			}
-		};
-
 		if (decodedToken) {
-			fetchUser();
+			getUserById(decodedToken._id)
+				.then((res) => {
+					setUser(res);
+				})
+				.catch((err) => {
+					console.error("Error fetching user:", err);
+				})
+				.finally(() => setLoading(false));
 		}
 	}, [decodedToken]);
 
+	if (loading) {
+		return <Loader />;
+	}
+
 	return (
-		<main className='min-vh-100 bg-dark'>
-			<div className='container-fluid h-100 position-relative profile'>
-				<div className=' d-flex align-items-center' style={{height: "350px"}}>
-					<Link to={""}>
-						<img
-							className='border border-light rounded-4'
-							src={
-								user.image?.url ||
-								"https://media2.giphy.com/media/l0MYO6VesS7Hc1uPm/200.webp?cid=ecf05e47hxvvpx851ogwi8s26zbj1b3lay9lke6lzvo76oyx&ep=v1_gifs_search&rid=200.webp&ct=g"
-							}
-							alt={`${user.image?.alt}'s avatar` || "User image"}
-							style={{
-								width: 200,
-								height: 200,
-								position: "absolute",
-								left: 50,
-								bottom: 5,
-							}}
-						/>
-					</Link>
-					{!isGoogleUser && (
-						<div className='text-center my-4'>
-							<Button
-								variant='contained'
-								color='warning'
-								// Edit Profile
-								onClick={() => navigate(path.CompleteProfile)}
-							>
-								עריכת פרטים אישיים
-							</Button>
-						</div>
-					)}
+		<main className='min-vh-100'>
+			<div className='container'>
+				<div>
+					<img
+						className='border border-light rounded'
+						src={
+							user.image.url
+								? user.image.url
+								: "https://via.placeholder.com/200"
+						}
+						alt={
+							user.image.alt
+								? `${user.image.alt}'s avatar`
+								: `${user.name.first ?? "User"}'s avatar`
+						}
+						role='img'
+					/>
+
 					<hr />
+				</div>
+				<div className='text-center my-4'>
+					<Button
+						variant='contained'
+						color='warning'
+						// Edit Profile
+						onClick={updateProfile}
+					>
+						עריכת פרטים אישיים
+					</Button>
 				</div>
 			</div>
 			<div className='container table-responsive m-auto text-center my-5 rounded p-3 bg-gradient'>
-				<div className=' fw-bold display-6 text-light p-2'>פרים אישיים</div>
+				<div className=' fw-bold display-6 p-2'>פרים אישיים</div>
 				<table className='table table-striped-columns'>
 					<tbody>
 						<tr>
@@ -141,11 +122,11 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						</tr>
 						<tr>
 							<th>טלפון ראשי</th>
-							<td>{user.phone?.phone_1}</td>
+							<td>{user.phone?.phone_1||"-"}</td>
 						</tr>
 						<tr>
 							<th>טלפון נוסף</th>
-							<td>{user.phone?.phone_2 || "אין"}</td>
+							<td>{user.phone?.phone_2 || "-"}</td>
 						</tr>
 						<tr>
 							<th>דו"אל</th>
@@ -158,17 +139,17 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 									? "מנהל ומנחה"
 									: user.role === RoleType.Moderator
 										? "מנחה"
-										: "לקוח"}
+										: user.role
+											? "לקוח"
+											: "—"}
 							</td>
 						</tr>
 					</tbody>
 				</table>
 
-				<div className='row m-auto text-center mt-5'>
+				<div className=' m-auto text-center mt-5 w-100'>
 					<div className='table-responsive m-auto text-center my-5 rounded p-3 bg-gradient'>
-						<div className=' fw-bold display-6 text-light p-2'>
-							הזמנות קודמות
-						</div>
+						<div className=' fw-bold display-6 p-2'>הזמנות קודמות</div>
 						<table className='table table-striped-columns'>
 							<tbody>
 								<tr className=' bg-danger-subtle'>
@@ -199,11 +180,10 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 					</div>
 				</div>
 			</div>
-			<div className='row m-auto text-center'>
-				<div className='col bg-success'>1</div>
-				<div className='col bg-primary'>2</div>
-				<div className='col bg-warning'>1</div>
-				<div className='col bg-opacity-75 bg-warning-subtle'>2</div>
+			<div className='row row-cols-1 row-cols-md-3 m-auto text-center'>
+				<div className='bg-gradient'>1</div>
+				<div className='bg-gradient'>2</div>
+				<div className='bg-gradient'>3</div>
 			</div>
 
 			<div className='row m-auto text-center py-5'>
@@ -227,7 +207,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 							</AccordionSummary>
 							<AccordionDetails>
 								<Typography style={{whiteSpace: "pre-line"}}>
-									{user.activity
+									{user.activity?.length
 										? user.activity
 												.map((timestamp) =>
 													new Date(timestamp).toLocaleString(
@@ -242,7 +222,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 													),
 												)
 												.join("\n")
-										: []}
+										: "אין נתוני התחברות"}
 								</Typography>
 							</AccordionDetails>
 						</Accordion>
@@ -264,12 +244,23 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 							</AccordionSummary>
 							<AccordionDetails>
 								<Typography style={{whiteSpace: "pre-line"}}>
-									{user._id}
+									vhgvhjgbjn,
 								</Typography>
 							</AccordionDetails>
 						</Accordion>
 					</div>
 				</div>
+			</div>
+			<div className='text-center my-4'>
+				<Button variant='contained' color='primary' onClick={changePassword}>
+					שינוי סיסמה
+				</Button>
+			</div>
+
+			<div className='text-center my-4'>
+				<Button variant='contained' color='secondary' onClick={contactSupport}>
+					צור קשר עם תמיכה
+				</Button>
 			</div>
 		</main>
 	);

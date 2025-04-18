@@ -8,8 +8,12 @@ import Loader from "../atoms/loader/Loader";
 import UpdateProductModal from "../atoms/UpdateProductModal";
 import {showError, showSuccess} from "../atoms/Toast";
 import Tooltip from "@mui/material/Tooltip";
-import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import RoleType from "../interfaces/UserType";
+import {useCartItems} from "../context/useCart";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Fab from "@mui/material/Fab";
+import {Button} from "@mui/material";
 
 interface ProductCategoryProps {
 	category: string;
@@ -30,8 +34,9 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 	const [showMoreLoading, setShowMoreLoading] = useState<boolean>(false);
 	const [showUpdateProductModal, setOnShowUpdateProductModal] =
 		useState<boolean>(false);
+	const {setQuantity} = useCartItems();
 
-	// Login modal to show whene adding a product to cart and (not loggedIn)
+	// Login modal to show whene user adding a product to cart and (not loggedIn)
 	const OnShowLoginModal = () => setShowLoginModal(true);
 	const OnHideLoginModal = () => setShowLoginModal(false);
 
@@ -48,6 +53,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 		discount: number,
 	) => {
 		const productQuantity = quantity[product_name];
+
 		if (!isLoggedIn) {
 			OnShowLoginModal();
 		} else {
@@ -60,6 +66,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 				sale,
 				discount,
 			);
+			setQuantity((prev) => prev + 1);
 		}
 	};
 
@@ -67,6 +74,12 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 		deleteProduct(product_name)
 			.then(() => {
 				showSuccess("המוצר נמחק בהצלחה!");
+
+				setProducts((prevProducts) =>
+					prevProducts.filter(
+						(product) => product.product_name !== product_name,
+					),
+				);
 			})
 			.catch((err) => {
 				console.error(err);
@@ -79,7 +92,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 			.then((res) => {
 				setProducts(res);
 
-				setVisibleProducts(res.slice(0, 15));
+				setVisibleProducts(res.slice(0, 9));
 
 				const initialQuantities = res.reduce(
 					(acc: any, product: {product_name: string}) => {
@@ -117,15 +130,20 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 						const productQuantity = quantities[product.product_name] || 1;
 						return (
 							<div
-								className='col-md-6 col-lg-3 col-sm-10 my-3 '
+								className='col-md-4 mb-5 col-lg-3 col-sm-10 '
 								key={product.product_name}
 							>
 								<div className='card h-100'>
 									<img
+										loading='lazy'
 										src={product.image_url}
 										alt={product.product_name}
-										style={{height: "400px", width: "100%"}}
-										className='card-img-top'
+										className='card-img-top img-fluid '
+										style={{
+											height: "160px",
+											objectFit: "contain",
+											padding: "10px",
+										}}
 										role='img'
 									/>
 
@@ -262,8 +280,9 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 														RoleType.Moderator)) && (
 												<div className='mt-3 rounded d-flex align-items-center justify-content-around'>
 													<Tooltip title='edit'>
-														<button
-															className='btn m-auto text-datk bg-warning'
+														<Fab
+															color='warning'
+															aria-label='edit'
 															onClick={() => {
 																setProductNameToUpdate(
 																	product.product_name,
@@ -271,20 +290,21 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 																onShowUpdateProductModal();
 															}}
 														>
-															{fontAwesomeIcon.edit}
-														</button>
+															<EditIcon />
+														</Fab>
 													</Tooltip>
 													<Tooltip title='Delete'>
-														<button
+														<Fab
+															color='error'
+															aria-label='edit'
 															onClick={() =>
 																handleDelete(
 																	product.product_name,
 																)
 															}
-															className='btn m-auto text-danger bg-danger-subtle'
 														>
-															{fontAwesomeIcon.trash}
-														</button>
+															<DeleteIcon />
+														</Fab>
 													</Tooltip>
 												</div>
 											)}
@@ -297,14 +317,15 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 				</div>
 				{/* Show More Button */}
 				{products.length > visibleProducts.length && (
-					<div className='text-center bg-light m-auto w-50 rounded-3 border border-2 border-primary'>
-						<button
+					<div className='text-center '>
+						<Button
 							onClick={handleShowMore}
-							className='btn btn-outline-primary w-100 fw-bold'
+							color='primary'
+							variant='contained'
 							disabled={showMoreLoading}
 						>
-							{showMoreLoading ? "טוען..." : "הצג עוד"}
-						</button>
+							הצג עוד מוצרים
+						</Button>
 					</div>
 				)}
 			</div>

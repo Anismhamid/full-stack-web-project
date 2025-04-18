@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
 	{
+		id: {type: String},
 		googleId: {
 			type: String,
 			unique: true,
@@ -9,8 +10,8 @@ const userSchema = new mongoose.Schema(
 		},
 		name: {
 			type: {
-				first: {type: String, required: true, minlength: 2, maxlength: 50},
-				last: {type: String, required: true, minlength: 2, maxlength: 50},
+				first: {type: String, required: true, minlength: 2},
+				last: {type: String, required: true, minlength: 2},
 			},
 		},
 		phone: {
@@ -21,8 +22,8 @@ const userSchema = new mongoose.Schema(
 		},
 		address: {
 			type: {
-				city: {type: String, required: true},
-				street: {type: String, required: true},
+				city: {type: String},
+				street: {type: String},
 				houseNumber: {type: String},
 			},
 		},
@@ -37,6 +38,7 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			minlength: 6,
 		},
+		gender: {type: String},
 		image: {
 			type: {
 				url: {
@@ -60,6 +62,7 @@ const userSchema = new mongoose.Schema(
 			type: Date,
 			default: Date.now,
 		},
+		terms: {type: String},
 	},
 	{timestamps: true},
 );

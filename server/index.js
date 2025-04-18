@@ -22,7 +22,6 @@ const carts = require("./routes/carts");
 const orders = require("./routes/orders");
 const receipt = require("./routes/receipt");
 const discounts = require("./routes/discountAndOffers");
-const googleLogin = require("./routes/googleLogin");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const chalk = require("chalk");
@@ -62,7 +61,7 @@ app.use(
 	}),
 );
 app.use(express.json({limit: "5mb"}));
-app.use(helmet());
+app.use(helmet({crossOriginOpenerPolicy: false}));
 app.use(logger);
 logToFile();
 app.use(limiter);
@@ -74,7 +73,6 @@ app.use("/api/orders", orders);
 app.use("/api/products", products);
 app.use("/api/discounts", discounts);
 app.use("/api/receipt", receipt);
-app.use("/api/google-login", googleLogin);
 
 io.on("connection", (socket) => {
 	orderSocketHandler(io, socket);

@@ -1,18 +1,26 @@
 import {useFormik} from "formik";
-import {FunctionComponent, useEffect} from "react";
+import {FunctionComponent, useEffect, useState} from "react";
 import {UserLogin} from "../interfaces/User";
 import * as yup from "yup";
 import {Link, useNavigate} from "react-router-dom";
 import {path} from "../routes/routes";
-import {loginUser, verifyGoogleToken} from "../services/usersServices";
+import {handleGoogleLogin, loginUser, verifyGoogleUser} from "../services/usersServices";
 import {useUser} from "../context/useUSer";
 import useToken from "../hooks/useToken";
 import {showError, showSuccess} from "../atoms/Toast";
 import {emptyAuthValues} from "../interfaces/authValues";
 import {GoogleLogin} from "@react-oauth/google";
-import axios from "axios";
-import {jwtDecode} from "jwt-decode";
 import {TextField} from "@mui/material";
+import UserInfoModal from "../atoms/UserInfoModal";
+import {jwtDecode} from "jwt-decode";
+import {CredentialResponse} from "@react-oauth/google";
+
+interface DecodedGooglePayload {
+	sub: string;
+	email?: string;
+	name?: string;
+	picture?: string;
+}
 
 interface LoginProps {}
 /**
@@ -23,6 +31,8 @@ const Login: FunctionComponent<LoginProps> = () => {
 	const {setAuth, setIsLoggedIn} = useUser();
 	const navigate = useNavigate();
 	const {decodedToken, setAfterDecode} = useToken();
+	const [showModal, setShowModal] = useState<boolean>(false);
+	const [googleResponse, setGoogleResponse] = useState<any>(null);
 
 	const formik = useFormik<UserLogin>({
 		initialValues: {
@@ -58,41 +68,46 @@ const Login: FunctionComponent<LoginProps> = () => {
 		},
 	});
 
-	const handleGoogleLoginSuccess = async (response: any) => {
-		const token = response.credential;
-		localStorage.setItem("token", token);
-
+	const handleGoogleLoginSuccess = async (response: CredentialResponse) => {
 		try {
-			const userInfo = await verifyGoogleToken(token);
-			if (userInfo) {
-				// Send verified userInfo to backend
-				const {data} = await axios.post(
-					`${import.meta.env.VITE_API_URL}/google-login`,
-					{
-						googleId: userInfo.sub,
-						email: userInfo.email,
-						name: {
-							first: userInfo.given_name,
-							last: userInfo.family_name,
-						},
-						image: {
-							url: userInfo.picture,
-							alt: userInfo.given_name,
-						},
-					},
-				);
+			if (!response.credential) {
+				throw new Error("Missing Google credential");
+			}
 
-				localStorage.setItem("token", data.token);
-				setAuth(jwtDecode(data.token));
-				setIsLoggedIn(true);
-				showSuccess("התחברת בהצלחה!");
-				navigate(path.CompleteProfile);
+			const decoded = jwtDecode<DecodedGooglePayload>(response.credential);
+			const userExists = await verifyGoogleUser(decoded.sub);
+
+			if (userExists) {
+				const token = await handleGoogleLogin(response, null);
+				if (token) {
+					const decoded = jwtDecode(token);
+					console.log(decoded);
+					setAfterDecode(token);
+					setAuth(decoded as any);
+					setIsLoggedIn(true);
+					navigate(path.Home);
+				}
 			} else {
-				showError("Google token verification failed.");
+				setGoogleResponse(response);
+				setShowModal(true);
 			}
 		} catch (error: any) {
-			showError("Error with Google login: " + error.message);
-			console.error("Error with Google login:", error);
+			showError("שגיאה בהתחברות עם גוגל: " + error.message);
+		}
+	};
+
+	const handleUserInfoSubmit = async (userExtraData: any) => {
+		try {
+			const token = await handleGoogleLogin(googleResponse, userExtraData);
+			if (token) {
+				setAfterDecode(token);
+				setAuth(decodedToken);
+				setIsLoggedIn(true);
+				navigate(path.Home);
+			}
+		} catch (error: any) {
+			showError("שגיאה בהתחברות עם גוגל: " + error.message);
+			setShowModal(false);
 		}
 	};
 
@@ -100,7 +115,7 @@ const Login: FunctionComponent<LoginProps> = () => {
 		if (localStorage.token) {
 			navigate(path.Home);
 		}
-	}, [navigate, verifyGoogleToken]);
+	}, [navigate]);
 
 	return (
 		<main className='min-vh-50'>
@@ -112,6 +127,7 @@ const Login: FunctionComponent<LoginProps> = () => {
 					onSubmit={formik.handleSubmit}
 				>
 					<TextField
+						autoFocus
 						label='דו"אל'
 						type='email'
 						name='email'
@@ -143,7 +159,7 @@ const Login: FunctionComponent<LoginProps> = () => {
 					<div className='mt-4'>
 						<GoogleLogin
 							onSuccess={handleGoogleLoginSuccess}
-							onError={() => console.error("Google login failed")}
+							onError={() => showError("Google login failed")}
 						/>
 					</div>
 					<div className='mt-3'>
@@ -158,6 +174,11 @@ const Login: FunctionComponent<LoginProps> = () => {
 					</div>
 				</form>
 			</div>
+			<UserInfoModal
+				isOpen={showModal}
+				onClose={() => setShowModal(false)}
+				onSubmit={handleUserInfoSubmit}
+			/>
 		</main>
 	);
 };

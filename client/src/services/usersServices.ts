@@ -41,7 +41,12 @@ export const registerNewUser = async (newUserData: UserRegister) => {
 	}
 };
 
-export const handleGoogleLogin = async (response: any) => {
+/**
+ * Responses handle google login
+ * @param response
+ * @returns
+ */
+export const handleGoogleLogin = async (response: any, extraData: any) => {
 	try {
 		const decoded = jwtDecode<GoogleJwtPayload>(response.credential);
 		const {email, given_name, family_name, picture, sub} = decoded;
@@ -61,16 +66,30 @@ export const handleGoogleLogin = async (response: any) => {
 				url: picture,
 				alt: given_name,
 			},
+			phone: {
+				phone_1: extraData ? extraData.phone_1 : "",
+				phone_2: extraData ? extraData.phone_2 : "",
+			},
+			address: {
+				city: extraData ? extraData.city : "",
+				street: extraData ? extraData.street : "",
+				houseNumber:extraData ? extraData.houseNumber : "",
+			},
 		};
 
-		const res = await axios.post(
-			`${import.meta.env.VITE_API_URL}/google-login`,
-			userData,
-		);
-		console.log("User logged in:", res.data);
-		return res.data;
+		const res = await axios.post(`${api}/google`, userData, {
+			headers: {
+				Authorization: localStorage.getItem("token"),
+			},
+		});
+		const token = res.data;
+		localStorage.setItem("token", token);
+		showSuccess("התחברת בהצלחה עם גוגל!");
+		return token;
 	} catch (error) {
 		console.error("Error during Google login:", error);
+		showError("התחברות עם גוגל נכשלה");
+		return null;
 	}
 };
 
@@ -81,6 +100,40 @@ export const verifyGoogleToken = async (token: string) => {
 		return response.data;
 	} catch (error) {
 		throw new Error("Failed to verify Google token");
+	}
+};
+
+export const verifyGoogleUser = async (googleId: string) => {
+	try {
+		const res = await axios.get(`${api}/google/verify/${googleId}`);
+		return res.data.exists; // سيرفر يرجّع true أو false
+	} catch (err) {
+		console.error("Error verifying Google user", err);
+		return false;
+	}
+};
+
+export const compleateProfileData = async (userId: string, values: any) => {
+	try {
+		const token = localStorage.getItem("token");
+		const payload = {
+			phone: {
+				phone_1: values.phone.phone_1,
+				phone_2: values.phone.phone_2,
+			},
+			address: {
+				city: values.address.city,
+				street: values.address.street,
+				houseNumber: values.address.houseNumber,
+			},
+		};
+		await axios.patch(`${api}/compleate/${userId}`, payload, {
+			headers: {
+				Authorization: token,
+			},
+		});
+	} catch (error) {
+		console.log(error);
 	}
 };
 
@@ -97,8 +150,7 @@ export const loginUser = async (userData: UserLogin) => {
 		if (error.request.response === "Too Many Requests") {
 			showError(error.request.response);
 		} else {
-			// showError("Invalid email or password");
-			showError(error.response.statusText);
+			showError("שם משתמש או סיסמה שגויים");
 		}
 		console.log();
 		return null;
@@ -128,12 +180,26 @@ export const getAllUsers = async () => {
  */
 export const getUserById = async (userId: string) => {
 	try {
+		const token = localStorage.getItem("token");
+
+		// If there is no token, c.log an error and return null
+		if (!token) {
+			console.error("No token found");
+			return null;
+		}
+
 		const response = await axios.get(`${api}/${userId}`, {
-			headers: {Authorization: localStorage.getItem("token")},
+			headers: {Authorization: token},
 		});
-		return response.data;
+		if (response.status === 200) {
+			return response.data;
+		} else {
+			console.error("Failed to fetch user: " + response.status);
+			return null;
+		}
 	} catch (error) {
-		console.log(error);
+		// Log any errors that occurred during the API request
+		console.error("Error getting user:", error);
 		return null;
 	}
 };

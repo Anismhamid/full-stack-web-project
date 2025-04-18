@@ -1,4 +1,4 @@
-import {FunctionComponent, useState, useEffect} from "react";
+import {FunctionComponent, useState, useEffect, useRef} from "react";
 import {useNavigate} from "react-router-dom";
 import {Cart as CartType} from "../interfaces/Cart";
 import {getCartItems} from "../services/cart";
@@ -13,6 +13,7 @@ import Checkbox from "@mui/material/Checkbox";
 import {useUser} from "../context/useUSer";
 import {Button} from "@mui/material";
 import PaymentModal from "../atoms/pymentModal/PymentModal";
+import {useCartItems} from "../context/useCart";
 
 interface CheckoutProps {}
 /**
@@ -27,9 +28,20 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 	const [, setOrderDetails] = useState<Order | null>(null);
 	const [newOrder, setNewOrder] = useState<Order | null>(null);
 	const [showPymentModal, setShowPymentModal] = useState<boolean>(false);
+	const formRef = useRef<HTMLFormElement | null>(null);
 
 	const onShowPymentModal = () => setShowPymentModal(true);
 	const hidePymentModal = () => setShowPymentModal(false);
+	const {setQuantity} = useCartItems();
+
+	const scrollToContent = () => {
+	if (formRef.current) {
+		const yOffset = -500;
+		const y =
+			formRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+		window.scrollTo({top: y, behavior: "smooth"});
+	}
+	};
 
 	const formik = useFormik({
 		initialValues: {
@@ -53,7 +65,6 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 		onSubmit: async (value) => {
 			try {
 				await handleCheckout(value);
-				showInfo("ממתין לאישור");
 			} catch (error) {
 				console.log(error);
 			}
@@ -128,11 +139,12 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 				setLoading(true);
 				onShowPymentModal();
 				setLoading(false);
-				return;
 			} else {
 				await postOrder(newOrder as Order);
 				setOrderDetails(newOrder as Order);
 				navigate(path.MyOrders);
+				showInfo("ממתין לאישור");
+				setQuantity((prev) => prev - prev);
 			}
 
 			setLoading(false);
@@ -147,7 +159,11 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 		<main className='min-vh-100 '>
 			<div className='container'>
 				<h1 className='text-center'>בחירת שיטת תשלום ואיסוף</h1>
-
+				<div className=' text-center m-auto'>
+					<Button variant='contained' color='primary' onClick={scrollToContent}>
+						לתשלום
+					</Button>
+				</div>
 				{/* Cart Summary */}
 				<section className='mt-4'>
 					<h4>סיכום הסל</h4>
@@ -193,7 +209,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 				</section>
 
 				{/* Payment Methods Selection */}
-				<form onSubmit={formik.handleSubmit} className='mt-5'>
+				<form ref={formRef} onSubmit={formik.handleSubmit} className='mt-5'>
 					<h4>בחר שיטת תשלום</h4>
 					<div className='mt-3'>
 						<div className='form-check mb-2'>
@@ -317,8 +333,9 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 						await postOrder(orderToSend);
 						setOrderDetails(orderToSend);
 						navigate(path.MyOrders);
-						showInfo("התשלום התקבל וההזמנה נשלחה");
+						showInfo("התשלום התקבל וההזמנה ממתינה לאישור");
 						setLoading(false);
+						setQuantity((prev) => prev - prev);
 					} catch (error) {
 						console.error(error);
 						showError("אירעה שגיאה בביצוע התשלום");

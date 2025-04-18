@@ -1,12 +1,28 @@
 import {useFormik} from "formik";
-import {FunctionComponent} from "react";
+import {FunctionComponent, useState} from "react";
 import * as yup from "yup";
 import {UserRegister} from "../interfaces/User";
 import {Link, useNavigate} from "react-router-dom";
 import {path} from "../routes/routes";
 import {registerNewUser} from "../services/usersServices";
-import {MenuItem, TextField} from "@mui/material";
+import {
+	Button,
+	Checkbox,
+	FormControl,
+	FormControlLabel,
+	FormHelperText,
+	IconButton,
+	Input,
+	InputAdornment,
+	InputLabel,
+	MenuItem,
+	OutlinedInput,
+	TextField,
+} from "@mui/material";
 import {cities} from "../interfaces/cities";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import React from "react";
 
 interface RegisterProps {}
 /**
@@ -14,6 +30,19 @@ interface RegisterProps {}
  * @returns input fileds for register user
  */
 const Register: FunctionComponent<RegisterProps> = () => {
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [showPassword, setShowPassword] = useState(false);
+
+	const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+	const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+	};
+
+	const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+	};
+
 	const navigate = useNavigate();
 	const formik = useFormik<UserRegister>({
 		initialValues: {
@@ -32,11 +61,14 @@ const Register: FunctionComponent<RegisterProps> = () => {
 			},
 			email: "",
 			password: "",
+			confirmPassword: "",
+			gender: "",
 			image: {
 				url: "",
 				alt: "",
 			},
 			role: "Client",
+			terms: false,
 		},
 		validationSchema: yup.object({
 			name: yup.object({
@@ -52,8 +84,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 			phone: yup.object({
 				phone_1: yup
 					.string()
-					.min(9, "מספר הטלפון חייב להיות בן 9 תווים לפחות")
-					.max(10, "מספר הטלפון חייב להיות באורך 10 תווים לכל היותר")
+					.min(10, "מספר הטלפון חייב להיות בן 9 תווים לפחות")
+					.max(11, "מספר הטלפון חייב להיות באורך 10 תווים לכל היותר")
 					.required('נדרש מ"ס טלפון'),
 				phone_2: yup.string(),
 			}),
@@ -75,16 +107,24 @@ const Register: FunctionComponent<RegisterProps> = () => {
 				.required("נדרשת סיסמה")
 				.min(8, "הסיסמה חייבת לכלול לפחות 8 תווים עד 60 תווים")
 				.max(60, "הסיסמה ארוכה מדי"),
+			confirmPassword: yup
+				.string()
+				.oneOf([yup.ref("password")], "הסיסמאות אינן תואמות")
+				.required("יש לאשר את הסיסמה"),
+			gender: yup.string().required("יש לבחור מגדר"),
 			role: yup.string().default("Client"),
 			image: yup.object({
 				url: yup.string().url("פורמט כתובת אתר לא חוקי").optional(),
 				alt: yup.string().optional(),
 			}),
+			terms: yup.boolean().oneOf([true], "יש לאשר את תנאי השימוש"),
 		}),
 		onSubmit: async (values) => {
 			try {
+				setIsLoading(true);
 				await registerNewUser(values);
 				navigate(path.Login);
+				setIsLoading(false);
 			} catch (error) {
 				console.log(error);
 			}
@@ -103,9 +143,10 @@ const Register: FunctionComponent<RegisterProps> = () => {
 					<h6 className='display-6 text-center'>הרשמה</h6>
 
 					{/* first - last name  */}
-					<div className='row'>
-						<div className='col-md-6'>
+					<div className='row row-cols-2'>
+						<div className=''>
 							<TextField
+								autoFocus
 								label='שם'
 								name='name.first'
 								type='text'
@@ -124,7 +165,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 								variant='outlined'
 							/>
 						</div>
-						<div className='col-md-6'>
+						<div className=''>
 							<TextField
 								label='שם משפחה'
 								name='name.last'
@@ -146,9 +187,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 					</div>
 
 					{/* phone 1 - 2  */}
-					<hr className='text-light' />
-					<div className='row'>
-						<div className='col-md-6'>
+					<div className='row row-cols-2'>
+						<div>
 							<TextField
 								label='טלופן ראשי'
 								name='phone.phone_1'
@@ -168,7 +208,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 								variant='outlined'
 							/>
 						</div>
-						<div className='col-md-6'>
+						<div>
 							<TextField
 								label='טלופן שני (לא חובה)'
 								name='phone.phone_2'
@@ -184,8 +224,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 
 					{/* email password */}
 					<hr className='text-light' />
-					<div className='row'>
-						<div className='col-md-6'>
+					<div className='row row-cols-3'>
+						<div>
 							<TextField
 								label='דו"אל'
 								name='email'
@@ -201,20 +241,71 @@ const Register: FunctionComponent<RegisterProps> = () => {
 								variant='outlined'
 							/>
 						</div>
-
-						<div className='col-md-6'>
-							<TextField
-								label='סיסמה'
-								type='password'
-								name='password'
-								value={formik.values.password}
-								onChange={formik.handleChange}
+						<div dir='ltr'>
+							{/* <TextField
+								variant='outlined'
+							/> */}
+							<FormControl
+								sx={{m: 1}}
+								variant='outlined'
 								error={
 									formik.touched.password &&
 									Boolean(formik.errors.password)
 								}
+								fullWidth
+							>
+								<InputLabel htmlFor='password'>סיסמה</InputLabel>
+								<OutlinedInput
+									id='password'
+									type={showPassword ? "text" : "password"}
+									autoComplete='current-password'
+									endAdornment={
+										<InputAdornment position='end'>
+											<IconButton
+												aria-label={
+													showPassword
+														? "hide the password"
+														: "display the password"
+												}
+												onClick={handleClickShowPassword}
+												onMouseDown={handleMouseDownPassword}
+												onMouseUp={handleMouseUpPassword}
+												edge='end'
+											>
+												{showPassword ? (
+													<VisibilityOff />
+												) : (
+													<Visibility />
+												)}
+											</IconButton>
+										</InputAdornment>
+									}
+									label='סיסמה'
+									name='password'
+									value={formik.values.password}
+									onChange={formik.handleChange}
+								/>
+								{formik.touched.password && formik.errors.password && (
+									<FormHelperText>
+										{formik.errors.password}
+									</FormHelperText>
+								)}
+							</FormControl>
+						</div>
+						<div>
+							<TextField
+								label='אישור סיסמה'
+								type='password'
+								name='confirmPassword'
+								value={formik.values.confirmPassword}
+								onChange={formik.handleChange}
+								error={
+									formik.touched.confirmPassword &&
+									Boolean(formik.errors.confirmPassword)
+								}
 								helperText={
-									formik.touched.password && formik.errors.password
+									formik.touched.confirmPassword &&
+									formik.errors.confirmPassword
 								}
 								fullWidth
 								className='my-2'
@@ -222,14 +313,29 @@ const Register: FunctionComponent<RegisterProps> = () => {
 							/>
 						</div>
 					</div>
-
+					<TextField
+						select
+						label='מגדר'
+						name='gender'
+						value={formik.values.gender}
+						onChange={formik.handleChange}
+						error={formik.touched.gender && Boolean(formik.errors.gender)}
+						helperText={formik.touched.gender && formik.errors.gender}
+						fullWidth
+						className='my-2'
+						variant='outlined'
+					>
+						<MenuItem value=''>בחר מגדר</MenuItem>
+						<MenuItem value='זכר'>זכר</MenuItem>
+						<MenuItem value='נקבה'>נקבה</MenuItem>
+					</TextField>
 					{/* image - alt */}
 					<hr className=' text-light' />
 
 					<h6 className='text-primary mb-2 text-center'>(אופציונלי)</h6>
 
-					<div className='row'>
-						<div className='col-6'>
+					<div className='row row-cols-2'>
+						<div>
 							<TextField
 								label='קישור לתמונה'
 								type='text'
@@ -241,7 +347,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 								variant='outlined'
 							/>
 						</div>
-						<div className='col-6'>
+						<div>
 							<TextField
 								label='שם תמונה'
 								type='text'
@@ -257,8 +363,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 
 					{/* address city - street - house number  */}
 					<hr className='text-light' />
-					<div className='row'>
-						<div className='col-md-4'>
+					<div className='row row-cols-3'>
+						<div>
 							<TextField
 								select
 								label='עיר'
@@ -287,8 +393,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 								))}
 							</TextField>
 						</div>
-
-						<div className='col-md-4'>
+						<div>
 							<TextField
 								label='רחוב'
 								name='address.street'
@@ -308,7 +413,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 								variant='outlined'
 							/>
 						</div>
-						<div className='col-md-4'>
+						<div>
 							<TextField
 								label='מספר בית'
 								name='address.houseNumber'
@@ -321,12 +426,37 @@ const Register: FunctionComponent<RegisterProps> = () => {
 							/>
 						</div>
 					</div>
-					<button type='submit' className='btn btn-success w-100 mt-5'>
-						הרשמה
-					</button>
+					<FormControlLabel
+						control={
+							<Checkbox
+								name='terms'
+								color='primary'
+								checked={formik.values.terms}
+								onChange={formik.handleChange}
+							/>
+						}
+						label='אני מסכים לתנאי השימוש והפרטיות'
+					/>
+					<Link className=' ms-4 mt-3' to={path.TermOfUse}>
+						תנאי השימוש
+					</Link>
+					{formik.touched.terms && formik.errors.terms && (
+						<div className='text-danger small'>{formik.errors.terms}</div>
+					)}
+					<div className=' m-auto mt-5'>
+						<Button
+							className=' w-100'
+							variant='contained'
+							color='primary'
+							type='submit'
+							disabled={!formik.dirty}
+						>
+							{isLoading ? "טוען..." : "הרשמה"}
+						</Button>
+					</div>
 					<div className='mt-5'>
-						<span className='text-light fw-bold me-1'>יש לך חשבון ?</span>
-						<Link to={path.Login}>לחץ כאן להתחבר</Link>
+						<span className='fw-bold me-3'>יש לך חשבון ?</span>
+						<Link to={path.Login}>התחבר כאן</Link>
 					</div>
 				</form>
 			</div>

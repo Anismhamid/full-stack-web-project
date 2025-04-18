@@ -1,6 +1,4 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
-import Fruits from "./Fruits";
-import Vegentable from "./Vegetable";
 import DiscountsAndOffers from "./DiscountsAndOffers";
 import {useUser} from "../context/useUSer";
 import AddProdutModal from "../atoms/AddProdutModal";
@@ -10,18 +8,10 @@ import {Products} from "../interfaces/Products";
 import {handleAddToCart, handleQuantity} from "../helpers/fruitesFunctions";
 import Loader from "../atoms/loader/Loader";
 import ForAllModal from "../atoms/LoginModal";
-import {SpeedDial, SpeedDialIcon, SpeedDialAction} from "@mui/material";
+import {SpeedDial, SpeedDialIcon, SpeedDialAction, Button} from "@mui/material";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import {path} from "../routes/routes";
 import RoleType from "../interfaces/UserType";
-import Fish from "./Fish";
-import Dairy from "./Dairy";
-import Meat from "./Meat";
-import Spices from "./Spices";
-import Bakery from "./Bakery";
-import Beverages from "./Beverages";
-import Frozen from "./Frozen";
-import Snacks from "./Snacks";
 
 interface HomeProps {}
 
@@ -39,6 +29,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const [loading, setLoading] = useState(true);
 	const {auth, isLoggedIn} = useUser();
 	const navigate = useNavigate();
+	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
+	const [visibleCount, setVisibleCount] = useState(15);
 
 	const OnShowCartModal = () => setOnShowModal(true);
 	const OnHideCartModal = () => setOnShowModal(false);
@@ -50,6 +42,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		getAllProducts()
 			.then((products) => {
 				setProducts(products);
+				setVisibleProducts(products.slice(0, 15));
 				setLoading(false);
 			})
 			.catch((err) => {
@@ -61,15 +54,23 @@ const Home: FunctionComponent<HomeProps> = () => {
 		return products.filter((product) => {
 			const productName = product.product_name || "";
 			const productPrice = product.price || "";
-			const productInDiscount = product.sale ? "מבצע" : false || "";
+			const productInDiscount = product.sale ? "מבצע" :  "";
 
 			return (
 				productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				(searchQuery && productPrice.toString() === searchQuery) ||
-				(searchQuery && productInDiscount.toString() === searchQuery)
+				(searchQuery && productPrice.toString().includes(searchQuery)) ||
+				(searchQuery && productInDiscount.toString().includes(searchQuery))
 			);
 		});
 	}, [products, searchQuery]);
+
+	useEffect(() => {
+		const dataToDisplay = searchQuery
+			? filteredProducts
+			: products.slice(0, visibleCount);
+
+		setVisibleProducts(dataToDisplay);
+	}, [products, searchQuery, filteredProducts, visibleCount]);
 
 	const handleAdd = (
 		product_name: string,
@@ -101,11 +102,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 			name: "מוצר חדש",
 			addClick: () => showAddProductModal(),
 		},
-		{
-			icon: fontAwesomeIcon.ordersList,
-			name: "הזמנות",
-			addClick: () => navigate(path.AllTheOrders),
-		},
+		
 	];
 
 	if (loading) {
@@ -113,7 +110,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 	}
 
 	return (
-		<main className='min-vh-100 main'>
+		<main className='min-vh-100'>
 			{((auth && auth.role === RoleType.Admin) ||
 				(auth && auth.role === RoleType.Moderator)) && (
 				<SpeedDial
@@ -147,59 +144,58 @@ const Home: FunctionComponent<HomeProps> = () => {
 						/>
 					</div>
 
-					<div className='row m-auto'>
-						{searchQuery.length ? (
-							filteredProducts.map((fruit) => {
-								const fruitQuantity = quantities[fruit.product_name] || 1;
+					{/* Discounts Section */}
+					{!searchQuery && <DiscountsAndOffers />}
+
+					<div className='row'>
+						{visibleProducts.length > 0 ? (
+							visibleProducts.map((product) => {
+								const productQuantity =
+									quantities[product.product_name] || 1;
 								return (
 									<div
-										className='col-md-4 col-lg-3 col-sm-10 m-auto'
-										key={fruit._id}
+										className='col-md-4 mb-5 col-lg-3 col-sm-10'
+										key={product._id}
 									>
-										<div className='card mb-3'>
-											<div className='card-img-top object-fit-cover overflow-hidden'>
+										<div className='card h-100'>
+											<div className='card-img-top'>
 												<img
 													style={{
 														height: "300px",
 														width: "100%",
 													}}
 													className=' img-thumbnail rounded-3'
-													src={fruit.image_url}
-													alt={`Image of ${fruit.product_name}`} // Improve alt text
+													src={product.image_url}
+													alt={`Image of ${product.product_name}`} // Improve alt text
 												/>
 											</div>
 
 											<div className='card-body'>
 												<h5 className='card-title'>
-													{fruit.product_name}
+													{product.product_name}
 												</h5>
 												<hr />
 												<h5 className='text-success text-center'>
-													במלאי - {fruit.quantity_in_stock} ק"ג
+													במלאי - {product.quantity_in_stock}{" "}
+													ק"ג
 												</h5>
 												<hr />
 
-												{fruit.sale ? (
+												{product.sale ? (
 													<>
 														<h5 className=' text-center'>
 															מחיר לפני:
 															<s className=' ms-2'>
-																{fruit.price.toLocaleString(
-																	"he-IL",
-																	{
-																		style: "currency",
-																		currency: "ILS",
-																	},
-																)}
+																{product.price}
 															</s>
 														</h5>
 														<h6 className=' text-center'>
 															מחיר:
 															{(
-																fruit.price -
-																(fruit.discount
-																	? (fruit.price *
-																			fruit.discount) /
+																product.price -
+																(product.discount
+																	? (product.price *
+																			product.discount) /
 																		100
 																	: 0)
 															).toLocaleString("he-IL", {
@@ -207,19 +203,13 @@ const Home: FunctionComponent<HomeProps> = () => {
 																currency: "ILS",
 															})}
 															<span className=' d-block m-2 text-center text-danger'>
-																{fruit.discount}% מבצע
+																{product.discount}% מבצע
 															</span>
 														</h6>
 													</>
 												) : (
 													<h5 className='card-text text-center'>
-														{fruit.price.toLocaleString(
-															"he-IL",
-															{
-																style: "currency",
-																currency: "ILS",
-															},
-														)}
+														{product.price}
 													</h5>
 												)}
 
@@ -229,7 +219,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 												<div className='d-flex align-items-center justify-content-evenly'>
 													<button
 														disabled={
-															fruit.quantity_in_stock <= 0
+															product.quantity_in_stock <= 0
 																? true
 																: false
 														}
@@ -237,7 +227,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 															handleQuantity(
 																setQuantities,
 																"-",
-																fruit.product_name,
+																product.product_name,
 															)
 														}
 														className='btn btn-info text-dark fw-bold'
@@ -245,11 +235,11 @@ const Home: FunctionComponent<HomeProps> = () => {
 														-
 													</button>
 													<h5 className='text-decoration-underline'>
-														<b>{fruitQuantity}</b>
+														<b>{productQuantity}</b>
 													</h5>
 													<button
 														disabled={
-															fruit.quantity_in_stock <= 0
+															product.quantity_in_stock <= 0
 																? true
 																: false
 														}
@@ -257,7 +247,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 															handleQuantity(
 																setQuantities,
 																"+",
-																fruit.product_name,
+																product.product_name,
 															);
 														}}
 														className='btn btn-info text-dark fw-bold'
@@ -269,26 +259,26 @@ const Home: FunctionComponent<HomeProps> = () => {
 													<button
 														onClick={() => {
 															handleAdd(
-																fruit.product_name,
+																product.product_name,
 																quantities,
-																fruit.price,
-																fruit.image_url,
-																fruit.sale || false,
-																fruit.discount || 0,
+																product.price,
+																product.image_url,
+																product.sale || false,
+																product.discount || 0,
 															);
 														}}
 														disabled={
-															fruit.quantity_in_stock <= 0
+															product.quantity_in_stock <= 0
 																? true
 																: false
 														}
 														className={` w-100 ${
-															fruit.quantity_in_stock <= 0
+															product.quantity_in_stock <= 0
 																? "btn btn-danger"
 																: "btn btn-success"
 														}`}
 													>
-														{fruit.quantity_in_stock <= 0
+														{product.quantity_in_stock <= 0
 															? "אזל מהמלאי"
 															: "הוספה לסל"}
 													</button>
@@ -316,64 +306,21 @@ const Home: FunctionComponent<HomeProps> = () => {
 						)}
 					</div>
 				</div>
+				{/* Show More Button */}
+				{!searchQuery && visibleCount < products.length && (
+					<div className='text-center mt-4'>
+						<Button
+							color='primary'
+							variant='contained'
+							onClick={() => setVisibleCount((prev) => prev + 15)}
+						>
+							הצג עוד מוצרים
+						</Button>
+					</div>
+				)}
 			</div>
 
 			<div className='container'>
-				{/* Discounts and Offers */}
-				<DiscountsAndOffers />
-
-				{/* Fruits  */}
-				<p className='display-4 fw-bold mt-5'>פירות</p>
-				<hr className=' text-primary' />
-
-				<Fruits />
-
-				{/* Vegetable section */}
-				<p className='display-4 fw-bold mt-5'>ירקות</p>
-				<hr className=' text-primary' />
-
-				<Vegentable />
-
-				{/* fish */}
-				<p className='display-4 fw-bold mt-5'>דגים</p>
-				<hr className=' text-light' />
-				<Fish />
-
-				{/* dairy */}
-				<p className='display-4 fw-bold mt-5'>מוצרי חלב</p>
-				<hr className=' text-light' />
-				<Dairy />
-
-				{/* meat */}
-				<p className='display-4 fw-bold mt-5'>בשרים</p>
-				<hr className=' text-light' />
-				<Meat />
-
-				{/* spices */}
-				<p className='display-4 fw-bold mt-5'>תבלינים</p>
-				<hr className=' text-light' />
-				<Spices />
-
-				{/* Bakery */}
-				<p className='display-4 fw-bold mt-5'>מאפים</p>
-				<hr className=' text-light' />
-				<Bakery />
-
-				{/* beverages */}
-				<p className='display-4 fw-bold mt-5'>משקאות</p>
-				<hr className=' text-light' />
-				<Beverages />
-
-				{/* forzen */}
-				<p className='display-4 fw-bold mt-5'>מוצרים קפואים</p>
-				<hr className=' text-light' />
-				<Frozen />
-
-				{/* snacks */}
-				<p className='display-4 fw-bold mt-5'>חטיפים</p>
-				<hr className=' text-light' />
-				<Snacks />
-
 				{/* Customer support section */}
 				<section className='my-5'>
 					<h2 className='text-center mb-4'>אנו כאן לשירותכם!</h2>

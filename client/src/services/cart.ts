@@ -54,6 +54,7 @@ export const getCartItems = async () => {
 		return response.data;
 	} catch (error) {
 		console.log("Error fetching cart items:", error);
+		return [];
 	}
 };
 

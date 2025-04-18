@@ -52,8 +52,14 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) 
 	});
 
 	return (
-		<Modal show={show} onHide={() => onHide()} centered dir='rtl'>
-			<ModalHeader closeButton className=" bg-success-subtle">
+		<Modal
+			
+			show={show}
+			onHide={() => onHide()}
+			centered
+			dir='rtl'
+		>
+			<ModalHeader closeButton>
 				<h6 className='display-6 p-2 fw-bold text-center'>הוספת מוצר חדש</h6>
 			</ModalHeader>
 			<Modal.Body className='rounded  d-flex justify-content-center align-items-center'>
@@ -216,7 +222,7 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) 
 								type='number'
 								name='discount'
 								disabled={formik.values.sale ? false : true}
-								value={formik.values.discount  || 0}
+								value={formik.values.discount || 0}
 								onChange={formik.handleChange}
 								className={`form-control  ${
 									formik.values.sale ? "" : "d-none"

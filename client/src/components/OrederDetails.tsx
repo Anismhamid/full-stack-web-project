@@ -30,12 +30,12 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 	}
 
 	return (
-		<main className=' min-vh-100'>
-			<div className='container p-2 mb-5'>
+		<main className='min-vh-50'>
+			<div className='container p-3'>
 				<h1 className='text-center bg-primary text-white rounded p-3 mb-4'>
 					{orderNumber}
 				</h1>
-				<div className='row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4'>
+				<div className='row row-cols-1 row-cols-md-3 row-cols-lg-3 g-4'>
 					{cartItems.products.map((product, index) => (
 						<div key={product.product_image + index + 1} className='col'>
 							<div className='card h-100 shadow-sm border-0'>
@@ -44,6 +44,7 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 									alt={product.product_name || "Product image"}
 									className='card-img-top'
 									role='img'
+									style={{height:"250px"}}
 								/>
 								<div className='card-body d-flex flex-column'>
 									<h5 className='card-title'>{product.product_name}</h5>

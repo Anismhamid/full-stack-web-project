@@ -4,10 +4,13 @@ import * as yup from "yup";
 import axios from "axios";
 import {useUser} from "../context/useUSer";
 import {showSuccess, showError} from "../atoms/Toast";
-import {FunctionComponent} from "react";
+import {FunctionComponent, useEffect, useState} from "react";
 import {Box, Button, CircularProgress, MenuItem, TextField} from "@mui/material";
 import {Col, Row} from "react-bootstrap";
 import {cities} from "../interfaces/cities";
+import {compleateProfileData, getUserById} from "../services/usersServices";
+import useToken from "../hooks/useToken";
+import Loader from "../atoms/loader/Loader";
 
 interface CompleteProfileProps {}
 
@@ -16,41 +19,75 @@ interface CompleteProfileProps {}
  * @returns inputs to colmplate the fileds on database
  */
 const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
-	const {auth} = useUser();
-	const navigate = useNavigate();
+	const {decodedToken} = useToken();
+	const [loading, setIsLoading] = useState<boolean>(true);
 
 	const formik = useFormik({
 		initialValues: {
-			phone_1: "",
-			phone_2: "",
-			city: "",
-			street: "",
-			houseNumber: "",
+			phone: {phone_1: "", phone_2: ""},
+			address: {city: "", street: "", houseNumber: ""},
 		},
+		enableReinitialize: true,
 		validationSchema: yup.object({
-			phone_1: yup.string().required("נדרש מספר טלפון"),
-			city: yup.string().required("עיר נדרשת"),
-			street: yup.string().required("רחוב נדרש"),
+			phone: yup.object({
+				phone_1: yup.string(),
+				phone_2: yup.string(),
+			}),
+			address: yup.object({
+				city: yup.string(),
+				street: yup.string(),
+				houseNumber: yup.string(),
+			}),
 		}),
-		onSubmit: async (values) => {
-			try {
-				await axios.put(
-					`${import.meta.env.VITE_API_URL}/users/${auth._id}`,
-					values,
-					{
-						headers: {
-							Authorization: localStorage.getItem("token"),
-						},
-					},
-				);
-				showSuccess("הפרופיל עודכן בהצלחה!");
-				navigate("/");
-			} catch (err) {
-				showError("שגיאה בעדכון הפרופיל");
-				console.error(err);
+		onSubmit: (values) => {
+			if (decodedToken) {
+				compleateProfileData(decodedToken._id, values)
+					.then(() => {
+						const time = setTimeout(() => {
+							formik.setSubmitting(false);
+							showSuccess("הפרופיל עודכן בהצלחה!");
+						}, 1000);
+						return () => clearTimeout(time);
+					})
+					.catch((err) => {
+						showError("שגיאה בעדכון הפרופיל");
+						console.error(err);
+					});
 			}
 		},
 	});
+
+	useEffect(() => {
+		async function getUser() {
+			try {
+				const user = await getUserById(decodedToken._id);
+
+				formik.setValues({
+					phone: {
+						phone_1: user.phone?.phone_1 || "",
+						phone_2: user.phone?.phone_2 || "",
+					},
+					address: {
+						city: user.address?.city || "בחר עיר",
+						street: user.address?.street || "שם רחוב לא הוזן",
+						houseNumber: user.address?.houseNumber || "",
+					},
+				});
+			} catch (err) {
+				console.log("Error getting user:", err);
+				showError("שגיאה בטעינת הפרופיל");
+			} finally {
+				setIsLoading(false);
+			}
+		}
+		if (decodedToken) {
+			getUser();
+		}
+	}, [decodedToken]);
+
+	if (loading) {
+		return <Loader />;
+	}
 
 	return (
 		<main
@@ -64,16 +101,17 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 						<Col>
 							<TextField
 								label='טלפון ראשי'
-								name='phone_1'
+								name='phone.phone_1'
 								type='text'
-								value={formik.values.phone_1}
+								value={formik.values.phone.phone_1}
 								onChange={formik.handleChange}
 								error={
-									formik.touched.phone_1 &&
-									Boolean(formik.errors.phone_1)
+									formik.touched.phone?.phone_1 &&
+									Boolean(formik.errors.phone?.phone_1)
 								}
 								helperText={
-									formik.touched.phone_1 && formik.errors.phone_1
+									formik.touched.phone?.phone_1 &&
+									formik.errors.phone?.phone_1
 								}
 								fullWidth
 								className='my-2'
@@ -84,9 +122,9 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 						<Col>
 							<TextField
 								label='טלפון נוסף (אופציונלי)'
-								name='phone_2'
+								name='phone.phone_2'
 								type='text'
-								value={formik.values.phone_2}
+								value={formik.values.phone.phone_2}
 								onChange={formik.handleChange}
 								fullWidth
 								className='my-2'
@@ -98,13 +136,17 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 								<TextField
 									select
 									label='עיר'
-									name='city'
-									value={formik.values.city}
+									name='address.city'
+									value={formik.values.address.city}
 									onChange={formik.handleChange}
 									error={
-										formik.touched.city && Boolean(formik.errors.city)
+										formik.touched.address?.city &&
+										Boolean(formik.errors.address?.city)
 									}
-									helperText={formik.touched.city && formik.errors.city}
+									helperText={
+										formik.touched.address?.city &&
+										formik.errors.address?.city
+									}
 									fullWidth
 									className='my-2'
 									variant='outlined'
@@ -122,16 +164,17 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 							<Col>
 								<TextField
 									label='רחוב'
-									name='street'
+									name='address.street'
 									type='text'
-									value={formik.values.street}
+									value={formik.values.address.street}
 									onChange={formik.handleChange}
 									error={
-										formik.touched.street &&
-										Boolean(formik.errors.street)
+										formik.touched.address?.street &&
+										Boolean(formik.errors.address?.street)
 									}
 									helperText={
-										formik.touched.street && formik.errors.street
+										formik.touched.address?.street &&
+										formik.errors.address?.street
 									}
 									fullWidth
 									className='my-2'
@@ -141,9 +184,9 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 							<Col>
 								<TextField
 									label='מספר בית'
-									name='houseNumber'
+									name='address.houseNumber'
 									type='text'
-									value={formik.values.houseNumber}
+									value={formik.values.address.houseNumber}
 									onChange={formik.handleChange}
 									fullWidth
 									className='my-2'

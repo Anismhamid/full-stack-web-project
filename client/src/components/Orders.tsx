@@ -75,7 +75,7 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 				<h1 className='text-center'>הזמנות שלי</h1>
 				<div className='row'>
 					{orders.length ? (
-						orders.map((order) => (
+						orders.reverse().map((order) => (
 							<div key={order.createdAt} className='mb-4 col-md-6 col-lg-3'>
 								<div className='card p-4 shadow-sm'>
 									<h5 className='card-title text-center bg-primary text-white p-2 rounded'>
@@ -89,13 +89,13 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 											</span>
 										</div>
 										<div>
-											<strong>תאריך הזמנה:</strong>{" "}
+											<strong>תאריך הזמנה:</strong>
 											{new Date(order.date).toLocaleDateString(
 												"he-IL",
 											)}
 										</div>
 										<div className='mt-1'>
-											<strong>סטטוס:</strong>{" "}
+											<strong>סטטוס:</strong>
 											<span
 												className={`${
 													orderStatuses[order.orderNumber] ===

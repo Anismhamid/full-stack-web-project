@@ -1,14 +1,26 @@
-import {FunctionComponent, memo, useEffect} from "react";
+import {FunctionComponent, memo, useEffect, useState} from "react";
 import {NavLink, useLocation, useNavigate} from "react-router-dom";
 import {path} from "../routes/routes";
 import {useUser} from "../context/useUSer";
 import useToken from "../hooks/useToken";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import AccountMenu from "../atoms/userMenu/AccountMenu";
-import {AppBar, Badge, Box, MenuList, Tooltip} from "@mui/material";
+import {
+	AppBar,
+	Badge,
+	Box,
+	Button,
+	Menu,
+	MenuItem,
+	Stack,
+	Tooltip,
+	Typography,
+} from "@mui/material";
 import RoleType from "../interfaces/UserType";
 import {navbarCategoryLinks} from "../helpers/navCategoryies";
 import {emptyAuthValues} from "../interfaces/authValues";
+import {useCartItems} from "../context/useCart";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 interface NavBarProps {}
 /**
@@ -19,10 +31,27 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 	const location = useLocation();
 	const {decodedToken, setAfterDecode} = useToken();
 	const {auth, setAuth, isLoggedIn, setIsLoggedIn} = useUser();
+	const {quantity, setQuantity} = useCartItems();
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const [openMenu, setOpenMenu] = useState(false);
 
 	const navigate = useNavigate();
 
 	const isActive = (path: string) => location.pathname === path;
+
+	const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
+		setOpenMenu(true);
+	};
+
+	const handleMenuClose = () => {
+		setOpenMenu(false);
+	};
+
+	useEffect(() => {
+		const storedQuantity = parseInt(localStorage.getItem("cartQuantity") || "0", 10);
+		setQuantity(storedQuantity);
+	}, []);
 
 	useEffect(() => {
 		const token = localStorage.getItem("token");
@@ -33,7 +62,9 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 	}, [decodedToken, auth]);
 
 	useEffect(() => {
-		window.scrollTo(0, 0);
+		window.scrollTo(0, 50);
+		if (isActive(path.Checkout)) {
+		}
 	}, [location]);
 
 	const logout = () => {
@@ -46,8 +77,17 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 
 	return (
 		<>
-			<AppBar position='sticky' className=" p-2">
-				<MenuList className='nav  d-flex align-items-center'>
+			<AppBar position='sticky' className='navbar-glass m-auto z-2'>
+				<Box
+					sx={{
+						display: "flex",
+						justifyContent: "space-between",
+						alignItems: "center",
+						flexWrap: "wrap",
+						padding: "5px 20px",
+					}}
+					component='nav'
+				>
 					<Tooltip title='בית' arrow color='secondary'>
 						<li className='nav-item'>
 							<NavLink
@@ -61,6 +101,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							</NavLink>
 						</li>
 					</Tooltip>
+
 					{auth && auth.role === RoleType.Admin && (
 						<Tooltip title='ניהול משתמשים' arrow>
 							<li className='nav-item'>
@@ -78,40 +119,92 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							</li>
 						</Tooltip>
 					)}
+					<Box
+						onMouseEnter={handleMenuClick}
+						onMouseLeave={handleMenuClose}
+						sx={{
+							cursor: "pointer",
+							display: "flex",
+							alignItems: "center",
+							gap: 0.5,
+							position: "relative",
+							px: 2,
+							py: 1,
+							fontWeight: 500,
+							color: "text.primary",
+						}}
+					>
+						<Stack direction='row' alignItems='center' spacing={0.5}>
+							<Typography variant='body1'>Products</Typography>
+							<KeyboardArrowDownIcon
+								sx={{
+									fontSize: 20,
+									transition: "transform 0.3s ease",
+									transform: openMenu
+										? "rotate(180deg)"
+										: "rotate(0deg)",
+								}}
+							/>
+						</Stack>
 
-					{navbarCategoryLinks.map(({label, path, icon}) => (
-						<Tooltip key={path} title={label} arrow>
-							<li className='nav-item'>
-								<NavLink
-									className={`${
-										isActive(path) ? "text-danger" : ""
-									} nav-link`}
-									to={path}
-								>
-									{icon}
-								</NavLink>
-							</li>
-						</Tooltip>
-					))}
-
-					{auth && isLoggedIn && (
-						<Tooltip title='הזמנות שלי' arrow>
+						<Menu
+							anchorEl={anchorEl}
+							open={openMenu}
+							onClose={handleMenuClose}
+							MenuListProps={{
+								onMouseEnter: handleMenuClick,
+								onMouseLeave: handleMenuClose,
+							}}
+							anchorOrigin={{vertical: "top", horizontal: "left"}}
+							transformOrigin={{vertical: "top", horizontal: "left"}}
+						>
+							{/* Category Links */}
+							{navbarCategoryLinks.map(({label, path, icon}) => (
+								<MenuItem key={path} onClick={handleMenuClose}>
+									<Tooltip title={label} arrow>
+										<NavLink
+											className={`${
+												isActive(path) ? "text-danger" : ""
+											} nav-link`}
+											to={path}
+										>
+											{icon}
+										</NavLink>
+									</Tooltip>
+								</MenuItem>
+							))}
+						</Menu>
+					</Box>
+					{auth && auth.role !== RoleType.Admin && isLoggedIn ? (
+						<li className='nav-item'>
+							<NavLink
+								className={` ${
+									isActive(path.MyOrders) ? "text-danger fw-bold" : ""
+								} nav-link`}
+								aria-current='page'
+								to={path.MyOrders}
+							>
+								הזמנות
+							</NavLink>
+						</li>
+					) : (
+						auth &&
+						auth.role === RoleType.Admin && (
 							<li className='nav-item'>
 								<NavLink
 									className={` ${
-										isActive(path.MyOrders)
+										isActive(path.AllTheOrders)
 											? "text-danger fw-bold"
 											: ""
 									} nav-link`}
 									aria-current='page'
-									to={path.MyOrders}
+									to={path.AllTheOrders}
 								>
-									{fontAwesomeIcon.ordersList} הזמנות
+									ההזמנות
 								</NavLink>
 							</li>
-						</Tooltip>
+						)
 					)}
-
 					<li className='nav-item'>
 						<NavLink
 							className={`${
@@ -147,13 +240,24 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					</li>
 					{auth && isLoggedIn && (
 						<Tooltip title='סל קניות' arrow>
-							<li className='nav-item ms-3'>
-								<Box sx={{display: "flex"}}>
-									<Badge badgeContent={5}>
+							<li className='nav-item ms-1'>
+								<Box>
+									<Badge
+										badgeContent={quantity}
+										color='primary'
+										overlap='circular'
+										sx={{
+											"& .MuiBadge-badge": {
+												fontSize: "0.75rem",
+												height: 20,
+												minWidth: 20,
+											},
+										}}
+									>
 										<NavLink
-											className={` ${
+											className={`${
 												isActive(path.Cart) ? "text-danger" : ""
-											} nav-link `}
+											} nav-link fs-5`}
 											aria-current='page'
 											to={path.Cart}
 										>
@@ -164,28 +268,31 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							</li>
 						</Tooltip>
 					)}
-
 					{!isLoggedIn ? (
 						<li>
-							<button
+							<Button
+								variant='contained'
+								color='success'
 								onClick={() => navigate(path.Login)}
-								className={`fw-bold position-absolute ${
-									isActive(path.Login) ? "" : ""
-								} nav-link`}
-								aria-current='page'
-								style={{
-									backgroundColor: "#00B336",
-									left: "6px",
-									bottom: "5px",
+								sx={{
+									position: "absolute",
+									left: "10px",
+									bottom: "-35px",
+									borderRadius: "20px",
+									fontWeight: "bold",
+									boxShadow: "0 2px 6px rgba(0, 0, 0, 0.3)",
+									"&:hover": {
+										backgroundColor: "#45a049",
+									},
 								}}
 							>
 								התחבר
-							</button>
+							</Button>
 						</li>
 					) : (
 						isLoggedIn && <AccountMenu logout={logout} />
 					)}
-				</MenuList>
+				</Box>
 			</AppBar>
 
 			<div

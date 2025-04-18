@@ -1,4 +1,4 @@
-import {FunctionComponent, useEffect, useState} from "react";
+import {FunctionComponent, useEffect, useRef, useState} from "react";
 import {DeleteCartItems, getCartItems} from "../services/cart";
 import {Cart as CartType} from "../interfaces/Cart";
 import useToken from "../hooks/useToken";
@@ -8,6 +8,7 @@ import NavigathionButtons from "../atoms/NavigathionButtons";
 import Loader from "../atoms/loader/Loader";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import {Button, Tooltip} from "@mui/material";
+import {useCartItems} from "../context/useCart";
 
 interface CartProps {}
 
@@ -20,6 +21,20 @@ const Cart: FunctionComponent<CartProps> = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const {decodedToken} = useToken();
 	const navigate = useNavigate();
+	const {setQuantity} = useCartItems();
+	const formRef = useRef<HTMLDivElement | null>(null);
+
+	const scrollToContent = () => {
+		if (formRef.current) {
+			const yOffset = -500;
+			const y =
+				formRef.current.getBoundingClientRect().top +
+				window.pageYOffset +
+				yOffset;
+			window.scrollTo({top: y, behavior: "smooth"});
+		}
+	};
+
 	/**
 	 * Deleteing product from cart by name
 	 * @param product_name
@@ -38,6 +53,7 @@ const Cart: FunctionComponent<CartProps> = () => {
 		DeleteCartItems(product_name).catch((err) => {
 			console.error("Error deleting item:", err);
 		});
+		setQuantity((prev) => prev - 1);
 	};
 
 	// Calculate total amount of the cart, only considering items that have valid products
@@ -76,6 +92,11 @@ const Cart: FunctionComponent<CartProps> = () => {
 	return (
 		<main className=' min-vh-100'>
 			<div className='container'>
+				<div className=' text-center m-auto'>
+					<Button variant='contained' color='primary' onClick={scrollToContent}>
+						לתשלום
+					</Button>
+				</div>
 				<h1 className='text-center'>סל קניות</h1>
 				<ul className='list-group'>
 					{items.length ? (
@@ -145,11 +166,15 @@ const Cart: FunctionComponent<CartProps> = () => {
 									})}
 								</h4>
 
-								<div className='d-flex justify-content-center mt-3'>
+								<div
+									ref={formRef}
+									className='d-flex justify-content-center mt-3'
+								>
 									<Button
+										variant='contained'
+										color='primary'
 										disabled={totalAmount == 0}
 										onClick={() => navigate(path.Checkout)}
-										className='btn btn-primary'
 									>
 										המשך לקופה
 									</Button>
