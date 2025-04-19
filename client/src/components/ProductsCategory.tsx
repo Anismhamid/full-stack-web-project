@@ -14,6 +14,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Fab from "@mui/material/Fab";
 import {Button} from "@mui/material";
+import AlertDialogs from "../atoms/alertDialod/AlertDialog";
 
 interface ProductCategoryProps {
 	category: string;
@@ -35,6 +36,14 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 	const [showUpdateProductModal, setOnShowUpdateProductModal] =
 		useState<boolean>(false);
 	const {setQuantity} = useCartItems();
+	const [productToDelete, setProductToDelete] = useState<string>("");
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+	const openDeleteModal = (name: string) => {
+		setProductToDelete(name);
+		setShowDeleteModal(true);
+	};
+	const closeDeleteModal = () => setShowDeleteModal(false);
 
 	// Login modal to show whene user adding a product to cart and (not loggedIn)
 	const OnShowLoginModal = () => setShowLoginModal(true);
@@ -124,38 +133,41 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 
 	return (
 		<main className='min-vh-100'>
-			<div className='container m-auto my-5'>
-				<div className='row'>
-					{visibleProducts.map((product) => {
+			<div className='container py-5'>
+				<div className='row g-4'>
+					{visibleProducts.map((product: Products) => {
 						const productQuantity = quantities[product.product_name] || 1;
 						return (
 							<div
-								className='col-md-4 mb-5 col-lg-3 col-sm-10 '
+								className='col-md-6 mb-5 col-lg-4 col-xl-3 '
 								key={product.product_name}
 							>
-								<div className='card h-100'>
+								<div className='card h-100 shadow rounded-4 overflow-hidden'>
 									<img
 										loading='lazy'
 										src={product.image_url}
 										alt={product.product_name}
-										className='card-img-top img-fluid '
+										className='card-img-top'
 										style={{
-											height: "160px",
-											objectFit: "contain",
-											padding: "10px",
+											objectFit: "cover",
+											height: "200px",
+											transition: "transform 0.3s ease-in-out",
 										}}
-										role='img'
+										onMouseOver={(e) =>
+											(e.currentTarget.style.transform =
+												"scale(1.05)")
+										}
+										onMouseOut={(e) =>
+											(e.currentTarget.style.transform = "scale(1)")
+										}
 									/>
 
-									<div className='card-body'>
-										<h5 className='card-title'>
+									<div className='card-body d-flex flex-column justify-content-between'>
+										<h5 className='card-title text-center fw-bold'>
 											{product.product_name}
 										</h5>
-										<h5 className='card-title text-muted'>
-											{product.description}
-										</h5>
 										<h5
-											className={` text-center ${
+											className={` text-center fw-semibold ${
 												product.quantity_in_stock <= 0
 													? "text-danger"
 													: "text-success"
@@ -169,7 +181,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 
 										{product.sale ? (
 											<>
-												<h5 className='text-center'>
+												<h5 className='text-center fw-bold'>
 													מחיר לפני:
 													<s className='ms-2'>
 														{product.price.toLocaleString(
@@ -194,14 +206,14 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 														style: "currency",
 														currency: "ILS",
 													})}
-													<span className='d-block m-2 text-center text-danger'>
-														{product.discount}% מבצע
-													</span>
 												</h6>
+												<p className='d-block m-2 text-center text-danger'>
+													{product.discount}% מבצע
+												</p>
 											</>
 										) : (
 											<h5 className='card-text text-center'>
-												מחיר:{" "}
+												מחיר:
 												{product.price.toLocaleString("he-IL", {
 													style: "currency",
 													currency: "ILS",
@@ -209,18 +221,20 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 											</h5>
 										)}
 
-										<h6 className='text-primary'>
+										<p className='text-center text-muted small'>
 											{category === "spices"
 												? "ל / 100-גרם"
-												: category === "fruit" ||
-													  category === "vegetable" ||
-													  category === "meat" ||
-													  category === "fish"
-													? 'ל / ק"ג'
+												: [
+															"fruit",
+															"vegetable",
+															"meat",
+															"fish",
+													  ].includes(category)
+													? "ל / ק" + "\u05B2" + "ג"
 													: "ל-יחידה"}
-										</h6>
+										</p>
 
-										<div className='d-flex align-items-center'>
+										<div className='d-flex align-items-center justify-content-center gap-3'>
 											<button
 												disabled={product.quantity_in_stock <= 0}
 												onClick={() =>
@@ -230,11 +244,15 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 														product.product_name,
 													)
 												}
-												className='btn mb-2 m-auto'
+												className='btn btn-light border rounded-circle shadow-sm my-1'
 											>
-												<img src='/svg/remove.svg' alt='' />
+												<img
+													src='/svg/remove.svg'
+													alt=''
+													width={20}
+												/>
 											</button>
-											<h5 className=''>
+											<h5 className='fs-5 fw-bold'>
 												<b>{productQuantity}</b>
 											</h5>
 											<button
@@ -246,9 +264,13 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 														product.product_name,
 													)
 												}
-												className='btn mb-2 m-auto'
+												className='btn btn-light border rounded-circle shadow-sm my-1'
 											>
-												<img src='/svg/add.svg' alt='' />
+												<img
+													src='/svg/add.svg'
+													alt=''
+													width={20}
+												/>
 											</button>
 										</div>
 										<button
@@ -263,52 +285,53 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 												);
 											}}
 											disabled={product.quantity_in_stock <= 0}
-											className={`w-100 shadow ${
+											className={`w-100 btn shadow-sm py-2 fw-bold rounded-pill d-block ${
 												product.quantity_in_stock <= 0
-													? "btn btn-danger"
-													: "btn btn-success"
+													? "btn btn-outline-danger"
+													: "btn btn-outline-success"
 											}`}
 										>
 											{product.quantity_in_stock <= 0
 												? "אזל מהמלאי"
 												: "הוספה לסל"}
 										</button>
-										<div className='card-footer mt-3'>
-											{((auth && auth.role === RoleType.Admin) ||
-												(auth &&
-													auth.role ===
-														RoleType.Moderator)) && (
-												<div className='mt-3 rounded d-flex align-items-center justify-content-around'>
-													<Tooltip title='edit'>
-														<Fab
-															color='warning'
-															aria-label='edit'
-															onClick={() => {
-																setProductNameToUpdate(
-																	product.product_name,
-																);
-																onShowUpdateProductModal();
-															}}
-														>
-															<EditIcon />
-														</Fab>
-													</Tooltip>
-													<Tooltip title='Delete'>
-														<Fab
-															color='error'
-															aria-label='edit'
-															onClick={() =>
-																handleDelete(
-																	product.product_name,
-																)
-															}
-														>
-															<DeleteIcon />
-														</Fab>
-													</Tooltip>
-												</div>
-											)}
-										</div>
+										{((auth && auth.role === RoleType.Admin) ||
+											(auth &&
+												auth.role === RoleType.Moderator)) && (
+											<div className='card-footer mt-3 bg-transparent border-0 d-flex justify-content-around'>
+												<Tooltip title='עריכה'>
+													<Fab
+														color='warning'
+														aria-label='עריכה'
+														onClick={() => {
+															setProductNameToUpdate(
+																product.product_name,
+															);
+															onShowUpdateProductModal();
+														}}
+														size='small'
+														className='z-1'
+													>
+														<EditIcon />
+													</Fab>
+												</Tooltip>
+												<Tooltip title='מחיקה'>
+													<Fab
+														color='error'
+														aria-label='מחיקה'
+														onClick={() =>
+															openDeleteModal(
+																product.product_name,
+															)
+														}
+														size='small'
+														className='z-1'
+													>
+														<DeleteIcon />
+													</Fab>
+												</Tooltip>
+											</div>
+										)}
 									</div>
 								</div>
 							</div>
@@ -322,18 +345,29 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 							onClick={handleShowMore}
 							color='primary'
 							variant='contained'
+							size='large'
 							disabled={showMoreLoading}
+							className='rounded-pill shadow'
 						>
 							הצג עוד מוצרים
 						</Button>
 					</div>
 				)}
 			</div>
+
 			<UpdateProductModal
 				product_name={productNameToUpdate}
 				show={showUpdateProductModal}
 				onHide={() => onHideUpdateProductModal()}
 			/>
+
+			<AlertDialogs
+				show={showDeleteModal}
+				openModal={() => setShowDeleteModal(true)}
+				onHide={closeDeleteModal}
+				handleDelete={() => handleDelete(productToDelete)}
+			/>
+
 			<ForAllModal show={showLoginModal} onHide={OnHideLoginModal} />
 		</main>
 	);

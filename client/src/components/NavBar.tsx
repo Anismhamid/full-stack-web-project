@@ -62,9 +62,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 	}, [decodedToken, auth]);
 
 	useEffect(() => {
-		window.scrollTo(0, 50);
-		if (isActive(path.Checkout)) {
-		}
+		window.scrollTo(0, 100);
 	}, [location]);
 
 	const logout = () => {
@@ -88,12 +86,12 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					}}
 					component='nav'
 				>
-					<Tooltip title='בית' arrow color='secondary'>
+					<Tooltip title='בית' arrow>
 						<li className='nav-item'>
 							<NavLink
 								className={`${
 									isActive(path.Home) ? "text-danger fw-bold" : ""
-								} nav-link`}
+								}`}
 								aria-current='page'
 								to={path.Home}
 							>
@@ -161,16 +159,15 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							{/* Category Links */}
 							{navbarCategoryLinks.map(({label, path, icon}) => (
 								<MenuItem key={path} onClick={handleMenuClose}>
-									<Tooltip title={label} arrow>
-										<NavLink
-											className={`${
-												isActive(path) ? "text-danger" : ""
-											} nav-link`}
-											to={path}
-										>
-											{icon}
-										</NavLink>
-									</Tooltip>
+									<NavLink
+										className={`${
+											isActive(path) ? "text-danger" : ""
+										} nav-link`}
+										to={path}
+									>
+										{icon}
+										<span className=' me-2'>{label}</span>
+									</NavLink>
 								</MenuItem>
 							))}
 						</Menu>
@@ -184,7 +181,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 								aria-current='page'
 								to={path.MyOrders}
 							>
-								הזמנות
+								<Typography variant='body1'>הזמנות</Typography>
 							</NavLink>
 						</li>
 					) : (
@@ -216,17 +213,19 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							אודות
 						</NavLink>
 					</li>
-					<li className='nav-item'>
-						<NavLink
-							className={`${
-								isActive(path.Receipt) ? "text-danger fw-bold" : ""
-							} nav-link`}
-							aria-current='page'
-							to={path.Receipt}
-						>
-							קבלות
-						</NavLink>
-					</li>
+					{isLoggedIn && (
+						<li className='nav-item'>
+							<NavLink
+								className={`${
+									isActive(path.Receipt) ? "text-danger" : ""
+								} nav-link`}
+								aria-current='page'
+								to={path.Receipt}
+							>
+								קבלות
+							</NavLink>
+						</li>
+					)}
 					<li className='nav-item'>
 						<NavLink
 							className={`${
@@ -277,7 +276,6 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 								sx={{
 									position: "absolute",
 									left: "10px",
-									bottom: "-35px",
 									borderRadius: "20px",
 									fontWeight: "bold",
 									boxShadow: "0 2px 6px rgba(0, 0, 0, 0.3)",

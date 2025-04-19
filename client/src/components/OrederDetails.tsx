@@ -2,6 +2,8 @@ import {FunctionComponent} from "react";
 import {useParams} from "react-router-dom";
 import Loader from "../atoms/loader/Loader";
 import useOrderDetails from "../hooks/useOrderDetails";
+import {useUser} from "../context/useUSer";
+import RoleType from "../interfaces/UserType";
 
 interface OrderDetailsProps {}
 
@@ -12,7 +14,7 @@ interface OrderDetailsProps {}
 const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 	const {orderNumber} = useParams<{orderNumber: string}>();
 	const {cartItems, loading, error} = useOrderDetails(orderNumber as string);
-
+	const {auth} = useUser();
 	if (loading) {
 		return <Loader />;
 	}
@@ -29,13 +31,67 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 		);
 	}
 
+	function handleStatus(arg0: string, orderNumber: any): void {
+		throw new Error("Function not implemented.");
+	}
+
 	return (
 		<main className='min-vh-50'>
 			<div className='container p-3'>
-				<h1 className='text-center bg-primary text-white rounded p-3 mb-4'>
-					{orderNumber}
-				</h1>
-				<div className='row row-cols-1 row-cols-md-3 row-cols-lg-3 g-4'>
+				<div className='text-center bg-gradient rounded p-3 mb-4'>
+					<div className='mb-3 text-center d-flex align-items-center justify-content-between'>
+						{((auth && auth.role === RoleType.Admin) ||
+							(auth && auth.role === RoleType.Moderator)) && (
+							<>
+								<button
+									// onClick={() =>
+									// 	handleStatus("Preparing", order.orderNumber)
+									// }
+									className='btn btn-primary me-3'
+									// disabled={
+									// 	order.status === "Preparing" ||
+									// 	order.status === "Delivered" ||
+									// 	order.status === "Shipped"
+									// }
+								>
+									{/* {statusLoading[order.orderNumber]
+										? "טוען..."
+										: "הכנה"} */}
+									הכנה
+								</button>
+								<button
+									// onClick={() =>
+									// 	handleStatus("Delivered", order.orderNumber)
+									// }
+									className='btn btn-info me-3'
+									// disabled={
+									// 	order.status === "Delivered" ||
+									// 	order.status === "Shipped"
+									// }
+								>
+									{/* {statusLoading[order.orderNumber]
+										? "טוען..."
+										: "נשלח"} */}
+									נשלח
+								</button>
+								<button
+									// onClick={() =>
+									// 	handleStatus("Shipped", order.orderNumber)
+									// }
+									className='btn btn-success'
+									// disabled={order.status === "Shipped"}
+								>
+									{/* {statusLoading[order.orderNumber]
+										? "טוען..."
+										: "נמסר"} */}
+									נמסר
+								</button>
+							</>
+						)}
+						<h1>{orderNumber}</h1>
+					</div>
+				</div>
+				<div className='row  row-cols-1 row-cols-md-3 row-cols-lg-3 g-4'>
 					{cartItems.products.map((product, index) => (
 						<div key={product.product_image + index + 1} className='col'>
 							<div className='card h-100 shadow-sm border-0'>
@@ -44,7 +100,7 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 									alt={product.product_name || "Product image"}
 									className='card-img-top'
 									role='img'
-									style={{height:"250px"}}
+									style={{height: "250px"}}
 								/>
 								<div className='card-body d-flex flex-column'>
 									<h5 className='card-title'>{product.product_name}</h5>

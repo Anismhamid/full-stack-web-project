@@ -52,13 +52,7 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) 
 	});
 
 	return (
-		<Modal
-			
-			show={show}
-			onHide={() => onHide()}
-			centered
-			dir='rtl'
-		>
+		<Modal show={show} onHide={() => onHide()} centered dir='rtl'>
 			<ModalHeader closeButton>
 				<h6 className='display-6 p-2 fw-bold text-center'>הוספת מוצר חדש</h6>
 			</ModalHeader>
@@ -237,16 +231,17 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) 
 								אחוז הנחה
 							</label>
 						</div>
-
-						<button type='submit' className='btn btn-success w-100'>
-							הוספה
-						</button>
-						<button
-							onClick={() => onHide()}
-							className='my-3 btn btn-danger w-100'
-						>
-							סגירה
-						</button>
+						<div className=' d-flex gap-5'>
+							<button type='submit' className='btn btn-primary w-100'>
+								הוספה
+							</button>
+							<button
+								onClick={() => onHide()}
+								className='btn btn-danger w-100'
+							>
+								סגירה
+							</button>
+						</div>
 					</form>
 				</div>
 			</Modal.Body>

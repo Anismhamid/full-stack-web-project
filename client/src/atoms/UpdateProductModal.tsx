@@ -84,6 +84,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 		onSubmit(values, {resetForm}) {
 			updateProduct(product_name as string, values as Products)
 				.then(() => {
+					setProduct((prev) => ({...prev, ...values}));
 					resetForm();
 					onHide();
 				})
@@ -264,7 +265,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 									if (!formik.values.sale) {
 										formik.setFieldValue("discount", 0);
 									} else {
-										formik.handleChange(e); // Else, handle the discount normally
+										formik.handleChange(e);
 									}
 								}}
 								className={`form-control  ${

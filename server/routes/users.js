@@ -174,7 +174,7 @@ router.post("/login", async (req, res) => {
 		}
 
 		// push the activity time
-		user.activity.push(new Date().toLocaleString("he-IL"));
+		user.activity.push(new Date().toLocaleString());
 
 		await user.save();
 

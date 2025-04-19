@@ -7,7 +7,6 @@ import Loader from "../atoms/loader/Loader";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import NavigathionButtons from "../atoms/NavigathionButtons";
 import RoleType from "../interfaces/UserType";
-import {Form} from "react-bootstrap";
 import SearchIcon from "@mui/icons-material/Search";
 import {InputBase, Paper, IconButton} from "@mui/material";
 
@@ -90,7 +89,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 
 	return (
 		<main className=' min-vh-100'>
-			<div className='container bg-gradient rounded  text-center align-items-center py-5 mt-5'>
+			<div className='container bg-gradient rounded  text-center align-items-center'>
 				<h1 className='text-center'>כל ההזמנות</h1>
 				<Paper
 					component='div'
@@ -133,8 +132,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 						❌
 					</IconButton>
 				</Paper>
-				<div className=' w-100 text-center bg-white m-auto'></div>
-				<div className='row w-100 mt-5'>
+				<div className='row mt-5'>
 					{filteredOrders.length ? (
 						filteredOrders.map((order) => (
 							<div key={order.createdAt} className='mb-4 col-md-6 col-lg-4'>
@@ -150,14 +148,24 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 											</span>
 										</div>
 										<div>
-											<strong>תאריך הזמנה:</strong>{" "}
+											<strong>תאריך הזמנה:</strong>(
 											{new Date(order.date).toLocaleString(
 												"he-IL",
 												{
-													dateStyle: "short",
-													timeStyle: "short",
+													year: "2-digit",
+													month: "short",
+													day: "numeric",
+													hour: "2-digit",
+													minute: "2-digit",
 												},
 											)}
+											)
+										</div>
+										<div className='text-start mt-3'>
+											<strong>טלפון מזמין:</strong>
+										</div>
+										<div className='text-start my-3'>
+											<strong>כתובת מזמין:</strong>
 										</div>
 										<div className='mt-1'>
 											<strong>סטטוס:</strong>{" "}

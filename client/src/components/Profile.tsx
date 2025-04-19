@@ -8,6 +8,7 @@ import {
 	AccordionSummary,
 	AccordionDetails,
 	Typography,
+	Skeleton,
 } from "@mui/material";
 import {path} from "../routes/routes";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
@@ -21,6 +22,7 @@ interface ProfileProps {}
  * @returns auth profile
  */
 const Profile: FunctionComponent<ProfileProps> = () => {
+	const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 	const {decodedToken} = useToken();
@@ -82,20 +84,29 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 		<main className='min-vh-100'>
 			<div className='container'>
 				<div>
-					<img
-						className='border border-light rounded'
-						src={
-							user.image.url
-								? user.image.url
-								: "https://via.placeholder.com/200"
-						}
-						alt={
-							user.image.alt
-								? `${user.image.alt}'s avatar`
-								: `${user.name.first ?? "User"}'s avatar`
-						}
-						role='img'
-					/>
+					<>
+						{!imageLoaded && (
+							<Skeleton
+								sx={{bgcolor: "grey.900"}}
+								variant='rectangular'
+								width={200}
+								height={118}
+							/>
+						)}
+						<img
+							className='border border-light rounded'
+							// src={user.image.url}
+							alt={
+								user.image.alt
+									? `${user.image.alt}'s avatar`
+									: `${user.name.first ?? "User"}'s avatar`
+							}
+							role='img'
+							style={imageLoaded ? {} : {display: "none"}}
+							width={200}
+							onLoad={() => setImageLoaded(true)}
+						/>
+					</>
 
 					<hr />
 				</div>
@@ -122,7 +133,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						</tr>
 						<tr>
 							<th>טלפון ראשי</th>
-							<td>{user.phone?.phone_1||"-"}</td>
+							<td>{user.phone?.phone_1 || "-"}</td>
 						</tr>
 						<tr>
 							<th>טלפון נוסף</th>
@@ -180,75 +191,43 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 					</div>
 				</div>
 			</div>
-			<div className='row row-cols-1 row-cols-md-3 m-auto text-center'>
-				<div className='bg-gradient'>1</div>
-				<div className='bg-gradient'>2</div>
-				<div className='bg-gradient'>3</div>
-			</div>
-
-			<div className='row m-auto text-center py-5'>
+			<div className='row m-auto text-center'>
 				{/* 1 */}
-				<div className='row'>
-					<div className='col-6'>
-						<Accordion
-							sx={{
-								color: "CaptionText",
-								bgcolor: "AppWorkspace",
-							}}
+				<div>
+					<Accordion
+						sx={{
+							color: "CaptionText",
+							bgcolor: "AppWorkspace",
+						}}
+					>
+						<AccordionSummary
+							expandIcon={<ArrowDownwardIcon />}
+							aria-controls='panel1-content'
+							id='panel1-header'
 						>
-							<AccordionSummary
-								expandIcon={<ArrowDownwardIcon />}
-								aria-controls='panel1-content'
-								id='panel1-header'
-							>
-								<Typography component='span'>
-									היסטורייה התחברות
-								</Typography>
-							</AccordionSummary>
-							<AccordionDetails>
-								<Typography style={{whiteSpace: "pre-line"}}>
-									{user.activity?.length
-										? user.activity
-												.map((timestamp) =>
-													new Date(timestamp).toLocaleString(
-														"he-IL",
-														{
-															year: "numeric",
-															month: "long",
-															day: "numeric",
-															hour: "2-digit",
-															minute: "2-digit",
-														},
-													),
-												)
-												.join("\n")
-										: "אין נתוני התחברות"}
-								</Typography>
-							</AccordionDetails>
-						</Accordion>
-					</div>
-					{/* 2 */}
-					<div className='col-6'>
-						<Accordion
-							sx={{
-								color: "CaptionText",
-								bgcolor: "AppWorkspace",
-							}}
-						>
-							<AccordionSummary
-								expandIcon={<ArrowDownwardIcon />}
-								aria-controls='panel1-content'
-								id='panel1-header'
-							>
-								<Typography component='span'>הזמנות קודמות</Typography>
-							</AccordionSummary>
-							<AccordionDetails>
-								<Typography style={{whiteSpace: "pre-line"}}>
-									vhgvhjgbjn,
-								</Typography>
-							</AccordionDetails>
-						</Accordion>
-					</div>
+							<Typography component='span'>היסטורייה התחברות</Typography>
+						</AccordionSummary>
+						<AccordionDetails>
+							<Typography style={{whiteSpace: "pre-line"}}>
+								{user.activity?.length
+									? user.activity
+											.map((timestamp) =>
+												new Date(timestamp).toLocaleString(
+													"he-IL",
+													{
+														year: "numeric",
+														month: "long",
+														day: "numeric",
+														hour: "2-digit",
+														minute: "2-digit",
+													},
+												),
+											)
+											.join("\n")
+									: "אין נתוני התחברות"}
+							</Typography>
+						</AccordionDetails>
+					</Accordion>
 				</div>
 			</div>
 			<div className='text-center my-4'>

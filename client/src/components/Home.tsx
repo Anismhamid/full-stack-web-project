@@ -2,16 +2,28 @@ import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import DiscountsAndOffers from "./DiscountsAndOffers";
 import {useUser} from "../context/useUSer";
 import AddProdutModal from "../atoms/AddProdutModal";
-import {useNavigate} from "react-router-dom";
-import {getAllProducts} from "../services/productsServices";
+import {deleteProduct, getAllProducts} from "../services/productsServices";
 import {Products} from "../interfaces/Products";
 import {handleAddToCart, handleQuantity} from "../helpers/fruitesFunctions";
 import Loader from "../atoms/loader/Loader";
 import ForAllModal from "../atoms/LoginModal";
-import {SpeedDial, SpeedDialIcon, SpeedDialAction, Button} from "@mui/material";
+import {
+	SpeedDial,
+	SpeedDialIcon,
+	SpeedDialAction,
+	Button,
+	Tooltip,
+	Fab,
+} from "@mui/material";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
-import {path} from "../routes/routes";
 import RoleType from "../interfaces/UserType";
+import SearchIcon from "@mui/icons-material/Search";
+import {InputBase, Paper, IconButton} from "@mui/material";
+import {showError, showSuccess} from "../atoms/Toast";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import UpdateProductModal from "../atoms/UpdateProductModal";
+import AlertDialogs from "../atoms/alertDialod/AlertDialog";
 
 interface HomeProps {}
 
@@ -28,9 +40,22 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [loading, setLoading] = useState(true);
 	const {auth, isLoggedIn} = useUser();
-	const navigate = useNavigate();
 	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
 	const [visibleCount, setVisibleCount] = useState(15);
+	const [productNameToUpdate, setProductNameToUpdate] = useState<string>("");
+	const [showUpdateProductModal, setOnShowUpdateProductModal] =
+		useState<boolean>(false);
+	const [productToDelete, setProductToDelete] = useState<string>("");
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+	const openDeleteModal = (name: string) => {
+		setProductToDelete(name);
+		setShowDeleteModal(true);
+	};
+	const closeDeleteModal = () => setShowDeleteModal(false);
+
+	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
+	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
 
 	const OnShowCartModal = () => setOnShowModal(true);
 	const OnHideCartModal = () => setOnShowModal(false);
@@ -54,7 +79,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		return products.filter((product) => {
 			const productName = product.product_name || "";
 			const productPrice = product.price || "";
-			const productInDiscount = product.sale ? "מבצע" :  "";
+			const productInDiscount = product.sale ? "מבצע" : "";
 
 			return (
 				productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -87,7 +112,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 			handleAddToCart(
 				setQuantities,
 				product_name,
-				productQuantity,
+				productQuantity || 1,
 				price - (price * discount) / 100,
 				product_image,
 				sale,
@@ -102,8 +127,19 @@ const Home: FunctionComponent<HomeProps> = () => {
 			name: "מוצר חדש",
 			addClick: () => showAddProductModal(),
 		},
-		
 	];
+
+	const handleDelete = (product_name: string) => {
+		deleteProduct(product_name)
+			.then(() => {
+				showSuccess("המוצר נמחק בהצלחה!");
+				setProducts((p) => p.filter((p) => p.product_name !== product_name));
+			})
+			.catch((err) => {
+				console.error(err);
+				showError("שגיאה במחיקת המוצר!");
+			});
+	};
 
 	if (loading) {
 		return <Loader />;
@@ -131,19 +167,49 @@ const Home: FunctionComponent<HomeProps> = () => {
 			)}
 
 			{/* Search and filter products */}
-			<div className='container'>
-				<div style={{marginTop: 0}} className=''>
-					<div className='w-50 m-auto'>
-						<input
-							type='search'
-							placeholder='חפש מוצר...'
+			<div className='container py-5'>
+				<div className=''>
+					<Paper
+						component='div'
+						onSubmit={(e) => e.preventDefault()}
+						sx={{
+							width: {xs: "90%", sm: 400},
+							m: "auto",
+							mb: 4,
+							p: "2px 10px",
+							display: "flex",
+							alignItems: "center",
+							borderRadius: "50px",
+							background: "rgba(255, 255, 255, 0.08)",
+							boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+							backdropFilter: "blur(10px)",
+							border: "1px solid rgba(255, 255, 255, 0.2)",
+							transition: "0.3s ease",
+							"&:hover": {
+								boxShadow: "0 6px 25px rgba(0, 0, 0, 0.4)",
+							},
+						}}
+					>
+						<SearchIcon sx={{color: "#66b2ff", mr: 1}} />
+						<InputBase
+							sx={{
+								color: "#696969",
+								ml: 5,
+								flex: 1,
+								fontSize: "16px",
+								"& input::placeholder": {
+									color: "#5f5f5f",
+								},
+							}}
+							placeholder='חיפוש מוצר'
 							value={searchQuery}
 							onChange={(e) => setSearchQuery(e.target.value)}
-							className=' border border-5 border-success form-control mt-5'
-							autoComplete='on'
+							inputProps={{"aria-label": "search"}}
 						/>
-					</div>
-
+						<IconButton onClick={() => setSearchQuery("")} size='small'>
+							❌
+						</IconButton>
+					</Paper>
 					{/* Discounts Section */}
 					{!searchQuery && <DiscountsAndOffers />}
 
@@ -151,65 +217,88 @@ const Home: FunctionComponent<HomeProps> = () => {
 						{visibleProducts.length > 0 ? (
 							visibleProducts.map((product) => {
 								const productQuantity =
-									quantities[product.product_name] || 1;
+									quantities[product.product_name] ?? 1;
+								const isOutOfStock = product.quantity_in_stock <= 0;
+								const discountedPrice = product.sale
+									? product.price -
+										(product.price * (product.discount || 0)) / 100
+									: product.price;
 								return (
 									<div
-										className='col-md-4 mb-5 col-lg-3 col-sm-10'
+										className='col-md-6 col-lg-4 col-xl-3 mb-4'
 										key={product._id}
 									>
-										<div className='card h-100'>
+										<div className='card shadow rounded-4 h-100 overflow-hidden border-0'>
 											<div className='card-img-top'>
 												<img
-													style={{
-														height: "300px",
-														width: "100%",
-													}}
-													className=' img-thumbnail rounded-3'
+													loading='lazy'
 													src={product.image_url}
-													alt={`Image of ${product.product_name}`} // Improve alt text
+													alt={product.product_name}
+													className='card-img-top'
+													style={{
+														objectFit: "cover",
+														height: "200px",
+														transition:
+															"transform 0.3s ease-in-out",
+													}}
+													onMouseOver={(e) =>
+														(e.currentTarget.style.transform =
+															"scale(1.05)")
+													}
+													onMouseOut={(e) =>
+														(e.currentTarget.style.transform =
+															"scale(1)")
+													}
 												/>
 											</div>
 
-											<div className='card-body'>
-												<h5 className='card-title'>
+											<div className='card-body d-flex flex-column justify-content-between'>
+												<h5 className='card-title text-center fw-bol'>
 													{product.product_name}
 												</h5>
-												<hr />
-												<h5 className='text-success text-center'>
-													במלאי - {product.quantity_in_stock}{" "}
-													ק"ג
-												</h5>
-												<hr />
+
+												<p className='text-success text-center mb-2'>
+													במלאי {product.quantity_in_stock}
+												</p>
 
 												{product.sale ? (
 													<>
-														<h5 className=' text-center'>
-															מחיר לפני:
-															<s className=' ms-2'>
-																{product.price}
-															</s>
-														</h5>
 														<h6 className=' text-center'>
-															מחיר:
-															{(
-																product.price -
-																(product.discount
-																	? (product.price *
-																			product.discount) /
-																		100
-																	: 0)
-															).toLocaleString("he-IL", {
-																style: "currency",
-																currency: "ILS",
-															})}
-															<span className=' d-block m-2 text-center text-danger'>
-																{product.discount}% מבצע
-															</span>
+															מחיר קודם:
+															<s>
+																{product.price.toLocaleString(
+																	"he-IL",
+																	{
+																		style: "currency",
+																		currency: "ILS",
+																	},
+																)}
+															</s>
 														</h6>
+
+														<h5 className=' text-center'>
+															מחיר:
+															{discountedPrice.toLocaleString(
+																"he-IL",
+																{
+																	style: "currency",
+																	currency: "ILS",
+																},
+															)}
+															<small className='text-muted ms-2'>
+																({product.discount}% הנחה)
+															</small>
+														</h5>
 													</>
 												) : (
 													<h5 className='card-text text-center'>
-														{product.price}
+														{product.price.toLocaleString(
+															"he-IL",
+															{
+																style: "currency",
+																currency: "ILS",
+															},
+														)}
 													</h5>
 												)}
 
@@ -218,11 +307,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 												</h6>
 												<div className='d-flex align-items-center justify-content-evenly'>
 													<button
-														disabled={
-															product.quantity_in_stock <= 0
-																? true
-																: false
-														}
+														disabled={isOutOfStock}
 														onClick={() =>
 															handleQuantity(
 																setQuantities,
@@ -230,9 +315,13 @@ const Home: FunctionComponent<HomeProps> = () => {
 																product.product_name,
 															)
 														}
-														className='btn btn-info text-dark fw-bold'
+														className='btn btn-light border rounded-circle shadow-sm my-1'
 													>
-														-
+														<img
+															src='/svg/remove.svg'
+															alt='remove one'
+															width={20}
+														/>
 													</button>
 													<h5 className='text-decoration-underline'>
 														<b>{productQuantity}</b>
@@ -250,40 +339,77 @@ const Home: FunctionComponent<HomeProps> = () => {
 																product.product_name,
 															);
 														}}
-														className='btn btn-info text-dark fw-bold'
+														className='btn btn-light border rounded-circle shadow-sm my-1'
 													>
-														+
+														<img
+															src='/svg/add.svg'
+															alt='add more one'
+															width={20}
+														/>
 													</button>
 												</div>
-												<div className='card-footer'>
-													<button
-														onClick={() => {
-															handleAdd(
-																product.product_name,
-																quantities,
-																product.price,
-																product.image_url,
-																product.sale || false,
-																product.discount || 0,
-															);
-														}}
-														disabled={
-															product.quantity_in_stock <= 0
-																? true
-																: false
-														}
-														className={` w-100 ${
-															product.quantity_in_stock <= 0
-																? "btn btn-danger"
-																: "btn btn-success"
-														}`}
-													>
-														{product.quantity_in_stock <= 0
-															? "אזל מהמלאי"
-															: "הוספה לסל"}
-													</button>
-												</div>
+												<button
+													onClick={() => {
+														handleAdd(
+															product.product_name,
+															quantities,
+															product.price,
+															product.image_url,
+															product.sale || false,
+															product.discount || 0,
+														);
+													}}
+													disabled={isOutOfStock}
+													className={`w-100 btn shadow-sm py-2 fw-bold rounded-pill ${
+														isOutOfStock
+															? "btn-outline-danger"
+															: "btn-outline-success"
+													}`}
+												>
+													{isOutOfStock
+														? "אזל מהמלאי"
+														: "הוספה לסל"}
+												</button>
 											</div>
+
+											{((auth && auth.role === RoleType.Admin) ||
+												(auth &&
+													auth.role ===
+														RoleType.Moderator)) && (
+												<div className='card-footer my-3 bg-transparent border-0 d-flex justify-content-around'>
+													<Tooltip title='עריכה'>
+														<Fab
+															color='warning'
+															aria-label='עריכה'
+															onClick={() => {
+																setProductNameToUpdate(
+																	product.product_name,
+																);
+																onShowUpdateProductModal();
+															}}
+															size='small'
+															className='z-1'
+														>
+															<EditIcon />
+														</Fab>
+													</Tooltip>
+													<Tooltip title='מחיקה'>
+														<Fab
+															color='error'
+															aria-label='מחיקה'
+															onClick={() =>
+																openDeleteModal(
+																	product.product_name,
+																)
+															}
+															size='small'
+															className='z-1'
+														>
+															<DeleteIcon />
+														</Fab>
+													</Tooltip>
+												</div>
+											)}
 										</div>
 									</div>
 								);
@@ -335,6 +461,19 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 			{/* Add product modal */}
 			<AddProdutModal show={onShowAddModal} onHide={hideAddProductModal} />
+
+			<UpdateProductModal
+				product_name={productNameToUpdate}
+				show={showUpdateProductModal}
+				onHide={() => onHideUpdateProductModal()}
+			/>
+
+			<AlertDialogs
+				show={showDeleteModal}
+				openModal={() => setShowDeleteModal(true)}
+				onHide={closeDeleteModal}
+				handleDelete={() => handleDelete(productToDelete)}
+			/>
 			<ForAllModal show={onShowModal} onHide={OnHideCartModal} />
 		</main>
 	);
