@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "node index.js",
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"postinstall": "npm install --prefix client && npm install --prefix server",
 		"install:client": "cd client && npm install",
 		"install:server": "cd server && npm install",
 		"install": "concurrently \"npm run install:client\" \"npm run install:server\"",
