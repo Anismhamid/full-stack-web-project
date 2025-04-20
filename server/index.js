@@ -11,7 +11,7 @@ const io = new Server(httpServer, {
 	transports: ["websocket"],
 	cors: {
 		origin: "http://localhost:5173",
-		methods: ["GET", "POST"],
+		methods: ["GET", "POST", "POST", "PATCH", "DELETE"],
 	},
 });
 

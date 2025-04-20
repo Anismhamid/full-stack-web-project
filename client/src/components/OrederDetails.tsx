@@ -31,9 +31,6 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 		);
 	}
 
-	function handleStatus(arg0: string, orderNumber: any): void {
-		throw new Error("Function not implemented.");
-	}
 
 	return (
 		<main className='min-vh-50'>
