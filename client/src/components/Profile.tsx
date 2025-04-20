@@ -1,7 +1,7 @@
 import {FunctionComponent, useEffect, useState} from "react";
 import {getUserById} from "../services/usersServices";
 import RoleType from "../interfaces/UserType";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {
 	Accordion,
 	Button,
@@ -14,7 +14,6 @@ import {path} from "../routes/routes";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import useToken from "../hooks/useToken";
 import Loader from "../atoms/loader/Loader";
-import {useUser} from "../context/useUSer";
 
 interface ProfileProps {}
 /**
@@ -95,10 +94,10 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						)}
 						<img
 							className='border border-light rounded'
-							// src={user.image.url}
+							src={user.image.url}
 							alt={
 								user.image.alt
-									? `${user.image.alt}'s avatar`
+									? `${user.image?.alt}'s avatar`
 									: `${user.name.first ?? "User"}'s avatar`
 							}
 							role='img'

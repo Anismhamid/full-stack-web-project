@@ -1,4 +1,4 @@
-import {FunctionComponent} from "react";
+import {FunctionComponent, useState} from "react";
 import {Modal} from "react-bootstrap";
 import {useFormik} from "formik";
 import {UserLogin} from "../interfaces/User";
@@ -10,6 +10,19 @@ import {useUser} from "../context/useUSer";
 import useToken from "../hooks/useToken";
 import {showSuccess} from "./Toast";
 import {emptyAuthValues} from "../interfaces/authValues";
+import {
+	Button,
+	FormControl,
+	FormHelperText,
+	IconButton,
+	InputAdornment,
+	InputLabel,
+	OutlinedInput,
+	TextField,
+} from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+
 interface ForAllModalProps {
 	show: boolean;
 	onHide: Function;
@@ -18,6 +31,17 @@ interface ForAllModalProps {
 const ForAllModal: FunctionComponent<ForAllModalProps> = ({onHide, show}) => {
 	const {setAuth, setIsLoggedIn} = useUser();
 	const {decodedToken, setAfterDecode} = useToken();
+	const [showPassword, setShowPassword] = useState(false);
+
+	const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+	const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+	};
+
+	const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+	};
 
 	const formik = useFormik<UserLogin>({
 		initialValues: {
@@ -56,55 +80,92 @@ const ForAllModal: FunctionComponent<ForAllModalProps> = ({onHide, show}) => {
 	return (
 		<Modal className='' show={show} onHide={() => onHide()} centered>
 			<Modal.Body className='d-flex justify-content-center align-items-center'>
-				<div className='container border rounded'>
+				<div className='container w-75'>
 					<form
 						autoComplete='off'
 						noValidate
 						onSubmit={formik.handleSubmit}
-						className=''
+						className=' w-100'
 					>
-						<h2 className='display-6 my-5 fw-bold text-center'>
-							התחברות
-						</h2>
-						<div className='form-floating my-3'>
-							<input
-								type='email'
+						<h2 className='display-6 m3-5 fw-bold text-center'>התחברות</h2>
+						<div className=''>
+							<TextField
+								autoFocus
+								label='דו"אל'
 								name='email'
+								type='email'
 								value={formik.values.email}
 								onChange={formik.handleChange}
-								className='form-control'
-								id='email'
-								placeholder=''
+								error={
+									formik.touched.email && Boolean(formik.errors.email)
+								}
+								helperText={formik.touched.email && formik.errors.email}
+								fullWidth
+								className='my-2'
+								variant='outlined'
 							/>
-							<label htmlFor='email'>דו"אל *</label>
-							{formik.touched.email && formik.errors.email && (
-								<div className='text-danger fw-bold'>
-									{formik.errors.email}
-								</div>
-							)}
 						</div>
-
-						<div className='form-floating mb-3'>
-							<input
-								type='password'
-								name='password'
-								value={formik.values.password}
-								onChange={formik.handleChange}
-								className='form-control'
-								id='password'
-								placeholder=''
-							/>
-							<label htmlFor='password'>סיסמה *</label>
-							{formik.errors.password && formik.touched.password && (
-								<div className='text-danger fw-bold'>
-									{formik.errors.password}
-								</div>
-							)}
+						<div dir='ltr'>
+							<FormControl
+								error={
+									formik.touched.password &&
+									Boolean(formik.errors.password)
+								}
+								fullWidth
+							>
+								<InputLabel htmlFor='password'>סיסמה</InputLabel>
+								<OutlinedInput
+									id='password'
+									type={showPassword ? "text" : "password"}
+									autoComplete='current-password'
+									endAdornment={
+										<InputAdornment position='start'>
+											<IconButton
+												aria-label={
+													showPassword
+														? "hide the password"
+														: "display the password"
+												}
+												onClick={handleClickShowPassword}
+												onMouseDown={handleMouseDownPassword}
+												onMouseUp={handleMouseUpPassword}
+												edge='start'
+												color='primary'
+											>
+												{showPassword ? (
+													<VisibilityOff />
+												) : (
+													<Visibility />
+												)}
+											</IconButton>
+										</InputAdornment>
+									}
+									label='סיסמה'
+									name='password'
+									value={formik.values.password}
+									onChange={formik.handleChange}
+								/>
+								{formik.touched.password && formik.errors.password && (
+									<FormHelperText>
+										{formik.errors.password}
+									</FormHelperText>
+								)}
+							</FormControl>
 						</div>
-
-						<button type='submit' className='btn btn-success w-100'>
-							התחברות
-						</button>
+						<div className=' d-flex gap-3 align-items-center justify-content-between my-3'>
+							<Button
+								onClick={() => onHide()}
+								type='submit'
+								variant='contained'
+								color='error'
+								className=' w-50'
+							>
+								סגירה
+							</Button>
+							<Button type='submit' variant='contained' className=' w-50'>
+								התחברות
+							</Button>
+						</div>
 						<div className='mt-3 text-start'>
 							<span className='text-dark fw-bold'>
 								עדיין אין לך חשבון ?
@@ -112,13 +173,6 @@ const ForAllModal: FunctionComponent<ForAllModalProps> = ({onHide, show}) => {
 							<Link to={path.Register}>לחץ כאן להרשמה</Link>
 						</div>
 					</form>
-					<button
-						onClick={() => onHide()}
-						type='submit'
-						className='my-3 btn btn-danger w-100'
-					>
-						סגירה
-					</button>
 				</div>
 			</Modal.Body>
 		</Modal>

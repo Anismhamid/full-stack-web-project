@@ -9,6 +9,7 @@ import NavigathionButtons from "../atoms/NavigathionButtons";
 import RoleType from "../interfaces/UserType";
 import SearchIcon from "@mui/icons-material/Search";
 import {InputBase, Paper, IconButton} from "@mui/material";
+import {useTranslation} from "react-i18next";
 
 interface AllTheOrdersProps {}
 /**
@@ -16,6 +17,7 @@ interface AllTheOrdersProps {}
  * @returns All Orders and orders statuses
  */
 const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
+	const {t} = useTranslation();
 	const [orderStatuses, setOrderStatuses] = useState<{[orderNumber: string]: string}>(
 		{},
 	);
@@ -90,7 +92,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	return (
 		<main className=' min-vh-100'>
 			<div className='container bg-gradient rounded  text-center align-items-center'>
-				<h1 className='text-center'>כל ההזמנות</h1>
+				<h1 className='text-center'>{t("links.orders")}</h1>
 				<Paper
 					component='div'
 					onSubmit={(e) => e.preventDefault()}

@@ -1,5 +1,6 @@
 import {FunctionComponent} from "react";
 import ProductCategory from "./ProductsCategory";
+import {useTranslation} from "react-i18next";
 
 interface DairyProps {}
 /**
@@ -7,22 +8,20 @@ interface DairyProps {}
  * @returns dairy products
  */
 const Dairy: FunctionComponent<DairyProps> = () => {
+	const {t} = useTranslation();
 	return (
 		<main className=' min-vh-100'>
 			<div className='container'>
 				<h1 className='text-center mb-4  p-2 rounded display-6 fw-bold'>
-					מוצרי החלב שלנו - טריים, איכותיים ומגוונים!
+					{t("pages.dairyHeading")}
 				</h1>
 				<hr />
 				<p className='text-center mb-4 p-2 rounded lead'>
-					כאן תוכלו למצוא מגוון רחב של מוצרי חלב טבעיים ואיכותיים, שנבחרו בקפידה
-					מהספקים המקומיים שלנו. אנו מבטיחים איכות גבוהה ושירות מצוין כדי שתהנו
-					מכל מוצר חלב בנוחות ובקלות.
+					{t("pages.dairydescription")}
 				</p>
 			</div>
 			<ProductCategory category='dairy' />
 		</main>
-		
 	);
 };
 

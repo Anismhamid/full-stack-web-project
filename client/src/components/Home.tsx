@@ -145,10 +145,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 		return <Loader />;
 	}
 
+	const isAdmin = auth.role === RoleType.Admin;
+	const isModerator = auth.role === RoleType.Moderator;
+
 	return (
 		<main className='min-vh-100'>
-			{((auth && auth.role === RoleType.Admin) ||
-				(auth && auth.role === RoleType.Moderator)) && (
+			{((auth && isAdmin) || (auth && isModerator)) && (
 				<SpeedDial
 					ariaLabel='SpeedDial basic example'
 					sx={{position: "fixed", bottom: 90, right: 16}}
@@ -198,7 +200,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 								flex: 1,
 								fontSize: "16px",
 								"& input::placeholder": {
-									color: "#5f5f5f",
+									color: "#ff5151",
 								},
 							}}
 							placeholder='חיפוש מוצר'
@@ -372,10 +374,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 												</button>
 											</div>
 
-											{((auth && auth.role === RoleType.Admin) ||
+											{((auth && isAdmin) ||
 												(auth &&
-													auth.role ===
-														RoleType.Moderator)) && (
+													isModerator)) && (
 												<div className='card-footer my-3 bg-transparent border-0 d-flex justify-content-around'>
 													<Tooltip title='עריכה'>
 														<Fab

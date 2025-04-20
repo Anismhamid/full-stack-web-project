@@ -13,7 +13,6 @@
 }
 
 header {
-
   background: rgba(47, 124, 233, 0.404) !important;
 }
 
@@ -38,10 +37,10 @@ header {
 
 
 .modal-content {
-  background: rgba(47, 124, 233, 0.404);
+  background: rgba(221, 235, 255, 0.671);
   backdrop-filter: blur(10px);
   box-shadow: var(--a);
-
+  color: #000 !important;
 }
 
 .nav-link {

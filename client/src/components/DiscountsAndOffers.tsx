@@ -4,14 +4,17 @@ import {getProductsInDiscount} from "../services/productsServices";
 import {Link} from "react-router-dom";
 import {productsPathes} from "../routes/routes";
 import Loader from "../atoms/loader/Loader";
-import {ImageList, ImageListItem, Skeleton} from "@mui/material";
+import {Skeleton} from "@mui/material";
+import {useTranslation} from "react-i18next";
 
 interface DiscountsAndOffersProps {}
+
 /**
  * Products in discount
  * @returns Products in discount
  */
 const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
+	const {t} = useTranslation();
 	const [productsInDiscount, setProductsInDiscount] = useState<Products[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
@@ -42,28 +45,27 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 			});
 	}, []);
 
-	const handleImageLoad = (id: string) => {
+	const setImageLoaded = (id: string) => {
 		setLoadedImages((prev) => ({...prev, [id]: true}));
 	};
 
 	if (loading) {
 		return <Loader />;
 	}
-
 	return (
 		<main className=' min-vh-100'>
 			<div className='container'>
-				<h1 className='text-center mb-4 display-5 fw-bold'>הצעות ומבצעים</h1>
+				<h1 className='text-center mb-4 display-5 fw-bold'>
+					{t("pages.discountsAndOffersHeading")}
+				</h1>
 				<p className='text-center lead mb-5'>
-					<span className='d-block'>אל תפספסו את המבצעים המיוחדים שלנו!</span>
-					אנחנו תמיד מציעים הנחות והטבות על פירות וירקות בעונות מסוימות, וגם
-					חבילות משתלמות למשפחות. עקבו אחרי הדף שלנו כדי לדעת את כל המבצעים
-					העדכניים ולחסוך עוד יותר!
+					<span className='d-block'>{t("pages.discountsAndOffersSpan")}</span>
+					{t("pages.discountsAndOffersDescription")}
 				</p>
 			</div>
 
 			<div className='row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4'>
-				{productsInDiscount.map((product) => {
+				{productsInDiscount.map((product: Products) => {
 					// Look up the category path from the map
 					const categoryPath = categoryToPath[product.category] || "";
 					const isLoaded = loadedImages[product.product_name];
@@ -89,9 +91,8 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 											height: "200px",
 										}}
 										onLoad={() =>
-											handleImageLoad(product.product_name)
+											setImageLoaded(product.product_name)
 										}
-										loading='lazy'
 									/>
 								</Link>
 

@@ -1,6 +1,6 @@
 {
 	"name": "full-stack-web-project",
-	"version": "5.8.7",
+	"version": "5.9.8",
 	"description": "E-Commerce Application - Corner Market\nThis is a simple e-commerce platform that allows users to browse and purchase various fresh products such as fruits, vegetables, fish, meat, dairy and more. Users can view categories of products, access discounts and offers, add items to the cart, and proceed to checkout.",
 	"main": "index.js",
 	"scripts": {
@@ -42,5 +42,10 @@
 	"devDependencies": {
 		"concurrently": "^9.1.2",
 		"cross-env": "^7.0.3"
+	},
+	"dependencies": {
+		"i18next": "^25.0.1",
+		"i18next-browser-languagedetector": "^8.0.5",
+		"react-i18next": "^15.4.1"
 	}
 }

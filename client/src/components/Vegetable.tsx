@@ -1,5 +1,6 @@
 import {FunctionComponent} from "react";
 import ProductCategory from "./ProductsCategory";
+import {useTranslation} from "react-i18next";
 
 interface VegentableProps {}
 /**
@@ -7,17 +8,16 @@ interface VegentableProps {}
  * @returns vegentable products
  */
 const Vegentable: FunctionComponent<VegentableProps> = () => {
+	const {t} = useTranslation();
 	return (
 		<main className=' min-vh-100'>
 			<div className='container m-auto'>
 				<h1 className='text-center mb-4 p-2 rounded display-6 fw-bold'>
-					הירקות שלנו - טריים ובריאים לכל משפחה!
+					{t("pages.vegetableHeading")}
 				</h1>
 				<hr />
 				<p className='text-center mb-4 p-2 rounded lead'>
-					הירקות שלנו גדלים בשדות פוריים ואיכותיים, עם דגש על טריות ובריאות.
-					אנחנו מביאים לכם את הירקות הטריים ביותר, שישדרגו כל ארוחה ויעניקו לכם
-					את הטוב ביותר. תמצאו כאן ירקות בעונה, במיוחד עבורכם
+					{t("pages.vegetableDescription")}
 				</p>
 			</div>
 			<ProductCategory category='vegetable' />

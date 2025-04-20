@@ -1,6 +1,7 @@
 import {FunctionComponent} from "react";
 
 import ProductCategory from "./ProductsCategory";
+import { useTranslation } from "react-i18next";
 
 interface FishProps {}
 /**
@@ -8,18 +9,16 @@ interface FishProps {}
  * @returns fishs products
  */
 const Fish: FunctionComponent<FishProps> = () => {
+	const {t} = useTranslation();
 	return (
 		<main className=' min-vh-100'>
 			<div className='container'>
 				<h1 className='text-center mb-4 p-2 rounded display-6 fw-bold'>
-					הדגים שלנו - טריים, איכותיים ומגוונים!
+					{t("pages.fishHeading")}
 				</h1>
 				<hr />
 				<p className='text-center mb-4 p-2 rounded lead'>
-					כאן תוכלו למצוא מגוון רחב של דגים טריים, שנקטפו ממש עכשיו מהדייגים
-					המקומיים שלנו. אנו מבטיחים איכות גבוהה ושירות מצוין כדי שתהנו מכל דג
-					בקלות ובנוחות. יש לנו דגים בכל הצבעים והטעמים, כך שכל אחד יכול למצוא
-					את המועדף עליו.
+					{t("pages.fishDescription")}
 				</p>
 			</div>
 

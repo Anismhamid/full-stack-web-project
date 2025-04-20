@@ -50,6 +50,7 @@ import {
 import PrivacyAdnPolicy from "./components/PrivacyAndPolicy.js";
 import CompleteProfile from "./components/CompleteProfile.js";
 import TermOfUse from "./components/TermOfUse.js";
+import "./locales/i18n.tsx";
 
 function App() {
 	const {decodedToken} = useToken();

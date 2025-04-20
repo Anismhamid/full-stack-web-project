@@ -21,6 +21,8 @@ import {navbarCategoryLinks} from "../helpers/navCategoryies";
 import {emptyAuthValues} from "../interfaces/authValues";
 import {useCartItems} from "../context/useCart";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import LanguageSwitcher from "../locales/languageSwich";
+import {useTranslation} from "react-i18next";
 
 interface NavBarProps {}
 /**
@@ -49,7 +51,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 	};
 
 	useEffect(() => {
-		const storedQuantity = parseInt(localStorage.getItem("cartQuantity") || "0", 10);
+		const storedQuantity = Number(localStorage.getItem("cartQuantity")) || 0;
 		setQuantity(storedQuantity);
 	}, []);
 
@@ -57,9 +59,15 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 		const token = localStorage.getItem("token");
 		if (token && decodedToken) {
 			setAuth(decodedToken);
-			if (auth) setIsLoggedIn(true);
+			setIsLoggedIn(true);
 		}
-	}, [decodedToken, auth]);
+	}, [decodedToken]);
+
+	const backOneStep = () =>
+		window.history.length > 1 ? navigate(-1) : navigate(path.Home);
+
+	const isAdmin = auth?.role === RoleType.Admin;
+	const isUser = !isAdmin && isLoggedIn;
 
 	useEffect(() => {
 		window.scrollTo(0, 100);
@@ -72,7 +80,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 		setAfterDecode(null);
 		navigate(path.Home);
 	};
-
+	const {t} = useTranslation();
 	return (
 		<>
 			<AppBar position='sticky' className='navbar-glass m-auto z-2'>
@@ -89,9 +97,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					<Tooltip title='בית' arrow>
 						<li className='nav-item'>
 							<NavLink
-								className={`${
-									isActive(path.Home) ? "text-danger fw-bold" : ""
-								}`}
+								className={`${isActive(path.Home) ? "text-danger" : ""}`}
 								aria-current='page'
 								to={path.Home}
 							>
@@ -100,7 +106,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						</li>
 					</Tooltip>
 
-					{auth && auth.role === RoleType.Admin && (
+					{auth && isAdmin && (
 						<Tooltip title='ניהול משתמשים' arrow>
 							<li className='nav-item'>
 								<NavLink
@@ -128,16 +134,21 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							position: "relative",
 							px: 2,
 							py: 1,
-							fontWeight: 500,
-							color: "text.primary",
+							fontWeight: 800,
 						}}
 					>
 						<Stack direction='row' alignItems='center' spacing={0.5}>
-							<Typography variant='body1'>Products</Typography>
+							<Typography
+								sx={{
+									fontSize: 20,
+								}}
+							>
+								{t("links.products")}
+							</Typography>
 							<KeyboardArrowDownIcon
 								sx={{
 									fontSize: 20,
-									transition: "transform 0.3s ease",
+									transition: "transform 1s ease",
 									transform: openMenu
 										? "rotate(180deg)"
 										: "rotate(0deg)",
@@ -157,22 +168,23 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							transformOrigin={{vertical: "top", horizontal: "left"}}
 						>
 							{/* Category Links */}
-							{navbarCategoryLinks.map(({label, path, icon}) => (
-								<MenuItem key={path} onClick={handleMenuClose}>
-									<NavLink
-										className={`${
-											isActive(path) ? "text-danger" : ""
-										} nav-link`}
-										to={path}
-									>
-										{icon}
-										<span className=' me-2'>{label}</span>
-									</NavLink>
+							{navbarCategoryLinks.map(({labelKey, path, icon}) => (
+								<MenuItem
+									key={path}
+									component={NavLink}
+									to={path}
+									onClick={handleMenuClose}
+									className={`${
+										isActive(path) ? "text-danger" : ""
+									} nav-link`}
+								>
+									{icon}
+									<span className=' me-2'>{t(labelKey)}</span>
 								</MenuItem>
 							))}
 						</Menu>
 					</Box>
-					{auth && auth.role !== RoleType.Admin && isLoggedIn ? (
+					{auth && isUser ? (
 						<li className='nav-item'>
 							<NavLink
 								className={` ${
@@ -181,12 +193,12 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 								aria-current='page'
 								to={path.MyOrders}
 							>
-								<Typography variant='body1'>הזמנות</Typography>
+								{t("links.orders")}
 							</NavLink>
 						</li>
 					) : (
 						auth &&
-						auth.role === RoleType.Admin && (
+						isAdmin && (
 							<li className='nav-item'>
 								<NavLink
 									className={` ${
@@ -197,7 +209,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 									aria-current='page'
 									to={path.AllTheOrders}
 								>
-									ההזמנות
+									{t("links.orders")}
 								</NavLink>
 							</li>
 						)
@@ -210,7 +222,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							aria-current='page'
 							to={path.About}
 						>
-							אודות
+							{t("links.about")}
 						</NavLink>
 					</li>
 					{isLoggedIn && (
@@ -222,7 +234,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 								aria-current='page'
 								to={path.Receipt}
 							>
-								קבלות
+								{t("links.receipts")}
 							</NavLink>
 						</li>
 					)}
@@ -234,7 +246,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							aria-current='page'
 							to={path.Contact}
 						>
-							צור קשר
+							{t("links.contact")}
 						</NavLink>
 					</li>
 					{auth && isLoggedIn && (
@@ -291,25 +303,29 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						isLoggedIn && <AccountMenu logout={logout} />
 					)}
 				</Box>
+
+				<LanguageSwitcher />
 			</AppBar>
 
-			<div
-				onClick={() => navigate(-1)}
-				className='position-fixed border border-light fw-bold link-success z-3 d-flex align-items-center justify-content-center'
-				style={{
-					cursor: "pointer",
-					width: "36px",
-					height: "35px",
-					right: "16px",
-					backgroundColor: "#1A1E22",
-					borderRadius: "100%",
-					top: "25%",
-				}}
-			>
-				<span style={{color: "#66B2FF"}} className='fs-2'>
-					{fontAwesomeIcon.backButton}
-				</span>
-			</div>
+			{location.pathname !== path.Home && (
+				<Box
+					onClick={() => backOneStep()}
+					className='position-fixed border border-light fw-bold link-success z-3 d-flex align-items-center justify-content-center'
+					sx={{
+						cursor: "pointer",
+						width: "36px",
+						height: "35px",
+						right: "16px",
+						backgroundColor: "#1A1E22",
+						borderRadius: "100%",
+						top: "30%",
+					}}
+				>
+					<span style={{color: "#66B2FF"}} className='fs-2'>
+						{fontAwesomeIcon.backButton}
+					</span>
+				</Box>
+			)}
 		</>
 	);
 };

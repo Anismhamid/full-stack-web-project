@@ -12,7 +12,6 @@ import {
 	FormControlLabel,
 	FormHelperText,
 	IconButton,
-	Input,
 	InputAdornment,
 	InputLabel,
 	MenuItem,
@@ -44,6 +43,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 	};
 
 	const navigate = useNavigate();
+	
 	const formik = useFormik<UserRegister>({
 		initialValues: {
 			name: {
@@ -242,9 +242,6 @@ const Register: FunctionComponent<RegisterProps> = () => {
 							/>
 						</div>
 						<div dir='ltr'>
-							{/* <TextField
-								variant='outlined'
-							/> */}
 							<FormControl
 								sx={{m: 1}}
 								variant='outlined'

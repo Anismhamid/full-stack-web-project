@@ -3,52 +3,52 @@ import { productsPathes } from "../routes/routes";
 
 export const navbarCategoryLinks = [
 	{
-		label: "פירות",
+		labelKey: "categories.fruits",
 		path: productsPathes.Fruits,
 		icon: fontAwesomeIcon.Fruit,
 	},
 	{
-		label: "ירקות",
+		labelKey: "categories.vegetable",
 		path: productsPathes.Vegetable,
 		icon: fontAwesomeIcon.Vegetable,
 	},
 	{
-		label: "דגים",
+		labelKey: "categories.fish",
 		path: productsPathes.fish,
 		icon: fontAwesomeIcon.fish,
 	},
 	{
-		label: "מוצרי חלב",
+		labelKey: "categories.dairy",
 		path: productsPathes.dairy,
 		icon: fontAwesomeIcon.dairyProducts,
 	},
 	{
-		label: "בשר",
+		labelKey: "categories.meat",
 		path: productsPathes.meat,
 		icon: fontAwesomeIcon.meat,
 	},
 	{
-		label: "תבלינים",
+		labelKey: "categories.spices",
 		path: productsPathes.spices,
 		icon: fontAwesomeIcon.spices,
 	},
 	{
-		label: "מאפים",
+		labelKey: "categories.bakery",
 		path: productsPathes.bakery,
 		icon: fontAwesomeIcon.bakery,
 	},
 	{
-		label: "שתייה",
+		labelKey: "categories.beverages",
 		path: productsPathes.beverages,
 		icon: fontAwesomeIcon.beverages,
 	},
 	{
-		label: "מוצרים קפואים",
+		labelKey: "categories.forzen",
 		path: productsPathes.forzen,
 		icon: fontAwesomeIcon.forzen,
 	},
 	{
-		label: "חטיפים",
+		labelKey: "categories.snacks",
 		path: productsPathes.snacks,
 		icon: fontAwesomeIcon.snacks,
 	},

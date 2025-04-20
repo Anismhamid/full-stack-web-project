@@ -7,6 +7,7 @@ import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import {useUser} from "../context/useUSer";
 import {useNavigate} from "react-router-dom";
 import RoleType from "../interfaces/UserType";
+import {useTranslation} from "react-i18next";
 
 interface OrdersProps {}
 
@@ -15,6 +16,7 @@ interface OrdersProps {}
  * @returns auth orders
  */
 const Orders: FunctionComponent<OrdersProps> = () => {
+	const {t} = useTranslation();
 	const navigate = useNavigate();
 	const {auth} = useUser();
 	const [orders, setOrders] = useState<Order[]>([]);
@@ -72,13 +74,13 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 	return (
 		<main className=' min-vh-100'>
 			<div className='container'>
-				<h1 className='text-center'>הזמנות שלי</h1>
+				<h1 className='text-center'>{t("links.orders")}</h1>
 				<div className='row'>
 					{orders.length ? (
 						orders.reverse().map((order) => (
 							<div key={order.createdAt} className='mb-4 col-md-6 col-lg-3'>
 								<div className='card p-4 shadow-sm'>
-									<h5 className='card-title text-center bg-primary text-white p-2 rounded'>
+									<h5 className='card-title text-center bg-primary  p-2 rounded'>
 										<strong>מ"ס הזמנה:</strong> {order.orderNumber}
 									</h5>
 									<div className='d-flex flex-column align-items-start mb-3'>
@@ -150,7 +152,7 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 									{/* Admin/Moderator Controls */}
 									{((auth && auth.role === RoleType.Admin) ||
 										(auth && auth?.role === RoleType.Moderator)) && (
-										<div className='d-flex align-items-center justify-content-around'>
+										<div className='d-flex align-items-center justify-content-between'>
 											<button
 												onClick={() =>
 													handleStatus(

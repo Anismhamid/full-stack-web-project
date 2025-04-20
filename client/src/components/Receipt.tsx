@@ -9,6 +9,7 @@ import {Button, TextField} from "@mui/material";
 import useToken from "../hooks/useToken";
 import RoleType from "../interfaces/UserType";
 import {showError} from "../atoms/Toast";
+import {useTranslation} from "react-i18next";
 
 interface ReceiptProps {}
 /**
@@ -16,6 +17,7 @@ interface ReceiptProps {}
  * @returns auth receipt and all receipt for admin users
  */
 const Receipt: FunctionComponent<ReceiptProps> = () => {
+	const {t, i18n} = useTranslation();
 	const [receipts, setReceipts] = useState<ReceiptsType[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [startDate, setStartDate] = useState("");
@@ -98,6 +100,10 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 			</main>
 		);
 	}
+	// changing the direction by language
+	const currentLanguage = i18n.language;
+	const direction =
+		currentLanguage === "he" || currentLanguage === "ar" ? "rtl" : "ltr";
 
 	if (receipts.length === 0) {
 		return (
@@ -108,15 +114,15 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 	}
 
 	return (
-		<main className=' min-vh-100'>
+		<main className=' min-vh-100' dir={direction}>
 			{/* חיפוש מתקדם  */}
 			<div className='container mt-4 rounded'>
 				<Form className='text-center p-3 my-3 m-auto' role='search'>
-					<h3>🔎 חיפוש מתקדם</h3>
+					<h3>🔎 {t("pages.receiptSearchTitle")}</h3>
 					<div className='row border p-3 border-primary rounded'>
 						<div className='col-6'>
 							<TextField
-								label='חפש לפי שם, אימייל או מספר הזמנה'
+								label={t("pages.receiptSearch_1")}
 								name='search_1'
 								type='search'
 								value={searchQuery}
@@ -128,7 +134,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 						</div>
 						<div className='col-6 '>
 							<TextField
-								label='חפש לפי שם מוצר'
+								label={t("pages.receiptSearch_2")}
 								name='search_2'
 								type='search'
 								value={productSearch}
@@ -140,7 +146,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 						</div>
 						<div className='d-flex justify-content-center gap-3 mt-3'>
 							<div>
-								<label>מתאריך:</label>
+								<label>{t("pages.receiptSearchFromDate")}</label>
 								<TextField
 									name='search_3'
 									type='date'
@@ -152,7 +158,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 								/>
 							</div>
 							<div>
-								<label>עד תאריך:</label>
+								<label>{t("pages.receiptSearchToDate")}</label>
 								<TextField
 									name='search_3'
 									type='date'
@@ -168,7 +174,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 				</Form>
 			</div>
 			<div className=' container'>
-				<h2 className='text-center mb-4'>🧾 הקבלות שלי</h2>
+				<h2 className='text-center mb-4'>{t("links.receipts")}🧾</h2>
 				{filteredOrders.map((receipt) => (
 					<div
 						id={`receipt-${receipt.orderNumber}`}
@@ -180,11 +186,11 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 								as='h5'
 								className='text-center bg-primary text-white'
 							>
-								קבלה מס' {receipt.orderNumber}
+								{t("pages.receiptNumber")} {receipt.orderNumber}
 							</Card.Header>
 							<Card.Body>
 								<Card.Text>
-									<strong>תאריך:</strong>
+									<strong>{t("pages.receiptDate")}</strong>
 									{new Date(receipt.orderDate).toLocaleString("he-IL", {
 										year: "numeric",
 										month: "long",
@@ -197,25 +203,37 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 								<Card.Text>
 									{receipt.customer ? (
 										<>
-											<strong className='me-1'>לקוח:</strong>
+											<strong className='me-1'>
+												{t("pages.receiptCustomer")}
+											</strong>
 											{receipt.customer.name.first}
 											<br />
-											<strong className='me-1'>טלפון:</strong>
+											<strong className='me-1'>
+												{t("pages.receiptCustomerPhone")}
+											</strong>
 											{receipt.customer.phone.phone_1}
 											<br />
-											<strong className='me-1'>טלפון:</strong>
+											<strong className='me-1'>
+												{t("pages.receiptCustomerPhone")}
+											</strong>
 											{receipt.customer.phone.phone_2 || "לא קיים"}
 											<br />
-											<strong className='me-1'>אימייל:</strong>{" "}
+											<strong className='me-1'>
+												{t("pages.receiptCustomerEmail")}
+											</strong>{" "}
 											{receipt.customer.email}
 											<br />
-											<strong className='me-1'>כתובת:</strong>
+											<strong className='me-1'>
+												{t("pages.receiptCustomerAdress")}
+											</strong>
 											{`${receipt.customer.address.city}, ${receipt.customer.address.street},
 											${receipt.customer.address.houseNumber}`}
 										</>
 									) : (
 										<span className='text-muted'>
-											אין פרטי לקוח זמינים
+											{t(
+												"pages.receiptCustomerNoCustomerToProvide",
+											)}
 										</span>
 									)}
 								</Card.Text>
@@ -223,24 +241,30 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 								<hr />
 
 								<Card.Text>
-									<strong>שיטת תשלום:</strong>{" "}
-									{receipt.payment == "true" ? "כרטיס אשראי" : "מזומן"}
+									<strong>
+										{t("pages.receiptCustomerPaymentMethod")}
+									</strong>
+									{receipt.payment == "true"
+										? t("pages.receiptCustomerCridetCard")
+										: t("pages.receiptCustomerCash")}
 								</Card.Text>
 								<Card.Text>
-									<strong>שיטת איסופ:</strong>{" "}
+									<strong>
+										{t("pages.receiptCustomerCollectionMethod")}
+									</strong>{" "}
 									{receipt.deliveryFee
-										? `משלוח עד הבית ${receipt.deliveryFee.toLocaleString(
+										? `${t("pages.receiptCustomerDelivry")} ${receipt.deliveryFee.toLocaleString(
 												"he-IL",
 												{
 													style: "currency",
 													currency: "ILS",
 												},
 											)}`
-										: "איסוף עצמי"}
+										: t("pages.receiptCustomerSelfCollection")}
 								</Card.Text>
 
 								<Card.Text className='fs-5 fw-bold'>
-									סה״כ לתשלום:{" "}
+									{t("pages.receiptTotalToBePaid")}
 									{receipt.totalAmount.toLocaleString("he-IL", {
 										style: "currency",
 										currency: "ILS",
@@ -249,14 +273,14 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 							</Card.Body>
 						</Card>
 
-						<h5 className='text-center'>🛒 מוצרים</h5>
+						<h5 className='text-center'>🛒 {t("links.products")}</h5>
 						<Table striped bordered hover dir='rtl' className='mb-5'>
 							<thead className='table-dark'>
 								<tr>
-									<th>מוצר</th>
-									<th>כמות</th>
-									<th>מחיר ליחידה</th>
-									<th>סה"כ</th>
+									<th>{t("links.products")}</th>
+									<th>{t("pages.receiptTotalQuantity")}</th>
+									<th>{t("pages.receiptTotalPricePerUnit")}</th>
+									<th>{t("pages.receiptTotalPriceTotalUnits")}</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -282,19 +306,21 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 								))}
 							</tbody>
 						</Table>
-						<Card.Text>
-							<strong>שם עסק:</strong>
+						<Card.Text className=' text-dark'>
+							<strong>{t("pages.receiptBusinessName")}</strong>
 							{receipt.businessInfo.name}
 							<br />
 							<br />
-							<strong>טלפון:</strong>
+							<strong>{t("pages.receiptCustomerPhone")}</strong>
 							{receipt.businessInfo.phone}
 							<br />
 							<br />
-							<strong>אימייל:</strong> {receipt.businessInfo.email}
+							<strong>{t("pages.receiptCustomerEmail")}</strong>{" "}
+							{receipt.businessInfo.email}
 							<br />
 							<br />
-							<strong>כתובת:</strong> {receipt.businessInfo.address}
+							<strong>{t("pages.receiptCustomerAdress")}</strong>{" "}
+							{receipt.businessInfo.address}
 						</Card.Text>
 
 						<hr />
@@ -307,7 +333,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 								}}
 								onClick={() => generatePDF(receipt.orderNumber)}
 							>
-								הורדה - PDF
+								{t("pages.receiptDownload")} - PDF
 							</Button>
 						</div>
 					</div>
