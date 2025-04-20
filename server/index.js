@@ -6,6 +6,7 @@ const {Server} = require("socket.io");
 const app = express();
 const httpServer = createServer(app);
 const orderSocketHandler = require("./sockets/orderSocket");
+const path = require("path");
 
 const io = new Server(httpServer, {
 	transports: ["websocket"],
@@ -28,6 +29,12 @@ const chalk = require("chalk");
 const expressRoutes = require("express-list-routes");
 const {rateLimit} = require("express-rate-limit");
 const {logger, logToFile} = require("./middlewares/logger");
+
+app.use(express.static(path.join(__dirname, "../client/dist")));
+
+app.get("*", (req, res) => {
+	res.sendFile(path.join(__dirname, ".../client/dist/index.html"));
+});
 
 const port = process.env.PORT || 8000;
 
