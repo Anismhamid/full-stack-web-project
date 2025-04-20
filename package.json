@@ -4,7 +4,7 @@
 	"description": "E-Commerce Application - Corner Market\nThis is a simple e-commerce platform that allows users to browse and purchase various fresh products such as fruits, vegetables, fish, meat, dairy and more. Users can view categories of products, access discounts and offers, add items to the cart, and proceed to checkout.",
 	"main": "index.js",
 	"scripts": {
-		"start": "node index.js",
+		"start": "node server/index.js",
 		"postinstall": "npm install --prefix client && npm install --prefix server",
 		"start:client": "cd client && npm run build && npm run preview",
 		"dev:client": "cd client && npm run dev",
