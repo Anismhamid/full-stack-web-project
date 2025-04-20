@@ -31,17 +31,20 @@ router.get("/", async (req, res) => {
 // Post to create a new product
 router.post("/", auth, async (req, res) => {
 	try {
-		if (!req.payload.role === "Admin" || !req.payload.role === "Moderator")
+		if (
+			!req.payload ||
+			(req.payload.role !== "Admin" && req.payload.role !== "Moderator")
+		) {
 			return res.status(401).send("Unauthorized");
+		}
 
 		const {error} = productsSchema.validate(req.body);
 		if (error) return res.status(400).send(error.details[0].message);
 
 		// Check if product already exists
 		let product = await Products.findOne({product_name: req.body.product_name});
-		if (product) {
-			return res.status(400).send("The product already exists");
-		}
+
+		if (product) return res.status(400).send("The product already exists");
 
 		// Create a new product using the data from the request body
 		product = new Products(req.body);
@@ -60,7 +63,7 @@ router.post("/", auth, async (req, res) => {
 router.get("/spicific/:name", auth, async (req, res) => {
 	try {
 		// Check if the user has permission to access the product
-		if (!req.payload.role === "Admin" && !req.payload.role === "Moderator")
+		if (req.payload.role !== "Admin" && req.payload.role !== "Moderator")
 			return res.status(401).send("Access denied.");
 
 		// Find the product by product_name
@@ -81,7 +84,7 @@ router.get("/spicific/:name", auth, async (req, res) => {
 router.put("/:productName", auth, async (req, res) => {
 	try {
 		// Check if the user has permission to access the product
-		if (!req.payload.role === "Admin" && !req.payload.role === "Moderator")
+		if (req.payload.role !== "Admin" && req.payload.role !== "Moderator")
 			return res.status(401).send("Access denied. no toke provided");
 
 		// validate body
@@ -97,6 +100,7 @@ router.put("/:productName", auth, async (req, res) => {
 			{new: true},
 		);
 		if (!productToUpdate) return res.status(404).send("This Product is not exists");
+
 		res.status(200).send(productToUpdate);
 	} catch (error) {
 		res.status(500).send(error.message);
@@ -108,14 +112,14 @@ router.put("/:productName", auth, async (req, res) => {
 // Delete product
 router.delete("/:name", auth, async (req, res) => {
 	try {
-		if (!req.payload.role === "Admin" && !req.payload.role === "Moderator")
+		if (req.payload.role !== "Admin" && req.payload.role !== "Moderator")
 			return res.status(401).send("Access denied. no token provided");
 
 		// Find the produc and delete
 		const productToDelete = await Products.findOneAndDelete({
 			product_name: req.params.name,
 		});
-		if (!productToDelete) res.status(404).send("product is not found");
+		if (!productToDelete) res.status(404).send("This product is not found");
 
 		res.status(200).send("The product has been deleted");
 	} catch (error) {
@@ -130,7 +134,9 @@ router.get("/:category", async (req, res) => {
 		const product = await Products.find({
 			category: category.charAt(0).toUpperCase() + category.slice(1),
 		});
-		if (!product) return res.status(404).send(`${category} not found`);
+
+		if (product.length === 0) return res.status(404).send(`${category} not found`);
+
 		res.status(200).send(product);
 	} catch (error) {
 		res.status(500).send(error.message);

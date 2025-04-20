@@ -30,12 +30,6 @@ const expressRoutes = require("express-list-routes");
 const {rateLimit} = require("express-rate-limit");
 const {logger, logToFile} = require("./middlewares/logger");
 
-app.use(express.static(path.join(__dirname, "../client/dist")));
-
-app.get("*", (req, res) => {
-	res.sendFile(path.join(__dirname, ".../client/dist/index.html"));
-});
-
 const port = process.env.PORT || 8000;
 
 const limiter = rateLimit({
@@ -57,7 +51,7 @@ mongoose
 app.use(
 	cors({
 		origin: (origin, callback) => {
-			const allowedOrigins = ["http://localhost:4173", "http://localhost:5173"];
+			const allowedOrigins = ["http://localhost:4173", "http://localhost:8209"];
 			if (!origin || allowedOrigins.includes(origin)) {
 				callback(null, true);
 			} else {
@@ -67,6 +61,8 @@ app.use(
 		credentials: true,
 	}),
 );
+
+
 app.use(express.json({limit: "5mb"}));
 app.use(helmet({crossOriginOpenerPolicy: false}));
 app.use(logger);
@@ -81,7 +77,9 @@ app.use("/api/products", products);
 app.use("/api/discounts", discounts);
 app.use("/api/receipt", receipt);
 
+
 io.on("connection", (socket) => {
+	console.log("A user connected");
 	orderSocketHandler(io, socket);
 });
 
